@@ -3,6 +3,7 @@ package view;
 import entity.Article;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
+import use_case.save_article.ArticleSaveInteractor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +19,8 @@ public class TopHeadlinesView extends JPanel {
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
     private final JButton refreshButton = new JButton("Load Top Headlines");
+    private final JButton saveButton = new JButton("Save Article");
+    private final ArticleSaveInteractor articleSaveInteractor = new ArticleSaveInteractor();
 
     public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
         this.controller = controller;
@@ -31,6 +34,7 @@ public class TopHeadlinesView extends JPanel {
         title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
         topBar.add(title);
         topBar.add(refreshButton);
+        topBar.add(saveButton);
         topBar.setBackground(Color.WHITE);
         add(topBar, BorderLayout.NORTH);
 
@@ -43,6 +47,15 @@ public class TopHeadlinesView extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         refreshButton.addActionListener(e -> loadArticles());
+
+        saveButton.addActionListener(e -> {
+            Article article = (Article) articleList.getSelectedValue();
+            if (article == null){
+                JOptionPane.showMessageDialog(this, "Please select an article first.");
+            }
+            String result = articleSaveInteractor.save(article);
+            JOptionPane.showMessageDialog(this, result);
+        });
 
         articleList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
