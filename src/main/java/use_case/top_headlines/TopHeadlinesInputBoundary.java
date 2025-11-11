@@ -1,4 +1,5 @@
-package use_case;
+package use_case.top_headlines;
 
-public class TopHeadlinesInputBoundary {
+public interface TopHeadlinesInputBoundary {
+    void execute(TopHeadlinesInputData inputData);
 }
