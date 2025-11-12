@@ -1,4 +1,64 @@
 package use_case.search_news;
 
-public class SearchNewsInteractor {
+import java.util.List;
+import entity.Article;
+
+/**
+ * The interactor for the Search News by Keyword use case.
+ * Handles the logic for searching news articles
+ */
+public class SearchNewsInteractor implements SearchNewsInputBoundary {
+
+    private final SearchNewsUserDataAccessInterface userDataAccessObject;
+    private final SearchNewsOutputBoundary searchNewsPresenter;
+
+    /**
+     * Constructs a SearchNewsInteractor with the given Data Access Object and Presenter.
+     *
+     * @param userDataAccessInterface  the data access interface for searching news articles
+     * @param searchNewsOutputBoundary the output boundary for presenting search results
+     */
+    public SearchNewsInteractor(SearchNewsUserDataAccessInterface userDataAccessInterface,
+                                SearchNewsOutputBoundary searchNewsOutputBoundary) {
+        this.userDataAccessObject = userDataAccessInterface;
+        this.searchNewsPresenter = searchNewsOutputBoundary;
+    }
+
+    /**
+     * Executes the Search News use case with the provided input data.
+     *
+     * @param searchNewsInputData the input data with the keyword to search for
+     */
+    @Override
+    public void execute(SearchNewsInputData searchNewsInputData) {
+        String keyword;
+
+        // Check for null input and trim the keyword
+        if (searchNewsInputData.getKeyword() == null) {
+            keyword = "";
+        } else {
+            keyword = searchNewsInputData.getKeyword().trim();
+        }
+
+        // Validate keyword input
+        if (keyword.isEmpty()) {
+            searchNewsPresenter.prepareFailView("Please enter a keyword.");
+            return;
+        }
+
+        try {
+            // Retrieve articles from the data access object
+            List<Article> articles = userDataAccessObject.searchByKeyword(keyword);
+
+            if (articles == null || articles.isEmpty()) {
+                searchNewsPresenter.prepareFailView("No articles found.");
+            } else {
+                SearchNewsOutputData searchNewsOutputData = new SearchNewsOutputData(keyword, articles);
+                searchNewsPresenter.prepareSuccessView(searchNewsOutputData);
+            }
+
+        } catch (Exception e) {
+            searchNewsPresenter.prepareFailView("Search failed. " + e.getMessage());
+        }
+    }
 }
