@@ -13,10 +13,8 @@ public class SearchNewsViewModel extends ViewModel<SearchNewsState> {
     public static final String SEARCH_BUTTON_LABEL = "Search";
     public static final String CANCEL_BUTTON_LABEL = "Cancel";
 
-    public static final String VIEW_NAME = "search news";
-
     public SearchNewsViewModel() {
-        super(VIEW_NAME);
+        super("search news");
         setState(new SearchNewsState());
     }
 }

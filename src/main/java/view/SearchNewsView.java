@@ -18,7 +18,7 @@ import java.beans.PropertyChangeListener;
  */
 public class SearchNewsView extends JPanel implements ActionListener, PropertyChangeListener {
 
-    private final String viewName = SearchNewsViewModel.VIEW_NAME;
+    private final String viewName = "search news";
     private final SearchNewsViewModel searchNewsViewModel;
 
     private final JTextField keywordInputField = new JTextField(15);
