@@ -27,7 +27,7 @@ public class SearchNewsPresenter implements SearchNewsOutputBoundary {
         searchNewsViewModel.getState().setError(null);
         searchNewsViewModel.getState().setKeyword(outputData.getKeyword());
         searchNewsViewModel.getState().setArticles(outputData.getArticles());
-        searchNewsViewModel.firePropertyChange(SearchNewsViewModel.STATE_PROPERTY);
+        searchNewsViewModel.firePropertyChange();
     }
 
     /**
@@ -38,6 +38,6 @@ public class SearchNewsPresenter implements SearchNewsOutputBoundary {
     public void prepareFailView(String error) {
         searchNewsViewModel.getState().setArticles(null);
         searchNewsViewModel.getState().setError(error);
-        searchNewsViewModel.firePropertyChange(SearchNewsViewModel.STATE_PROPERTY);
+        searchNewsViewModel.firePropertyChange();
     }
 }
