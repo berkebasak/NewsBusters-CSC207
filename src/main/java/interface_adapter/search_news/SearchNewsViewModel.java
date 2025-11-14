@@ -9,6 +9,7 @@ import java.beans.PropertyChangeSupport;
 
 public class SearchNewsViewModel {
 
+    public static final String STATE_PROPERTY = "state";
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
     private SearchNewsState state = new SearchNewsState();
 
@@ -31,7 +32,7 @@ public class SearchNewsViewModel {
      * Tells listeners that the state changed.
      * @param propertyName the label for the property that was changed
      */
-    public void firePropertyChanged(String propertyName) {
+    public void firePropertyChange(String propertyName) {
         this.support.firePropertyChange(propertyName, null, this.state);
     }
 
