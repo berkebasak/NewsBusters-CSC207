@@ -12,8 +12,6 @@ public interface SearchNewsUserDataAccessInterface {
     /**
      * Searches for articles by keyword.
      * @param keyword keyword to search for
-     * @return list of matching articles
-     * @throws Exception if data retrieval fails
      */
-    List<Article> searchByKeyword(String keyword) throws Exception;
+    List<Article> searchByKeyword(String keyword);
 }

@@ -1,6 +1,6 @@
 package app;
 
-import data_access.TopHeadlinesDataAccessObject;
+import data_access.DBUserDataAccessObject;
 import interface_adapter.top_headlines.*;
 import use_case.top_headlines.*;
 import view.TopHeadlinesView;
@@ -8,7 +8,7 @@ import view.TopHeadlinesView;
 public class AppBuilder {
 
     public static void buildApp() {
-        TopHeadlinesUserDataAccessInterface dao = new TopHeadlinesDataAccessObject();
+        TopHeadlinesUserDataAccessInterface dao = new DBUserDataAccessObject();
 
         TopHeadlinesState state = new TopHeadlinesState();
         TopHeadlinesViewModel viewModel = new TopHeadlinesViewModel(state);
