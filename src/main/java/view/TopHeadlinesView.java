@@ -1,9 +1,6 @@
 package view;
 
 import entity.Article;
-import interface_adapter.top_headlines.TopHeadlinesController;
-import interface_adapter.top_headlines.TopHeadlinesViewModel;
-import use_case.save_article.ArticleSaveInteractor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,18 +8,29 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URI;
 
+import interface_adapter.top_headlines.TopHeadlinesController;
+import interface_adapter.top_headlines.TopHeadlinesViewModel;
+import interface_adapter.save_article.SaveArticleController;
+import interface_adapter.save_article.SaveArticleViewModel;
+
 public class TopHeadlinesView extends JFrame {
     private final TopHeadlinesController controller;
     private final TopHeadlinesViewModel viewModel;
+    private final SaveArticleController saveController;
+    private final SaveArticleViewModel saveViewModel;
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
     private final JButton refreshButton = new JButton("Load Top Headlines");
     private final JButton saveButton = new JButton("Save Article");
-    private final ArticleSaveInteractor articleSaveInteractor = new ArticleSaveInteractor();
 
-    public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
+    public TopHeadlinesView(TopHeadlinesController controller,
+                            TopHeadlinesViewModel viewModel,
+                            SaveArticleController saveArticleController,
+                            SaveArticleViewModel saveArticleViewModel) {
         this.controller = controller;
         this.viewModel = viewModel;
+        this.saveController = saveArticleController;
+        this.saveViewModel = saveArticleViewModel;
 
         setTitle("Top Headlines");
         setSize(900, 600);
@@ -52,13 +60,21 @@ public class TopHeadlinesView extends JFrame {
         // Event listeners
         refreshButton.addActionListener(e -> loadArticles());
 
+        saveViewModel.addPropertyChangeListener(evt -> {
+            if ("message".equals(evt.getPropertyName())) {
+                String msg = (String) evt.getNewValue();
+                if (msg != null && !msg.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, msg);
+                }
+            }
+        });
+
         saveButton.addActionListener(e -> {
-            Article article = (Article) articleList.getSelectedValue();
+            Article article = articleList.getSelectedValue();
             if (article == null){
                 JOptionPane.showMessageDialog(this, "Please select an article first.");
             }
-            String result = articleSaveInteractor.save(article);
-            JOptionPane.showMessageDialog(this, result);
+            saveController.save(article);
         });
 
         articleList.addMouseListener(new MouseAdapter() {
