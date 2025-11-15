@@ -4,6 +4,9 @@ import entity.Article;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
 
+import interface_adapter.save_article.SaveArticleController;
+import interface_adapter.save_article.SaveArticleViewModel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -15,13 +18,18 @@ public class TopHeadlinesView extends JPanel {
     public static final String VIEW_NAME = "top_headlines_view";
     private TopHeadlinesController controller;
     private final TopHeadlinesViewModel viewModel;
+    private SaveArticleController saveController;
+    private SaveArticleViewModel saveViewModel;
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
     private final JButton refreshButton = new JButton("Load Top Headlines");
+    private final JButton saveButton = new JButton("Save Article");
 
     public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
         this.controller = controller;
         this.viewModel = viewModel;
+        this.saveController = null;
+        this.saveViewModel = null;
 
         setLayout(new BorderLayout(10, 10));
         setBackground(Color.WHITE);
@@ -31,6 +39,7 @@ public class TopHeadlinesView extends JPanel {
         title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
         topBar.add(title);
         topBar.add(refreshButton);
+        topBar.add(saveButton);
         topBar.setBackground(Color.WHITE);
         add(topBar, BorderLayout.NORTH);
 
@@ -44,6 +53,19 @@ public class TopHeadlinesView extends JPanel {
 
         refreshButton.addActionListener(e -> loadArticles());
 
+        saveButton.addActionListener(e -> {
+            Article article = articleList.getSelectedValue();
+            if (article == null) {
+                JOptionPane.showMessageDialog(this, "Please select an article first.");
+                return;
+            }
+            if (saveController == null) {
+                JOptionPane.showMessageDialog(this, "Unable to save article.");
+                return;
+            }
+            saveController.save(article);
+        });
+
         articleList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -56,6 +78,21 @@ public class TopHeadlinesView extends JPanel {
 
     public void setController(TopHeadlinesController controller) {
         this.controller = controller;
+    }
+
+    public void setSaveArticleUseCase(SaveArticleController controller,
+                                  SaveArticleViewModel viewModel) {
+        this.saveController = controller;
+        this.saveViewModel = viewModel;
+
+        this.saveViewModel.addPropertyChangeListener(evt -> {
+            if ("message".equals(evt.getPropertyName())) {
+                String msg = (String) evt.getNewValue();
+                if (msg != null && !msg.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, msg);
+                }
+            }
+        });
     }
 
     private void loadArticles() {
