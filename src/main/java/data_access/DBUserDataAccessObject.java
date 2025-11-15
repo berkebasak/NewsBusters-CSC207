@@ -10,7 +10,7 @@ import use_case.top_headlines.TopHeadlinesUserDataAccessInterface;
 
 import java.util.*;
 
-public class TopHeadlinesDataAccessObject implements TopHeadlinesUserDataAccessInterface {
+public class DBUserDataAccessObject implements TopHeadlinesUserDataAccessInterface {
     private static final String API_KEY = "pub_bfcfbe16d3df4bf4b577b1b6096daf57";
     private static final String BASE_URL = "https://newsdata.io/api/1/news?country=us&language=en&category=top&removeduplicate=1";
     private final OkHttpClient client = new OkHttpClient();
