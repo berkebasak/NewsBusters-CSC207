@@ -1,9 +1,12 @@
 package use_case.top_headlines;
 
+
 import entity.Article;
+
 import java.util.List;
 
-public class TopHeadlinesInteractor implements use_case.top_headlines.TopHeadlinesInputBoundary {
+public class TopHeadlinesInteractor implements TopHeadlinesInputBoundary {
+
     private final TopHeadlinesUserDataAccessInterface dataAccess;
     private final TopHeadlinesOutputBoundary presenter;
 
@@ -14,7 +17,7 @@ public class TopHeadlinesInteractor implements use_case.top_headlines.TopHeadlin
     }
 
     @Override
-    public void execute(use_case.top_headlines.TopHeadlinesInputData inputData) {
+    public void execute(TopHeadlinesInputData inputData) {
         List<Article> articles = dataAccess.fetchTopHeadlines();
         presenter.present(new TopHeadlinesOutputData(articles));
     }
