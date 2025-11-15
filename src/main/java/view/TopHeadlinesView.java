@@ -143,8 +143,27 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         listModel.clear();
-        for (Article a : viewModel.getState().getArticles()) {
-            listModel.addElement(a);
+
+        var state = viewModel.getState();
+
+        java.util.List<Article> articles = state.getArticles();
+        if (articles != null) {
+            for (Article a : articles) {
+                listModel.addElement(a);
+            }
+        }
+
+        String error = state.getError();
+        if (error != null && !error.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    error,
+                    "Search News",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            state.setError(null);
         }
     }
+
+
 }

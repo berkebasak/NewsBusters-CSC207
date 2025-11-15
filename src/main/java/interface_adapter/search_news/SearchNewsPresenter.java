@@ -5,6 +5,9 @@ import interface_adapter.top_headlines.TopHeadlinesViewModel;
 import use_case.search_news.SearchNewsOutputBoundary;
 import use_case.search_news.SearchNewsOutputData;
 
+
+import java.util.Collections;
+
 /**
  * The Presenter for the Search News Use Case.
  * It updates the SAME ViewModel used by TopHeadlinesView,
@@ -39,7 +42,7 @@ public class SearchNewsPresenter implements SearchNewsOutputBoundary {
     @Override
     public void prepareFailView(String error) {
         TopHeadlinesState state = topHeadlinesViewModel.getState();
-        state.setArticles(null);
+        state.setArticles(Collections.emptyList());
         state.setError(error);
         topHeadlinesViewModel.firePropertyChange();
     }
