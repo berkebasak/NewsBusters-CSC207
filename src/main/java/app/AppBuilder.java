@@ -10,6 +10,11 @@ import view.TopHeadlinesView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+
+import data_access.save_article.FileSaveArticleDataAccess;
+import interface_adapter.save_article.*;
+import use_case.save_article.*;
 
 public class AppBuilder {
 
@@ -21,6 +26,8 @@ public class AppBuilder {
 
     private TopHeadlinesView topHeadlinesView;
     private TopHeadlinesViewModel topHeadlinesViewModel;
+
+    private SaveArticleViewModel saveArticleViewModel;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -41,6 +48,21 @@ public class AppBuilder {
         topHeadlinesView.setController(controller);
         return this;
     }
+
+    public AppBuilder addSaveArticleUseCase() throws IOException {
+        saveArticleViewModel = new SaveArticleViewModel();
+        SaveArticleDataAccessInterface saveDao =
+                new FileSaveArticleDataAccess("data/saved_articles.txt");
+        SaveArticleOutputBoundary savePresenter =
+                new SaveArticlePresenter(saveArticleViewModel);
+        SaveArticleInputBoundary saveInteractor =
+                new SaveArticleInteractor(saveDao, savePresenter);
+        SaveArticleController saveController
+                = new SaveArticleController(saveInteractor);
+        topHeadlinesView.setSaveArticleUseCase(saveController, saveArticleViewModel);
+        return this;
+    }
+
 
     public JFrame build() {
         JFrame application = new JFrame("NewsBusters");
