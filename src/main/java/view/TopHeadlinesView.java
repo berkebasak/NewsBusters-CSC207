@@ -10,8 +10,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URI;
 
-public class TopHeadlinesView extends JFrame {
-    private final TopHeadlinesController controller;
+public class TopHeadlinesView extends JPanel {
+
+    public static final String VIEW_NAME = "top_headlines_view";
+    private TopHeadlinesController controller;
     private final TopHeadlinesViewModel viewModel;
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
@@ -21,22 +23,17 @@ public class TopHeadlinesView extends JFrame {
         this.controller = controller;
         this.viewModel = viewModel;
 
-        setTitle("Top Headlines");
-        setSize(900, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
-        getContentPane().setBackground(Color.WHITE);
+        setBackground(Color.WHITE);
 
-        // Top bar
         JPanel topBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JLabel title = new JLabel("Top News Headlines");
-        title.setFont(new Font("SansSerif", Font.BOLD, 22));
+        title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
         topBar.add(title);
         topBar.add(refreshButton);
         topBar.setBackground(Color.WHITE);
         add(topBar, BorderLayout.NORTH);
 
-        // Configure article list
         articleList.setCellRenderer(new ArticleRenderer());
         articleList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         articleList.setBackground(Color.WHITE);
@@ -45,7 +42,6 @@ public class TopHeadlinesView extends JFrame {
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         add(scrollPane, BorderLayout.CENTER);
 
-        // Event listeners
         refreshButton.addActionListener(e -> loadArticles());
 
         articleList.addMouseListener(new MouseAdapter() {
@@ -56,8 +52,10 @@ public class TopHeadlinesView extends JFrame {
                 }
             }
         });
+    }
 
-        loadArticles();
+    public void setController(TopHeadlinesController controller) {
+        this.controller = controller;
     }
 
     private void loadArticles() {
@@ -76,7 +74,6 @@ public class TopHeadlinesView extends JFrame {
         }
     }
 
-    /** Custom renderer to show both title and source neatly **/
     static class ArticleRenderer extends JPanel implements ListCellRenderer<Article> {
         private final JLabel titleLabel = new JLabel();
         private final JLabel sourceLabel = new JLabel();
