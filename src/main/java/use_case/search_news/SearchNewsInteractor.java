@@ -1,5 +1,6 @@
 package use_case.search_news;
 
+import java.util.ArrayList;
 import java.util.List;
 import entity.Article;
 
@@ -52,8 +53,24 @@ public class SearchNewsInteractor implements SearchNewsInputBoundary {
 
             if (articles == null || articles.isEmpty()) {
                 searchNewsPresenter.prepareFailView("No articles found.");
+                return;
+            }
+
+            String lowerKeyword = keyword.toLowerCase();
+            List<Article> filtered = new ArrayList<>();
+
+            for (Article a : articles) {
+                String title = a.getTitle();
+                if (title != null && title.toLowerCase().contains(lowerKeyword)) {
+                    filtered.add(a);
+                }
+            }
+
+            if (filtered.isEmpty()) {
+                searchNewsPresenter.prepareFailView("No articles found.");
             } else {
-                SearchNewsOutputData searchNewsOutputData = new SearchNewsOutputData(keyword, articles);
+                SearchNewsOutputData searchNewsOutputData =
+                        new SearchNewsOutputData(keyword, filtered);
                 searchNewsPresenter.prepareSuccessView(searchNewsOutputData);
             }
 
