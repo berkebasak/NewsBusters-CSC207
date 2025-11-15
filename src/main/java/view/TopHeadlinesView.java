@@ -91,7 +91,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             if (searchNewsController != null) {
                 String keyword = keywordField.getText().trim();
                 if (!keyword.isEmpty()) {
-                    searchNewsController.excute(keyword);
+                    searchNewsController.execute(keyword);
                 }
             }
         });
