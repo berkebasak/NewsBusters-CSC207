@@ -10,6 +10,7 @@ public class Main {
                 .addTopHeadlinesView()
                 .addTopHeadlinesUseCase()
                 .addSaveArticleUseCase()
+                .addSearchNewsUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);

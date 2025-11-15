@@ -1,13 +1,11 @@
 package interface_adapter.top_headlines;
 
-public class TopHeadlinesViewModel {
-    private final TopHeadlinesState state;
+import interface_adapter.ViewModel;
 
-    public TopHeadlinesViewModel(TopHeadlinesState state) {
-        this.state = state;
-    }
+public class TopHeadlinesViewModel extends ViewModel<TopHeadlinesState> {
 
-    public TopHeadlinesState getState() {
-        return state;
+    public TopHeadlinesViewModel() {
+        super("top headlines");
+        setState(new TopHeadlinesState());
     }
 }

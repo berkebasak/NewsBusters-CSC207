@@ -3,7 +3,7 @@ package view;
 import entity.Article;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
-
+import interface_adapter.search_news.SearchNewsController;
 import interface_adapter.save_article.SaveArticleController;
 import interface_adapter.save_article.SaveArticleViewModel;
 
@@ -11,9 +11,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 import java.net.URI;
 
-public class TopHeadlinesView extends JPanel {
+public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
     public static final String VIEW_NAME = "top_headlines_view";
     private TopHeadlinesController controller;
@@ -25,11 +27,16 @@ public class TopHeadlinesView extends JPanel {
     private final JButton refreshButton = new JButton("Load Top Headlines");
     private final JButton saveButton = new JButton("Save Article");
 
+    private SearchNewsController searchNewsController;
+    private final JTextField keywordField = new JTextField(20);
+    private final JButton searchButton = new JButton("Search");
+
     public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
         this.controller = controller;
         this.viewModel = viewModel;
         this.saveController = null;
         this.saveViewModel = null;
+        this.viewModel.addPropertyChangeListener(this);
 
         setLayout(new BorderLayout(10, 10));
         setBackground(Color.WHITE);
@@ -41,7 +48,21 @@ public class TopHeadlinesView extends JPanel {
         topBar.add(refreshButton);
         topBar.add(saveButton);
         topBar.setBackground(Color.WHITE);
-        add(topBar, BorderLayout.NORTH);
+
+
+        JPanel searchBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        searchBar.add(new JLabel("Keyword:"));
+        searchBar.add(keywordField);
+        searchBar.add(searchButton);
+        searchBar.setBackground(Color.WHITE);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.add(topBar);
+        topPanel.add(searchBar);
+        topPanel.setBackground(Color.WHITE);
+
+        add(topPanel, BorderLayout.NORTH);
 
         articleList.setCellRenderer(new ArticleRenderer());
         articleList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -65,6 +86,16 @@ public class TopHeadlinesView extends JPanel {
             }
             saveController.save(article);
         });
+
+        searchButton.addActionListener(e -> {
+            if (searchNewsController != null) {
+                String keyword = keywordField.getText().trim();
+                if (!keyword.isEmpty()) {
+                    searchNewsController.excute(keyword);
+                }
+            }
+        });
+
 
         articleList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -95,6 +126,11 @@ public class TopHeadlinesView extends JPanel {
         });
     }
 
+    public void setSearchNewsController(SearchNewsController searchNewsController) {
+        this.searchNewsController = searchNewsController;
+    }
+
+
     private void loadArticles() {
         controller.fetchHeadlines();
         listModel.clear();
@@ -108,6 +144,31 @@ public class TopHeadlinesView extends JPanel {
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Cannot open link: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        listModel.clear();
+
+        var state = viewModel.getState();
+
+        java.util.List<Article> articles = state.getArticles();
+        if (articles != null) {
+            for (Article a : articles) {
+                listModel.addElement(a);
+            }
+        }
+
+        String error = state.getError();
+        if (error != null && !error.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    error,
+                    "Search News",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            state.setError(null);
         }
     }
 
@@ -147,4 +208,5 @@ public class TopHeadlinesView extends JPanel {
             return this;
         }
     }
+
 }
