@@ -2,6 +2,7 @@ package use_case.filter_news;
 
 /**
  * Output Boundary for the Filter News use case.
+ * Called by the Interactor to update the UI.
  */
 public interface FilterNewsOutputBoundary {
 
