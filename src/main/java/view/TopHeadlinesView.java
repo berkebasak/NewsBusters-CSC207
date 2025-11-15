@@ -4,7 +4,8 @@ import entity.Article;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
 import interface_adapter.search_news.SearchNewsController;
-
+import interface_adapter.save_article.SaveArticleController;
+import interface_adapter.save_article.SaveArticleViewModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,9 +20,12 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     public static final String VIEW_NAME = "top_headlines_view";
     private TopHeadlinesController controller;
     private final TopHeadlinesViewModel viewModel;
+    private SaveArticleController saveController;
+    private SaveArticleViewModel saveViewModel;
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
     private final JButton refreshButton = new JButton("Load Top Headlines");
+    private final JButton saveButton = new JButton("Save Article");
 
     private SearchNewsController searchNewsController;
     private final JTextField keywordField = new JTextField(20);
@@ -30,6 +34,8 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
         this.controller = controller;
         this.viewModel = viewModel;
+        this.saveController = null;
+        this.saveViewModel = null;
         this.viewModel.addPropertyChangeListener(this);
 
         setLayout(new BorderLayout(10, 10));
@@ -40,6 +46,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
         topBar.add(title);
         topBar.add(refreshButton);
+        topBar.add(saveButton);
         topBar.setBackground(Color.WHITE);
 
 
@@ -67,6 +74,19 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
         refreshButton.addActionListener(e -> loadArticles());
 
+        saveButton.addActionListener(e -> {
+            Article article = articleList.getSelectedValue();
+            if (article == null) {
+                JOptionPane.showMessageDialog(this, "Please select an article first.");
+                return;
+            }
+            if (saveController == null) {
+                JOptionPane.showMessageDialog(this, "Unable to save article.");
+                return;
+            }
+            saveController.save(article);
+        });
+
         searchButton.addActionListener(e -> {
             if (searchNewsController != null) {
                 String keyword = keywordField.getText().trim();
@@ -91,6 +111,21 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         this.controller = controller;
     }
 
+    public void setSaveArticleUseCase(SaveArticleController controller,
+                                  SaveArticleViewModel viewModel) {
+        this.saveController = controller;
+        this.saveViewModel = viewModel;
+
+        this.saveViewModel.addPropertyChangeListener(evt -> {
+            if ("message".equals(evt.getPropertyName())) {
+                String msg = (String) evt.getNewValue();
+                if (msg != null && !msg.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, msg);
+                }
+            }
+        });
+    }
+
     public void setSearchNewsController(SearchNewsController searchNewsController) {
         this.searchNewsController = searchNewsController;
     }
@@ -109,6 +144,31 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Cannot open link: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        listModel.clear();
+
+        var state = viewModel.getState();
+
+        java.util.List<Article> articles = state.getArticles();
+        if (articles != null) {
+            for (Article a : articles) {
+                listModel.addElement(a);
+            }
+        }
+
+        String error = state.getError();
+        if (error != null && !error.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    error,
+                    "Search News",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            state.setError(null);
         }
     }
 
@@ -148,31 +208,5 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             return this;
         }
     }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        listModel.clear();
-
-        var state = viewModel.getState();
-
-        java.util.List<Article> articles = state.getArticles();
-        if (articles != null) {
-            for (Article a : articles) {
-                listModel.addElement(a);
-            }
-        }
-
-        String error = state.getError();
-        if (error != null && !error.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    error,
-                    "Search News",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-            state.setError(null);
-        }
-    }
-
 
 }

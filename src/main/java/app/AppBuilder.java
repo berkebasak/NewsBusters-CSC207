@@ -14,8 +14,15 @@ import use_case.search_news.SearchNewsInputBoundary;
 import use_case.search_news.SearchNewsInteractor;
 import use_case.search_news.SearchNewsOutputBoundary;
 
+import java.io.IOException;
+
+import data_access.save_article.FileSaveArticleDataAccess;
+import interface_adapter.save_article.*;
+import use_case.save_article.*;
+
 import javax.swing.*;
 import java.awt.*;
+
 
 public class AppBuilder {
 
@@ -28,6 +35,7 @@ public class AppBuilder {
 
     private TopHeadlinesView topHeadlinesView;
     private TopHeadlinesViewModel topHeadlinesViewModel;
+    private SaveArticleViewModel saveArticleViewModel;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -54,6 +62,20 @@ public class AppBuilder {
         SearchNewsInputBoundary interactor = new SearchNewsInteractor(newsDataAccessObject, presenter);
         SearchNewsController controller = new SearchNewsController(interactor);
         topHeadlinesView.setSearchNewsController(controller);
+        return this;
+    }
+
+    public AppBuilder addSaveArticleUseCase() throws IOException {
+        saveArticleViewModel = new SaveArticleViewModel();
+        SaveArticleDataAccessInterface saveDao =
+                new FileSaveArticleDataAccess("data/saved_articles.txt");
+        SaveArticleOutputBoundary savePresenter =
+                new SaveArticlePresenter(saveArticleViewModel);
+        SaveArticleInputBoundary saveInteractor =
+                new SaveArticleInteractor(saveDao, savePresenter);
+        SaveArticleController saveController
+                = new SaveArticleController(saveInteractor);
+        topHeadlinesView.setSaveArticleUseCase(saveController, saveArticleViewModel);
         return this;
     }
 
