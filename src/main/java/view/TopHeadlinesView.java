@@ -3,7 +3,9 @@ package view;
 import entity.Article;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
-import use_case.save_article.ArticleSaveInteractor;
+
+import interface_adapter.save_article.SaveArticleController;
+import interface_adapter.save_article.SaveArticleViewModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,15 +18,19 @@ public class TopHeadlinesView extends JPanel {
     public static final String VIEW_NAME = "top_headlines_view";
     private TopHeadlinesController controller;
     private final TopHeadlinesViewModel viewModel;
+    private SaveArticleController saveArticleController;
+    private SaveArticleViewModel saveArticleViewModel;
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
     private final JButton refreshButton = new JButton("Load Top Headlines");
     private final JButton saveButton = new JButton("Save Article");
-    private final ArticleSaveInteractor articleSaveInteractor = new ArticleSaveInteractor();
 
     public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
         this.controller = controller;
         this.viewModel = viewModel;
+
+        this.saveArticleController = null;
+        this.saveArticleViewModel = null;
 
         setLayout(new BorderLayout(10, 10));
         setBackground(Color.WHITE);
@@ -49,12 +55,16 @@ public class TopHeadlinesView extends JPanel {
         refreshButton.addActionListener(e -> loadArticles());
 
         saveButton.addActionListener(e -> {
-            Article article = (Article) articleList.getSelectedValue();
+            Article article = articleList.getSelectedValue();
             if (article == null){
                 JOptionPane.showMessageDialog(this, "Please select an article first.");
+                return;
             }
-            String result = articleSaveInteractor.save(article);
-            JOptionPane.showMessageDialog(this, result);
+            if (saveArticleController == null) {
+                JOptionPane.showMessageDialog(this, "Unable to save article.");
+                return;
+            }
+            saveArticleController.save(article);
         });
 
         articleList.addMouseListener(new MouseAdapter() {
@@ -69,6 +79,22 @@ public class TopHeadlinesView extends JPanel {
 
     public void setController(TopHeadlinesController controller) {
         this.controller = controller;
+    }
+
+    public void setSaveArticleUseCase(SaveArticleController controller,
+                                      SaveArticleViewModel viewModel){
+        this.saveArticleController = controller;
+        this.saveArticleViewModel = viewModel;
+
+        this.saveArticleViewModel.addPropertyChangeListener(evt ->{
+            if ("message".equals(evt.getPropertyName())) {
+                String msg = (String) evt.getNewValue();
+                if (msg != null && !msg.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, msg);
+                }
+            }
+        });
+
     }
 
     private void loadArticles() {
