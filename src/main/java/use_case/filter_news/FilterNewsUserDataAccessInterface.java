@@ -10,7 +10,6 @@ public interface FilterNewsUserDataAccessInterface {
 
     /**
      * Filters articles that match the selected topics.
-     *
      * @param topics the list of topics the user selected
      * @return a list of matching articles
      */
