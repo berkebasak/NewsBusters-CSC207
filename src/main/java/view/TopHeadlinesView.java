@@ -40,13 +40,22 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
         topBar.add(title);
         topBar.add(refreshButton);
-
-        topBar.add(new JLabel("Keyword:"));
-        topBar.add(keywordField);
-        topBar.add(searchButton);
-
         topBar.setBackground(Color.WHITE);
-        add(topBar, BorderLayout.NORTH);
+
+
+        JPanel searchBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        searchBar.add(new JLabel("Keyword:"));
+        searchBar.add(keywordField);
+        searchBar.add(searchButton);
+        searchBar.setBackground(Color.WHITE);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.add(topBar);
+        topPanel.add(searchBar);
+        topPanel.setBackground(Color.WHITE);
+
+        add(topPanel, BorderLayout.NORTH);
 
         articleList.setCellRenderer(new ArticleRenderer());
         articleList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
