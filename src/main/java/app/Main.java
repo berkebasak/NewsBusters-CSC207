@@ -7,7 +7,6 @@ public class Main {
         AppBuilder appBuilder = new AppBuilder();
         JFrame application = appBuilder
                 .addTopHeadlinesView()
-                .addSearchNewsView()
                 .addTopHeadlinesUseCase()
                 .addSearchNewsUseCase()
                 .build();

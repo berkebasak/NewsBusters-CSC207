@@ -100,7 +100,6 @@ public class DBUserDataAccessObject implements TopHeadlinesUserDataAccessInterfa
                 String source = a.optString("source_id", "Unknown").trim();
                 String key = title.toLowerCase() + "|" + source.toLowerCase();
 
-                // Skip duplicates
                 if (title.isEmpty() || seen.contains(key)) continue;
                 seen.add(key);
 

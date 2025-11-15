@@ -1,43 +1,46 @@
 package interface_adapter.search_news;
 
+import interface_adapter.top_headlines.TopHeadlinesState;
+import interface_adapter.top_headlines.TopHeadlinesViewModel;
 import use_case.search_news.SearchNewsOutputBoundary;
 import use_case.search_news.SearchNewsOutputData;
 
 /**
  * The Presenter for the Search News Use Case.
+ * It updates the SAME ViewModel used by TopHeadlinesView,
+ * so the results show up in the headlines list.
  */
 public class SearchNewsPresenter implements SearchNewsOutputBoundary {
 
-    private final SearchNewsViewModel searchNewsViewModel;
+    private final TopHeadlinesViewModel topHeadlinesViewModel;
 
     /**
      * Builds a SearchNewsPresenter.
-     * @param searchNewsViewModel the ViewModel for Search News
+     * @param topHeadlinesViewModel the shared ViewModel used by TopHeadlinesView
      */
-    public SearchNewsPresenter(SearchNewsViewModel searchNewsViewModel) {
-        this.searchNewsViewModel = searchNewsViewModel;
+    public SearchNewsPresenter(TopHeadlinesViewModel topHeadlinesViewModel) {
+        this.topHeadlinesViewModel = topHeadlinesViewModel;
     }
 
     /**
      * Updates the state on success and notifies the view.
-     * @param outputData the results of the search (keyword and articles)
      */
     @Override
     public void prepareSuccessView(SearchNewsOutputData outputData) {
-        searchNewsViewModel.getState().setError(null);
-        searchNewsViewModel.getState().setKeyword(outputData.getKeyword());
-        searchNewsViewModel.getState().setArticles(outputData.getArticles());
-        searchNewsViewModel.firePropertyChange();
+        TopHeadlinesState state = topHeadlinesViewModel.getState();
+        state.setArticles(outputData.getArticles());
+        state.setError(null);
+        topHeadlinesViewModel.firePropertyChange();
     }
 
     /**
      * Updates the state on failure and notifies the view.
-     * @param error the error message to display
      */
     @Override
     public void prepareFailView(String error) {
-        searchNewsViewModel.getState().setArticles(null);
-        searchNewsViewModel.getState().setError(error);
-        searchNewsViewModel.firePropertyChange();
+        TopHeadlinesState state = topHeadlinesViewModel.getState();
+        state.setArticles(null);
+        state.setError(error);
+        topHeadlinesViewModel.firePropertyChange();
     }
 }

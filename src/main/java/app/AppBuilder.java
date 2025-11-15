@@ -10,14 +10,9 @@ import view.TopHeadlinesView;
 
 import interface_adapter.search_news.SearchNewsController;
 import interface_adapter.search_news.SearchNewsPresenter;
-import interface_adapter.search_news.SearchNewsViewModel;
 import use_case.search_news.SearchNewsInputBoundary;
 import use_case.search_news.SearchNewsInteractor;
-import use_case.search_news.SearchNewsUserDataAccessInterface;
-
-import view.TopHeadlinesView;
-import view.SearchNewsView;
-import view.ViewManager;
+import use_case.search_news.SearchNewsOutputBoundary;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,24 +29,14 @@ public class AppBuilder {
     private TopHeadlinesView topHeadlinesView;
     private TopHeadlinesViewModel topHeadlinesViewModel;
 
-    private SearchNewsViewModel searchNewsViewModel;
-    private SearchNewsView searchNewsView;
-
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
 
     public AppBuilder addTopHeadlinesView() {
-        topHeadlinesViewModel = new TopHeadlinesViewModel(new TopHeadlinesState());
+        topHeadlinesViewModel = new TopHeadlinesViewModel();
         topHeadlinesView = new TopHeadlinesView(null, topHeadlinesViewModel);
         cardPanel.add(topHeadlinesView, TopHeadlinesView.VIEW_NAME);
-        return this;
-    }
-
-    public AppBuilder addSearchNewsView() {
-        searchNewsViewModel = new SearchNewsViewModel();
-        searchNewsView = new SearchNewsView(searchNewsViewModel);
-        cardPanel.add(searchNewsView, searchNewsView.getViewName());
         return this;
     }
 
@@ -65,10 +50,10 @@ public class AppBuilder {
     }
 
     public AppBuilder addSearchNewsUseCase() {
-        SearchNewsPresenter presenter = new SearchNewsPresenter(searchNewsViewModel);
+        SearchNewsOutputBoundary presenter = new SearchNewsPresenter(topHeadlinesViewModel);
         SearchNewsInputBoundary interactor = new SearchNewsInteractor(newsDataAccessObject, presenter);
         SearchNewsController controller = new SearchNewsController(interactor);
-        searchNewsView.setSearchNewsController(controller);
+        topHeadlinesView.setSearchNewsController(controller);
         return this;
     }
 

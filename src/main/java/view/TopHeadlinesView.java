@@ -3,14 +3,18 @@ package view;
 import entity.Article;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
+import interface_adapter.search_news.SearchNewsController;
+
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 import java.net.URI;
 
-public class TopHeadlinesView extends JPanel {
+public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
     public static final String VIEW_NAME = "top_headlines_view";
     private TopHeadlinesController controller;
@@ -19,9 +23,14 @@ public class TopHeadlinesView extends JPanel {
     private final JList<Article> articleList = new JList<>(listModel);
     private final JButton refreshButton = new JButton("Load Top Headlines");
 
+    private SearchNewsController searchNewsController;
+    private final JTextField keywordField = new JTextField(20);
+    private final JButton searchButton = new JButton("Search");
+
     public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
         this.controller = controller;
         this.viewModel = viewModel;
+        this.viewModel.addPropertyChangeListener(this);
 
         setLayout(new BorderLayout(10, 10));
         setBackground(Color.WHITE);
@@ -31,6 +40,11 @@ public class TopHeadlinesView extends JPanel {
         title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
         topBar.add(title);
         topBar.add(refreshButton);
+
+        topBar.add(new JLabel("Keyword:"));
+        topBar.add(keywordField);
+        topBar.add(searchButton);
+
         topBar.setBackground(Color.WHITE);
         add(topBar, BorderLayout.NORTH);
 
@@ -43,6 +57,16 @@ public class TopHeadlinesView extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         refreshButton.addActionListener(e -> loadArticles());
+
+        searchButton.addActionListener(e -> {
+            if (searchNewsController != null) {
+                String keyword = keywordField.getText().trim();
+                if (!keyword.isEmpty()) {
+                    searchNewsController.excute(keyword);
+                }
+            }
+        });
+
 
         articleList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -57,6 +81,11 @@ public class TopHeadlinesView extends JPanel {
     public void setController(TopHeadlinesController controller) {
         this.controller = controller;
     }
+
+    public void setSearchNewsController(SearchNewsController searchNewsController) {
+        this.searchNewsController = searchNewsController;
+    }
+
 
     private void loadArticles() {
         controller.fetchHeadlines();
@@ -108,6 +137,14 @@ public class TopHeadlinesView extends JPanel {
             }
 
             return this;
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        listModel.clear();
+        for (Article a : viewModel.getState().getArticles()) {
+            listModel.addElement(a);
         }
     }
 }
