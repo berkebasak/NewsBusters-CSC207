@@ -8,6 +8,17 @@ import interface_adapter.top_headlines.*;
 import use_case.top_headlines.*;
 import view.TopHeadlinesView;
 
+import interface_adapter.search_news.SearchNewsController;
+import interface_adapter.search_news.SearchNewsPresenter;
+import interface_adapter.search_news.SearchNewsViewModel;
+import use_case.search_news.SearchNewsInputBoundary;
+import use_case.search_news.SearchNewsInteractor;
+import use_case.search_news.SearchNewsUserDataAccessInterface;
+
+import view.TopHeadlinesView;
+import view.SearchNewsView;
+import view.ViewManager;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -18,9 +29,13 @@ public class AppBuilder {
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
     private final ViewManager viewManager =
             new ViewManager(cardPanel, cardLayout, viewManagerModel);
+    private final DBUserDataAccessObject newsDataAccessObject = new DBUserDataAccessObject();
 
     private TopHeadlinesView topHeadlinesView;
     private TopHeadlinesViewModel topHeadlinesViewModel;
+
+    private SearchNewsViewModel searchNewsViewModel;
+    private SearchNewsView searchNewsView;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -33,12 +48,27 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addSearchNewsView() {
+        searchNewsViewModel = new SearchNewsViewModel();
+        searchNewsView = new SearchNewsView(searchNewsViewModel);
+        cardPanel.add(searchNewsView, searchNewsView.getViewName());
+        return this;
+    }
+
     public AppBuilder addTopHeadlinesUseCase() {
-        TopHeadlinesUserDataAccessInterface dao = new DBUserDataAccessObject();
+        TopHeadlinesUserDataAccessInterface dao = newsDataAccessObject;
         TopHeadlinesPresenter presenter = new TopHeadlinesPresenter(topHeadlinesViewModel);
         TopHeadlinesInputBoundary interactor = new TopHeadlinesInteractor(dao, presenter);
         TopHeadlinesController controller = new TopHeadlinesController(interactor);
         topHeadlinesView.setController(controller);
+        return this;
+    }
+
+    public AppBuilder addSearchNewsUseCase() {
+        SearchNewsPresenter presenter = new SearchNewsPresenter(searchNewsViewModel);
+        SearchNewsInputBoundary interactor = new SearchNewsInteractor(newsDataAccessObject, presenter);
+        SearchNewsController controller = new SearchNewsController(interactor);
+        searchNewsView.setSearchNewsController(controller);
         return this;
     }
 
