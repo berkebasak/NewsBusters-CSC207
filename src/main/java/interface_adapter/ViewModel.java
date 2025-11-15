@@ -50,6 +50,7 @@ public class ViewModel<T> {
      * Fires a property changed event for the state property.
      */
     public void firePropertyChange() {
+        support.firePropertyChange("state", null, this.state);
         this.support.firePropertyChange("state", null, this.state);
     }
 

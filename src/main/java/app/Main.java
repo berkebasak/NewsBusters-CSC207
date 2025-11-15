@@ -12,7 +12,6 @@ public class Main {
                 .addSearchNewsUseCase()
                 .build();
 
-        application.pack();
         application.setLocationRelativeTo(null);
         application.setVisible(true);
     }
