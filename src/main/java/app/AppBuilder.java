@@ -44,8 +44,6 @@ public class AppBuilder {
     private TopHeadlinesViewModel topHeadlinesViewModel;
     private SaveArticleViewModel saveArticleViewModel;
 
-    private FilterNewsController filterNewsController;
-
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
@@ -77,7 +75,8 @@ public class AppBuilder {
     public AppBuilder addFilterNewsUseCase() {
         FilterNewsOutputBoundary presenter = new FilterNewsPresenter(topHeadlinesViewModel);
         FilterNewsInputBoundary interactor = new FilterNewsInteractor(newsDataAccessObject, presenter);
-        this.filterNewsController = new FilterNewsController(interactor);
+        FilterNewsController controller = new FilterNewsController(interactor);
+        topHeadlinesView.setFilterNewsController(controller);
         return this;
     }
 
@@ -100,10 +99,6 @@ public class AppBuilder {
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         application.setSize(900, 600);
         application.add(cardPanel);
-
-        if (filterNewsController != null) {
-            topHeadlinesView.setFilterNewsController(filterNewsController, application);
-        }
 
         viewManagerModel.setState(TopHeadlinesView.VIEW_NAME);
         viewManagerModel.firePropertyChange();

@@ -56,6 +56,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         topBar.add(title);
         topBar.add(refreshButton);
         topBar.add(saveButton);
+        topBar.add(filterButton);
         topBar.setBackground(Color.WHITE);
 
 
@@ -106,15 +107,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             }
         });
 
-        filterButton.addActionListener(e -> {
-            if (filterNewsController == null || filterNewsView == null) {
-                JOptionPane.showMessageDialog(this, "Filtering is not available.");
-                return;
-            }
-            filterNewsView.setVisible(true);
-        });
-
-
+        filterButton.addActionListener(e -> openFilter());
 
         articleList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -152,11 +145,9 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     /**
      * Sets the Filter News controller and creates the FilterNewsView dialog.
      * @param filterNewsController the controller for the filter news use case
-     * @param frame          the main application frame
      */
-    public void setFilterNewsController(FilterNewsController filterNewsController, JFrame frame) {
+    public void setFilterNewsController(FilterNewsController filterNewsController) {
         this.filterNewsController = filterNewsController;
-        this.filterNewsView = new FilterNewsView(frame, filterNewsController);
     }
 
 
@@ -199,6 +190,27 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             );
             state.setError(null);
         }
+    }
+
+    private void openFilter() {
+        if (filterNewsController == null) {
+            JOptionPane.showMessageDialog(this, "Filtering is not available.");
+            return;
+        }
+
+        if (filterNewsView == null) {
+            // Find the parent window just like CA-lab views live inside a frame.
+            java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+            if (window instanceof JFrame frame) {
+                filterNewsView = new FilterNewsView(frame, filterNewsController);
+            } else {
+                JOptionPane.showMessageDialog(this, "Unable to open filter dialog.");
+                return;
+            }
+        }
+
+        filterNewsView.setLocationRelativeTo(this);
+        filterNewsView.setVisible(true);
     }
 
     static class ArticleRenderer extends JPanel implements ListCellRenderer<Article> {
