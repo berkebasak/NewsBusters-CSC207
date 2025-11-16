@@ -20,6 +20,10 @@ import data_access.save_article.FileSaveArticleDataAccess;
 import interface_adapter.save_article.*;
 import use_case.save_article.*;
 
+import interface_adapter.discover_page.*;
+import use_case.discover_page.*;
+import view.DiscoverPageView;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -36,6 +40,8 @@ public class AppBuilder {
     private TopHeadlinesView topHeadlinesView;
     private TopHeadlinesViewModel topHeadlinesViewModel;
     private SaveArticleViewModel saveArticleViewModel;
+    private DiscoverPageView discoverPageView;
+    private DiscoverPageViewModel discoverPageViewModel;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -44,6 +50,7 @@ public class AppBuilder {
     public AppBuilder addTopHeadlinesView() {
         topHeadlinesViewModel = new TopHeadlinesViewModel();
         topHeadlinesView = new TopHeadlinesView(null, topHeadlinesViewModel);
+        topHeadlinesView.setViewManagerModel(viewManagerModel);
         cardPanel.add(topHeadlinesView, TopHeadlinesView.VIEW_NAME);
         return this;
     }
@@ -76,6 +83,22 @@ public class AppBuilder {
         SaveArticleController saveController
                 = new SaveArticleController(saveInteractor);
         topHeadlinesView.setSaveArticleUseCase(saveController, saveArticleViewModel);
+        return this;
+    }
+
+    public AppBuilder addDiscoverPageView() {
+        discoverPageViewModel = new DiscoverPageViewModel();
+        discoverPageView = new DiscoverPageView(null, discoverPageViewModel);
+        discoverPageView.setViewManagerModel(viewManagerModel);
+        cardPanel.add(discoverPageView, DiscoverPageView.VIEW_NAME);
+        return this;
+    }
+
+    public AppBuilder addDiscoverPageUseCase() {
+        DiscoverPageOutputBoundary presenter = new DiscoverPagePresenter(discoverPageViewModel);
+        DiscoverPageInputBoundary interactor = new DiscoverPageInteractor(newsDataAccessObject, presenter);
+        DiscoverPageController controller = new DiscoverPageController(interactor);
+        discoverPageView.setController(controller);
         return this;
     }
 
