@@ -121,7 +121,6 @@ public class DBUserDataAccessObject implements TopHeadlinesUserDataAccessInterfa
         return articles;
     }
 
-
     @Override
     public List<Article> getReadingHistory() {
         List<Article> savedArticles = new ArrayList<>();
@@ -155,7 +154,6 @@ public class DBUserDataAccessObject implements TopHeadlinesUserDataAccessInterfa
         return savedArticles;
     }
 
-
     @Override
     public Set<String> extractTopTopics(List<Article> articles, int topN) {
         if (articles == null || articles.isEmpty()) {
@@ -179,14 +177,12 @@ public class DBUserDataAccessObject implements TopHeadlinesUserDataAccessInterfa
             String title = article.getTitle();
             if (title == null || title.isEmpty()) continue;
             
-            // Split title into words, convert to lowercase, remove punctuation
             String[] words = title.toLowerCase()
                     .replaceAll("[^a-z0-9\\s]", " ")
                     .split("\\s+");
             
             for (String word : words) {
                 word = word.trim();
-                // Skip stop words and short words (less than 3 characters)
                 if (word.length() >= 3 && !stopWords.contains(word)) {
                     if (wordCount.containsKey(word)) {
                         wordCount.put(word, wordCount.get(word) + 1);
@@ -198,11 +194,11 @@ public class DBUserDataAccessObject implements TopHeadlinesUserDataAccessInterfa
         }
 
         List<Map.Entry<String, Integer>> entryList = new ArrayList<>(wordCount.entrySet());
-
+        
         Collections.sort(entryList, new Comparator<Map.Entry<String, Integer>>() {
             @Override
             public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
-                return e2.getValue().compareTo(e1.getValue()); // Descending order
+                return e2.getValue().compareTo(e1.getValue());
             }
         });
 
@@ -214,7 +210,6 @@ public class DBUserDataAccessObject implements TopHeadlinesUserDataAccessInterfa
 
         return topTopics;
     }
-
 
     @Override
     public List<Article> searchByTopics(Set<String> topics) {
