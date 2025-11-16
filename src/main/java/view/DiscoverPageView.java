@@ -93,6 +93,9 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
 
     public void setController(DiscoverPageController controller) {
         this.controller = controller;
+        if (controller != null) {
+            controller.execute();
+        }
     }
 
     public void setViewManagerModel(ViewManagerModel viewManagerModel) {
