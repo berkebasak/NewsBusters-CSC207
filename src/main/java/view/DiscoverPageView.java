@@ -38,12 +38,24 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
         JPanel topBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JLabel title = new JLabel("Discover Page");
         title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
+        JLabel subtitle = new JLabel("Articles based on your saved articles");
+        subtitle.setFont(new Font("TimesNewRoman", Font.PLAIN, 12));
+        subtitle.setForeground(new Color(100, 100, 100));
         topBar.add(title);
         topBar.add(refreshButton);
         topBar.add(backButton);
         topBar.setBackground(Color.WHITE);
 
-        add(topBar, BorderLayout.NORTH);
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.add(topBar);
+        JPanel subtitlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        subtitlePanel.add(subtitle);
+        subtitlePanel.setBackground(Color.WHITE);
+        topPanel.add(subtitlePanel);
+        topPanel.setBackground(Color.WHITE);
+
+        add(topPanel, BorderLayout.NORTH);
 
         messagePanel.setLayout(new BorderLayout());
         messagePanel.setBackground(Color.WHITE);
