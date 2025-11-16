@@ -2,6 +2,7 @@ package use_case.filter_news;
 
 import entity.Article;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,8 +16,9 @@ public class FilterNewsInteractor implements FilterNewsInputBoundary {
 
     /**
      * Creates a new FilterNewsInteractor.
-     * @param userDataAccessInterface the Data Access object used to fetch filtered articles
-     * @param filterNewsOutputBoundary  the Output Boundary that prepares the view
+     *
+     * @param userDataAccessInterface  the Data Access object used to fetch filtered articles
+     * @param filterNewsOutputBoundary the Output Boundary that prepares the view
      */
     public FilterNewsInteractor(FilterNewsUserDataAccessInterface userDataAccessInterface,
                                 FilterNewsOutputBoundary filterNewsOutputBoundary) {
@@ -26,6 +28,7 @@ public class FilterNewsInteractor implements FilterNewsInputBoundary {
 
     /**
      * Runs the Filter News use case.
+     *
      * @param inputData the topics selected by the user
      */
     @Override
@@ -41,9 +44,14 @@ public class FilterNewsInteractor implements FilterNewsInputBoundary {
 
         if (articles == null || articles.isEmpty()) {
             filterNewsPresenter.prepareFailView("No articles found for the selected topics.");
-        } else {
-            FilterNewsOutputData outputData = new FilterNewsOutputData(articles, topics);
-            filterNewsPresenter.prepareSuccessView(outputData);
+            return;
         }
+
+        // Mix articles so they are not grouped by topic
+        Collections.shuffle(articles);
+
+        FilterNewsOutputData outputData = new FilterNewsOutputData(articles, topics);
+        filterNewsPresenter.prepareSuccessView(outputData);
+
     }
 }

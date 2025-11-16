@@ -5,97 +5,101 @@ import interface_adapter.filter_news.FilterNewsController;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * View for the Filter News use case.
- * Lets the user select one or more topics and apply filters.
+ * Filter News popup window.
+ * Lets the user choose one or more news categories.
+ * Clean, dynamic, and easy to maintain.
  */
 public class FilterNewsView extends JDialog {
 
     private final FilterNewsController filterNewsController;
 
-    private final JCheckBox businessCheckBox = new JCheckBox("Business");
-    private final JCheckBox sportsCheckBox = new JCheckBox("Sports");
-    private final JCheckBox technologyCheckBox = new JCheckBox("Technology");
-    private final JCheckBox healthCheckBox = new JCheckBox("Health");
-    private final JCheckBox entertainmentCheckBox = new JCheckBox("Entertainment");
-    private final JCheckBox scienceCheckBox = new JCheckBox("Science");
+    private final Map<JCheckBox, String> checkboxMap = new LinkedHashMap<>();
 
     private final JButton applyButton = new JButton("Apply Filters");
     private final JButton cancelButton = new JButton("Cancel");
 
     /**
-     * Creates a new FilterNewsView dialog.
-     *
-     * @param frame     main window frame
-     * @param filterNewsController the Filter News controller
+     * Creates the Filter News popup.
+     * @param frame the main JFrame
+     * @param filterNewsController the controller for applying filters
      */
     public FilterNewsView(JFrame frame, FilterNewsController filterNewsController) {
         super(frame, "Filter News by Topic", true);
         this.filterNewsController = filterNewsController;
 
         setLayout(new BorderLayout(10, 10));
-        JPanel topicsPanel = new JPanel(new GridLayout(0, 2, 5, 5));
+        getContentPane().setBackground(Color.WHITE);
 
-        topicsPanel.add(businessCheckBox);
-        topicsPanel.add(sportsCheckBox);
-        topicsPanel.add(technologyCheckBox);
-        topicsPanel.add(healthCheckBox);
-        topicsPanel.add(entertainmentCheckBox);
-        topicsPanel.add(scienceCheckBox);
+        // ===== List of all NewsData.io categories you support =====
+        List<String> topics = List.of(
+                "business", "entertainment", "environment", "food", "health",
+                "politics", "science", "sports", "technology", "world",
+                "lifestyle", "education", "crime", "tourism", "automobile"
+        );
+
+        JPanel topicsPanel = new JPanel(new GridLayout(0, 2, 8, 8));
+        topicsPanel.setBackground(Color.WHITE);
+
+        // Create checkboxes
+        for (String topic : topics) {
+            String label = capitalize(topic);
+            JCheckBox box = new JCheckBox(label);
+            box.setBackground(Color.WHITE);
+
+            checkboxMap.put(box, topic);
+            topicsPanel.add(box);
+        }
+
+        JScrollPane scrollPane = new JScrollPane(topicsPanel);
+        scrollPane.setPreferredSize(new Dimension(350, 240));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.add(cancelButton);
         buttonPanel.add(applyButton);
 
-        add(new JLabel("Select one or more topics:"), BorderLayout.NORTH);
-        add(topicsPanel, BorderLayout.CENTER);
+        JLabel header = new JLabel("Select one or more topics:");
+        header.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+
+        add(header, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
         pack();
         setLocationRelativeTo(frame);
 
-        applyButton.addActionListener(e -> onApply());
+        applyButton.addActionListener(e -> applyFilters());
         cancelButton.addActionListener(e -> setVisible(false));
     }
 
-    /**
-     * Collects selected topics and calls the use case.
-     */
-    private void onApply() {
-        java.util.List<String> selectedTopics = new ArrayList<>();
+     // Collects selected topics and runs the filter use case.
+    private void applyFilters() {
+        List<String> selected = new ArrayList<>();
 
-        if (businessCheckBox.isSelected()) {
-            selectedTopics.add("business");
+        for (var entry : checkboxMap.entrySet()) {
+            if (entry.getKey().isSelected()) {
+                selected.add(entry.getValue());
+            }
         }
 
-        if (sportsCheckBox.isSelected()) {
-            selectedTopics.add("sports");
-        }
-
-        if (technologyCheckBox.isSelected()) {
-            selectedTopics.add("technology");
-        }
-
-        if (healthCheckBox.isSelected()) {
-            selectedTopics.add("health");
-        }
-
-        if (entertainmentCheckBox.isSelected()) {
-            selectedTopics.add("entertainment");
-        }
-
-        if (scienceCheckBox.isSelected()) {
-            selectedTopics.add("science");
-        }
-
-        if (selectedTopics.isEmpty()) {
+        if (selected.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please select at least one topic.");
             return;
         }
 
-        filterNewsController.execute(selectedTopics);
+        filterNewsController.execute(selected);
         setVisible(false);
+    }
+
+
+    //Capitalize first letter.
+    private String capitalize(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 }
