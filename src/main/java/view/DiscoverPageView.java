@@ -25,6 +25,7 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
     private final JButton backButton = new JButton("Back to Headlines");
     private final JLabel messageLabel = new JLabel();
     private final JPanel messagePanel = new JPanel();
+    private final JPanel centerPanel = new JPanel(new CardLayout());
 
     public DiscoverPageView(DiscoverPageController controller, DiscoverPageViewModel viewModel) {
         this.controller = controller;
@@ -59,7 +60,6 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
         JScrollPane scrollPane = new JScrollPane(articleList);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        JPanel centerPanel = new JPanel(new CardLayout());
         centerPanel.add(scrollPane, "articles");
         centerPanel.add(messagePanel, "message");
         add(centerPanel, BorderLayout.CENTER);
@@ -109,11 +109,11 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
 
     private void updateView() {
         var state = viewModel.getState();
-        CardLayout cardLayout = (CardLayout) ((JPanel) getComponent(1)).getLayout();
+        CardLayout cardLayout = (CardLayout) centerPanel.getLayout();
 
         if (state.getHasNoHistory() || state.getHasNoArticles()) {
             messageLabel.setText(state.getMessage());
-            cardLayout.show((JPanel) getComponent(1), "message");
+            cardLayout.show(centerPanel, "message");
             listModel.clear();
         } else {
             listModel.clear();
@@ -122,10 +122,10 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
                 for (Article a : articles) {
                     listModel.addElement(a);
                 }
-                cardLayout.show((JPanel) getComponent(1), "articles");
+                cardLayout.show(centerPanel, "articles");
             } else {
                 messageLabel.setText("No articles to display.");
-                cardLayout.show((JPanel) getComponent(1), "message");
+                cardLayout.show(centerPanel, "message");
             }
         }
     }
