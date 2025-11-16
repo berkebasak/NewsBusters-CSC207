@@ -17,6 +17,8 @@ public class DiscoverPagePresenter implements DiscoverPageOutputBoundary {
     public void prepareSuccessView(DiscoverPageOutputData outputData) {
         DiscoverPageState state = discoverPageViewModel.getState();
         state.setArticles(outputData.getArticles());
+        state.setCurrentTopics(outputData.getTopics());
+        state.setCurrentPage(outputData.getPage());
         state.setMessage(null);
         state.setHasNoHistory(false);
         state.setHasNoArticles(false);

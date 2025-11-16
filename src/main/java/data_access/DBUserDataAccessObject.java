@@ -135,13 +135,22 @@ public class DBUserDataAccessObject implements
     @Override
     public List<Article> getReadingHistory() {
         List<Article> savedArticles = new ArrayList<>();
+        // Use the same path as FileSaveArticleDataAccess for consistency
+        // Create file using the same relative path resolution
         File savedFile = new File("data/saved_articles.txt");
+        
+        // Get absolute path to ensure we're reading from the correct location
+        String absolutePath = savedFile.getAbsolutePath();
+        savedFile = new File(absolutePath);
 
         if (!savedFile.exists()) {
             return savedArticles;
         }
 
-        try (BufferedReader br = new BufferedReader(new FileReader(savedFile))) {
+        // Read the file fresh each time - no caching
+        // Force a fresh read by creating a new FileReader each time
+        try (FileReader fr = new FileReader(savedFile);
+             BufferedReader br = new BufferedReader(fr)) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.isBlank()) continue;
@@ -223,7 +232,7 @@ public class DBUserDataAccessObject implements
     }
 
     @Override
-    public List<Article> searchByTopics(Set<String> topics) {
+    public List<Article> searchByTopics(Set<String> topics, int page) {
         if (topics == null || topics.isEmpty()) {
             return new ArrayList<>();
         }
@@ -243,45 +252,69 @@ public class DBUserDataAccessObject implements
                 query += topicList.get(i);
             }
 
-            String url = "https://newsdata.io/api/1/news?"
-                    + "q=" + java.net.URLEncoder.encode(query, "UTF-8")
-                    + "&language=en"
-                    + "&removeduplicate=1"
-                    + "&apikey=" + API_KEY;
+            String nextPage = null;
+            int currentPageIndex = 0;
+            
+            // Navigate to the requested page
+            while (currentPageIndex <= page) {
+                String url = "https://newsdata.io/api/1/news?"
+                        + "q=" + java.net.URLEncoder.encode(query, "UTF-8")
+                        + "&language=en"
+                        + "&removeduplicate=1"
+                        + "&apikey=" + API_KEY;
+                
+                if (nextPage != null) {
+                    url += "&page=" + nextPage;
+                }
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
+                Request request = new Request.Builder()
+                        .url(url)
+                        .build();
 
-            Response response = client.newCall(request).execute();
-            if (!response.isSuccessful()) {
-                System.err.println("API Error: HTTP " + response.code());
-                return articles;
-            }
+                Response response = client.newCall(request).execute();
+                if (!response.isSuccessful()) {
+                    System.err.println("API Error: HTTP " + response.code());
+                    break;
+                }
 
-            String json = response.body().string();
-            JSONObject obj = new JSONObject(json);
-            JSONArray results = obj.optJSONArray("results");
-            if (results == null) return articles;
+                String json = response.body().string();
+                JSONObject obj = new JSONObject(json);
+                JSONArray results = obj.optJSONArray("results");
+                
+                if (results == null) break;
+                
+                // Only extract articles if we're on the requested page
+                // Limit to 10 articles per page to reduce API calls
+                if (currentPageIndex == page) {
+                    int maxArticles = 10;
+                    for (int i = 0; i < results.length() && articles.size() < maxArticles; i++) {
+                        JSONObject a = results.getJSONObject(i);
 
-            for (int i = 0; i < results.length(); i++) {
-                JSONObject a = results.getJSONObject(i);
+                        String title = a.optString("title", "").trim();
+                        String source = a.optString("source_id", "Unknown").trim();
+                        String key = title.toLowerCase() + "|" + source.toLowerCase();
 
-                String title = a.optString("title", "").trim();
-                String source = a.optString("source_id", "Unknown").trim();
-                String key = title.toLowerCase() + "|" + source.toLowerCase();
+                        if (title.isEmpty() || seen.contains(key)) continue;
+                        seen.add(key);
 
-                if (title.isEmpty() || seen.contains(key)) continue;
-                seen.add(key);
-
-                articles.add(new Article(
-                        UUID.randomUUID().toString(),
-                        title,
-                        a.optString("description", ""),
-                        a.optString("link", ""),
-                        a.optString("image_url", ""),
-                        source
-                ));
+                        articles.add(new Article(
+                                UUID.randomUUID().toString(),
+                                title,
+                                a.optString("description", ""),
+                                a.optString("link", ""),
+                                a.optString("image_url", ""),
+                                source
+                        ));
+                    }
+                }
+                
+                nextPage = obj.optString("nextPage", null);
+                if (nextPage == null || nextPage.isEmpty()) {
+                    // No more pages available
+                    break;
+                }
+                
+                currentPageIndex++;
             }
         } catch (Exception e) {
             System.err.println("Error searching by topics: " + e.getMessage());

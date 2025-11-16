@@ -25,21 +25,41 @@ public class DiscoverPageInteractor implements DiscoverPageInputBoundary {
                 return;
             }
 
-            Set<String> topics = dataAccessObject.extractTopTopics(readingHistory, 5);
+            Set<String> newTopics = dataAccessObject.extractTopTopics(readingHistory, 5);
 
-            if (topics == null || topics.isEmpty()) {
+            if (newTopics == null || newTopics.isEmpty()) {
                 presenter.prepareNoHistoryView("Save articles to personalize your Discover feed.");
                 return;
             }
 
-            List<Article> discoveredArticles = dataAccessObject.searchByTopics(topics);
-
-            if (discoveredArticles == null || discoveredArticles.isEmpty()) {
-                presenter.prepareNoArticlesView("No new articles available.");
-                return;
+            // Check if topics have changed
+            Set<String> currentTopics = inputData.getCurrentTopics();
+            int pageToUse;
+            
+            if (currentTopics == null || currentTopics.isEmpty() || !currentTopics.equals(newTopics)) {
+                // Topics changed, reset to page 0
+                pageToUse = 0;
+            } else {
+                // Topics are the same, increment page for next set of articles
+                pageToUse = inputData.getCurrentPage() + 1;
             }
 
-            DiscoverPageOutputData outputData = new DiscoverPageOutputData(discoveredArticles, topics);
+            List<Article> discoveredArticles = dataAccessObject.searchByTopics(newTopics, pageToUse);
+
+            if (discoveredArticles == null || discoveredArticles.isEmpty()) {
+                // If no articles on this page, try page 0
+                if (pageToUse > 0) {
+                    discoveredArticles = dataAccessObject.searchByTopics(newTopics, 0);
+                    pageToUse = 0;
+                }
+                
+                if (discoveredArticles == null || discoveredArticles.isEmpty()) {
+                    presenter.prepareNoArticlesView("No new articles available.");
+                    return;
+                }
+            }
+
+            DiscoverPageOutputData outputData = new DiscoverPageOutputData(discoveredArticles, newTopics, pageToUse);
             presenter.prepareSuccessView(outputData);
 
         } catch (Exception e) {

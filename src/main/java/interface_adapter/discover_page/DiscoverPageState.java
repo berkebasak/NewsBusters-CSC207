@@ -3,12 +3,15 @@ package interface_adapter.discover_page;
 import entity.Article;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class DiscoverPageState {
     private List<Article> articles = new ArrayList<>();
     private String message;
     private boolean hasNoHistory;
     private boolean hasNoArticles;
+    private Set<String> currentTopics = new java.util.HashSet<>();
+    private int currentPage = 0;
 
     public List<Article> getArticles() {
         return articles;
@@ -40,6 +43,22 @@ public class DiscoverPageState {
 
     public void setHasNoArticles(boolean hasNoArticles) {
         this.hasNoArticles = hasNoArticles;
+    }
+
+    public Set<String> getCurrentTopics() {
+        return currentTopics;
+    }
+
+    public void setCurrentTopics(Set<String> currentTopics) {
+        this.currentTopics = currentTopics;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
 }
 

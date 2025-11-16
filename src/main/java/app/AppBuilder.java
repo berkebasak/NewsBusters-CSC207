@@ -97,7 +97,7 @@ public class AppBuilder {
     public AppBuilder addDiscoverPageUseCase() {
         DiscoverPageOutputBoundary presenter = new DiscoverPagePresenter(discoverPageViewModel);
         DiscoverPageInputBoundary interactor = new DiscoverPageInteractor(newsDataAccessObject, presenter);
-        DiscoverPageController controller = new DiscoverPageController(interactor);
+        DiscoverPageController controller = new DiscoverPageController(interactor, discoverPageViewModel);
         discoverPageView.setController(controller);
         return this;
     }

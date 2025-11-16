@@ -27,7 +27,8 @@ public interface DiscoverPageDataAccessInterface {
     /**
      * Searches for new articles related to the given topics.
      * @param topics the topics to search for
+     * @param page the page number to fetch (0-based, where 0 is the first page)
      * @return list of articles related to the topics
      */
-    List<Article> searchByTopics(Set<String> topics);
+    List<Article> searchByTopics(Set<String> topics, int page);
 }

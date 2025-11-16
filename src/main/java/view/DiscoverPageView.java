@@ -77,8 +77,8 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
         add(centerPanel, BorderLayout.CENTER);
 
         refreshButton.addActionListener(e -> {
-            if (controller != null) {
-                controller.execute();
+            if (this.controller != null) {
+                this.controller.execute();
             }
         });
 
