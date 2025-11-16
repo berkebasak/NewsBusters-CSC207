@@ -61,6 +61,8 @@ public class FileSaveArticleDataAccess implements SaveArticleDataAccessInterface
 
             bw.write(article.getId() + "|" + article.getTitle() + "|" + article.getUrl());
             bw.newLine();
+            bw.flush(); // Explicitly flush to ensure data is written to disk immediately
+            fw.flush(); // Also flush the underlying FileWriter
         }
 
         if (article.getId() != null){

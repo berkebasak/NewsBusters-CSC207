@@ -1,54 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
-  </component>
-  <component name="ChangeListManager">
-    <list default="true" id="ad0693ef-8800-4e3d-ac90-8c0989a99209" name="Changes" comment="update" />
-    <option name="SHOW_DIALOG" value="false" />
-    <option name="HIGHLIGHT_CONFLICTS" value="true" />
-    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
-    <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="main" />
-      </map>
-    </option>
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;sauerkraut33&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/berkebasak/NewsBusters-CSC207.git",
-    "accountId": "60b96ab7-263e-4203-9f75-f89a65776d4f"
-  }
-}]]></component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 4
-}</component>
-  <component name="ProjectId" id="35LcCF0oyUMdU66VwCiz7d4OjVV" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
-  <component name="PropertiesComponent"><![CDATA[{
+    <component name="AutoImportSettings">
+        <option name="autoReloadType" value="SELECTIVE" />
+    </component>
+    <component name="ChangeListManager">
+        <list default="true" id="ad0693ef-8800-4e3d-ac90-8c0989a99209" name="Changes" comment="update">
+            <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/data/saved_articles.txt" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/src/main/java/data_access/save_article/FileSaveArticleDataAccess.java" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/save_article/SaveArticleController.java" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/save_article/SaveArticlePresenter.java" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/save_article/SaveArticleViewModel.java" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleDataAccessInterface.java" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleInputBoundary.java" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleInputData.java" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleInteractor.java" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleOutputBoundary.java" afterDir="false" />
+            <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleOutputData.java" afterDir="false" />
+            <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+            <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+            <change beforePath="$PROJECT_DIR$/src/main/java/app/AppBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/AppBuilder.java" afterDir="false" />
+            <change beforePath="$PROJECT_DIR$/src/main/java/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/Main.java" afterDir="false" />
+            <change beforePath="$PROJECT_DIR$/src/main/java/view/TopHeadlinesView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/view/TopHeadlinesView.java" afterDir="false" />
+        </list>
+        <option name="SHOW_DIALOG" value="false" />
+        <option name="HIGHLIGHT_CONFLICTS" value="true" />
+        <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+        <option name="LAST_RESOLUTION" value="IGNORE" />
+    </component>
+    <component name="FileTemplateManagerImpl">
+        <option name="RECENT_TEMPLATES">
+            <list>
+                <option value="Class" />
+            </list>
+        </option>
+    </component>
+    <component name="Git.Settings">
+        <option name="RECENT_BRANCH_BY_REPOSITORY">
+            <map>
+                <entry key="$PROJECT_DIR$" value="main" />
+            </map>
+        </option>
+        <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    </component>
+    <component name="GitHubPullRequestSearchHistory">{
+        &quot;lastFilter&quot;: {
+        &quot;state&quot;: &quot;OPEN&quot;,
+        &quot;assignee&quot;: &quot;sauerkraut33&quot;
+        }
+        }</component>
+    <component name="GithubPullRequestsUISettings">{
+        &quot;selectedUrlAndAccountId&quot;: {
+        &quot;url&quot;: &quot;https://github.com/berkebasak/NewsBusters-CSC207.git&quot;,
+        &quot;accountId&quot;: &quot;449a0ba0-82c9-4b82-a12a-cfe640927db2&quot;
+        }
+        }</component>
+    <component name="ProblemsViewState">
+        <option name="selectedTabId" value="CurrentFile" />
+    </component>
+    <component name="ProjectColorInfo">{
+        &quot;associatedIndex&quot;: 4
+        }</component>
+    <component name="ProjectId" id="35LcCF0oyUMdU66VwCiz7d4OjVV" />
+    <component name="ProjectViewState">
+        <option name="hideEmptyMiddlePackages" value="true" />
+        <option name="showLibraryContents" value="true" />
+    </component>
+    <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -56,6 +74,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "SONARLINT_PRECOMMIT_ANALYSIS": "true",
     "ignore.virus.scanning.warn.message": "true",
+    "git-widget-placeholder": "#4 on Merging search__news__UC9__lana",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/nnlan/OneDrive/Documents/GitHub/NewsBusters-CSC207-2",
     "project.structure.last.edited": "Project",
@@ -63,159 +82,157 @@
     "project.structure.side.proportion": "0.2"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/main/java/data_access/save_article" />
-    </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="app.Main" />
-      <module name="NewsBusters" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="app.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Application.Main" />
-        <item itemvalue="Application.Main" />
-        <item itemvalue="Application.Main" />
-        <item itemvalue="Application.Main" />
-        <item itemvalue="Application.Main" />
-      </list>
-    </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.25557.131" />
-      </set>
-    </attachedChunks>
-  </component>
-  <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="ad0693ef-8800-4e3d-ac90-8c0989a99209" name="Changes" comment="" />
-      <created>1762892662491</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1762892662491</updated>
-    </task>
-    <task id="LOCAL-00001" summary="Implemented &quot;Save Article&quot; button in TopHeadlinesView">
-      <option name="closed" value="true" />
-      <created>1762895509163</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1762895509163</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Implemented ArticleSaver">
-      <option name="closed" value="true" />
-      <created>1762897706210</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1762897706210</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Implemented ArticleSaver">
-      <option name="closed" value="true" />
-      <created>1763177291708</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1763177291708</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Updated AppBuilder for UC11">
-      <option name="closed" value="true" />
-      <created>1763180287815</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1763180287815</updated>
-    </task>
-    <task id="LOCAL-00005" summary="ArticleSaver Deleted">
-      <option name="closed" value="true" />
-      <created>1763180303159</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1763180303159</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Updated Main for UC11">
-      <option name="closed" value="true" />
-      <created>1763180320629</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1763180320629</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Moved saved_articles.txt">
-      <option name="closed" value="true" />
-      <created>1763180370259</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1763180370259</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Updated TopHeadlinesView for UC11">
-      <option name="closed" value="true" />
-      <created>1763180389461</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1763180389461</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Data Access, Interface Adaptor, Use Case for UC11">
-      <option name="closed" value="true" />
-      <created>1763180501907</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1763180501907</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Data Access, Interface Adaptor, Use Case for UC11">
-      <option name="closed" value="true" />
-      <created>1763180564443</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1763180564443</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Updated TopHeadlinesView for UC11">
-      <option name="closed" value="true" />
-      <created>1763187250436</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1763187250436</updated>
-    </task>
-    <task id="LOCAL-00012" summary="update">
-      <option name="closed" value="true" />
-      <created>1763187781134</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1763187781134</updated>
-    </task>
-    <option name="localTasksCounter" value="13" />
-    <servers />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented &quot;Save Article&quot; button in TopHeadlinesView" />
-    <MESSAGE value="Implemented ArticleSaver" />
-    <MESSAGE value="Updated AppBuilder for UC11" />
-    <MESSAGE value="ArticleSaver Deleted" />
-    <MESSAGE value="Updated Main for UC11" />
-    <MESSAGE value="Moved saved_articles.txt" />
-    <MESSAGE value="Data Access, Interface Adaptor, Use Case for UC11" />
-    <MESSAGE value="Updated TopHeadlinesView for UC11" />
-    <MESSAGE value="update" />
-    <option name="LAST_COMMIT_MESSAGE" value="update" />
-  </component>
+    <component name="RecentsManager">
+        <key name="MoveFile.RECENT_KEYS">
+            <recent name="$PROJECT_DIR$/src/main/java/data_access/save_article" />
+        </key>
+    </component>
+    <component name="RunManager">
+        <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+            <option name="MAIN_CLASS_NAME" value="app.Main" />
+            <module name="NewsBusters" />
+            <extension name="coverage">
+                <pattern>
+                    <option name="PATTERN" value="app.*" />
+                    <option name="ENABLED" value="true" />
+                </pattern>
+            </extension>
+            <method v="2">
+                <option name="Make" enabled="true" />
+            </method>
+        </configuration>
+        <recent_temporary>
+            <list>
+                <item itemvalue="Application.Main" />
+                <item itemvalue="Application.Main" />
+                <item itemvalue="Application.Main" />
+            </list>
+        </recent_temporary>
+    </component>
+    <component name="SharedIndexes">
+        <attachedChunks>
+            <set>
+                <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.25557.131" />
+            </set>
+        </attachedChunks>
+    </component>
+    <component name="TaskManager">
+        <task active="true" id="Default" summary="Default task">
+            <changelist id="ad0693ef-8800-4e3d-ac90-8c0989a99209" name="Changes" comment="" />
+            <created>1762892662491</created>
+            <option name="number" value="Default" />
+            <option name="presentableId" value="Default" />
+            <updated>1762892662491</updated>
+        </task>
+        <task id="LOCAL-00001" summary="Implemented &quot;Save Article&quot; button in TopHeadlinesView">
+            <option name="closed" value="true" />
+            <created>1762895509163</created>
+            <option name="number" value="00001" />
+            <option name="presentableId" value="LOCAL-00001" />
+            <option name="project" value="LOCAL" />
+            <updated>1762895509163</updated>
+        </task>
+        <task id="LOCAL-00002" summary="Implemented ArticleSaver">
+            <option name="closed" value="true" />
+            <created>1762897706210</created>
+            <option name="number" value="00002" />
+            <option name="presentableId" value="LOCAL-00002" />
+            <option name="project" value="LOCAL" />
+            <updated>1762897706210</updated>
+        </task>
+        <task id="LOCAL-00003" summary="Implemented ArticleSaver">
+            <option name="closed" value="true" />
+            <created>1763177291708</created>
+            <option name="number" value="00003" />
+            <option name="presentableId" value="LOCAL-00003" />
+            <option name="project" value="LOCAL" />
+            <updated>1763177291708</updated>
+        </task>
+        <task id="LOCAL-00004" summary="Updated AppBuilder for UC11">
+            <option name="closed" value="true" />
+            <created>1763180287815</created>
+            <option name="number" value="00004" />
+            <option name="presentableId" value="LOCAL-00004" />
+            <option name="project" value="LOCAL" />
+            <updated>1763180287815</updated>
+        </task>
+        <task id="LOCAL-00005" summary="ArticleSaver Deleted">
+            <option name="closed" value="true" />
+            <created>1763180303159</created>
+            <option name="number" value="00005" />
+            <option name="presentableId" value="LOCAL-00005" />
+            <option name="project" value="LOCAL" />
+            <updated>1763180303159</updated>
+        </task>
+        <task id="LOCAL-00006" summary="Updated Main for UC11">
+            <option name="closed" value="true" />
+            <created>1763180320629</created>
+            <option name="number" value="00006" />
+            <option name="presentableId" value="LOCAL-00006" />
+            <option name="project" value="LOCAL" />
+            <updated>1763180320629</updated>
+        </task>
+        <task id="LOCAL-00007" summary="Moved saved_articles.txt">
+            <option name="closed" value="true" />
+            <created>1763180370259</created>
+            <option name="number" value="00007" />
+            <option name="presentableId" value="LOCAL-00007" />
+            <option name="project" value="LOCAL" />
+            <updated>1763180370259</updated>
+        </task>
+        <task id="LOCAL-00008" summary="Updated TopHeadlinesView for UC11">
+            <option name="closed" value="true" />
+            <created>1763180389461</created>
+            <option name="number" value="00008" />
+            <option name="presentableId" value="LOCAL-00008" />
+            <option name="project" value="LOCAL" />
+            <updated>1763180389461</updated>
+        </task>
+        <task id="LOCAL-00009" summary="Data Access, Interface Adaptor, Use Case for UC11">
+            <option name="closed" value="true" />
+            <created>1763180501907</created>
+            <option name="number" value="00009" />
+            <option name="presentableId" value="LOCAL-00009" />
+            <option name="project" value="LOCAL" />
+            <updated>1763180501907</updated>
+        </task>
+        <task id="LOCAL-00010" summary="Data Access, Interface Adaptor, Use Case for UC11">
+            <option name="closed" value="true" />
+            <created>1763180564443</created>
+            <option name="number" value="00010" />
+            <option name="presentableId" value="LOCAL-00010" />
+            <option name="project" value="LOCAL" />
+            <updated>1763180564443</updated>
+        </task>
+        <task id="LOCAL-00011" summary="Updated TopHeadlinesView for UC11">
+            <option name="closed" value="true" />
+            <created>1763187250436</created>
+            <option name="number" value="00011" />
+            <option name="presentableId" value="LOCAL-00011" />
+            <option name="project" value="LOCAL" />
+            <updated>1763187250436</updated>
+        </task>
+        <task id="LOCAL-00012" summary="update">
+            <option name="closed" value="true" />
+            <created>1763187781134</created>
+            <option name="number" value="00012" />
+            <option name="presentableId" value="LOCAL-00012" />
+            <option name="project" value="LOCAL" />
+            <updated>1763187781134</updated>
+        </task>
+        <option name="localTasksCounter" value="13" />
+        <servers />
+    </component>
+    <component name="VcsManagerConfiguration">
+        <MESSAGE value="Implemented &quot;Save Article&quot; button in TopHeadlinesView" />
+        <MESSAGE value="Implemented ArticleSaver" />
+        <MESSAGE value="Updated AppBuilder for UC11" />
+        <MESSAGE value="ArticleSaver Deleted" />
+        <MESSAGE value="Updated Main for UC11" />
+        <MESSAGE value="Moved saved_articles.txt" />
+        <MESSAGE value="Data Access, Interface Adaptor, Use Case for UC11" />
+        <MESSAGE value="Updated TopHeadlinesView for UC11" />
+        <MESSAGE value="update" />
+        <option name="LAST_COMMIT_MESSAGE" value="update" />
+    </component>
 </project>
