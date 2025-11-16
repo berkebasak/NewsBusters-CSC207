@@ -11,6 +11,7 @@ public class Main {
                 .addTopHeadlinesUseCase()
                 .addSaveArticleUseCase()
                 .addSearchNewsUseCase()
+                .addFilterNewsUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);

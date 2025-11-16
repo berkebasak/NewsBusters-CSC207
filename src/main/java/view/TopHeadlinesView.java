@@ -4,6 +4,7 @@ import entity.Article;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
 import interface_adapter.search_news.SearchNewsController;
+import interface_adapter.filter_news.FilterNewsController;
 import interface_adapter.save_article.SaveArticleController;
 import interface_adapter.save_article.SaveArticleViewModel;
 
@@ -22,14 +23,22 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private final TopHeadlinesViewModel viewModel;
     private SaveArticleController saveController;
     private SaveArticleViewModel saveViewModel;
+
+    private SearchNewsController searchNewsController;
+    private FilterNewsController filterNewsController;
+    private FilterNewsView filterNewsView;
+
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
+
     private final JButton refreshButton = new JButton("Load Top Headlines");
     private final JButton saveButton = new JButton("Save Article");
 
-    private SearchNewsController searchNewsController;
     private final JTextField keywordField = new JTextField(20);
     private final JButton searchButton = new JButton("Search");
+
+    private final JButton filterButton = new JButton("Filter");
+
 
     public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
         this.controller = controller;
@@ -55,6 +64,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         searchBar.add(keywordField);
         searchBar.add(searchButton);
         searchBar.setBackground(Color.WHITE);
+
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
@@ -96,6 +106,15 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             }
         });
 
+        filterButton.addActionListener(e -> {
+            if (filterNewsController == null || filterNewsView == null) {
+                JOptionPane.showMessageDialog(this, "Filtering is not available.");
+                return;
+            }
+            filterNewsView.setVisible(true);
+        });
+
+
 
         articleList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -128,6 +147,16 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
     public void setSearchNewsController(SearchNewsController searchNewsController) {
         this.searchNewsController = searchNewsController;
+    }
+
+    /**
+     * Sets the Filter News controller and creates the FilterNewsView dialog.
+     * @param filterNewsController the controller for the filter news use case
+     * @param frame          the main application frame
+     */
+    public void setFilterNewsController(FilterNewsController filterNewsController, JFrame frame) {
+        this.filterNewsController = filterNewsController;
+        this.filterNewsView = new FilterNewsView(frame, filterNewsController);
     }
 
 
