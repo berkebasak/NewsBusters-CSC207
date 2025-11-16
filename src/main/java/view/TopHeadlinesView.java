@@ -1,6 +1,7 @@
 package view;
 
 import entity.Article;
+import interface_adapter.ViewManagerModel;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
 import interface_adapter.search_news.SearchNewsController;
@@ -22,10 +23,12 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private final TopHeadlinesViewModel viewModel;
     private SaveArticleController saveController;
     private SaveArticleViewModel saveViewModel;
+    private ViewManagerModel viewManagerModel;
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
     private final JButton refreshButton = new JButton("Load Top Headlines");
     private final JButton saveButton = new JButton("Save Article");
+    private final JButton discoverButton = new JButton("Discover Page");
 
     private SearchNewsController searchNewsController;
     private final JTextField keywordField = new JTextField(20);
@@ -47,6 +50,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         topBar.add(title);
         topBar.add(refreshButton);
         topBar.add(saveButton);
+        topBar.add(discoverButton);
         topBar.setBackground(Color.WHITE);
 
 
@@ -85,6 +89,13 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                 return;
             }
             saveController.save(article);
+        });
+
+        discoverButton.addActionListener(e -> {
+            if (viewManagerModel != null) {
+                viewManagerModel.setState(DiscoverPageView.VIEW_NAME);
+                viewManagerModel.firePropertyChange();
+            }
         });
 
         searchButton.addActionListener(e -> {
@@ -128,6 +139,10 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
     public void setSearchNewsController(SearchNewsController searchNewsController) {
         this.searchNewsController = searchNewsController;
+    }
+
+    public void setViewManagerModel(ViewManagerModel viewManagerModel) {
+        this.viewManagerModel = viewManagerModel;
     }
 
 
