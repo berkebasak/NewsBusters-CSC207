@@ -26,100 +26,76 @@ public class DBUserDataAccessObject implements TopHeadlinesUserDataAccessInterfa
         Set<String> seen = new HashSet<>();
 
         try {
-            Request request = new Request.Builder()
-                    .url(BASE_URL + "&apikey=" + API_KEY)
-                    .build();
+            String nextPage = null;
 
-            Response response = client.newCall(request).execute();
-            if (!response.isSuccessful()) {
-                System.err.println("API Error: HTTP " + response.code());
-                return articles;
+            while (articles.size() < 50) {
+                String url = TOP_URL;
+                if (nextPage != null) url += "&page=" + nextPage;
+
+                Request request = new Request.Builder().url(url).build();
+                Response response = client.newCall(request).execute();
+                if (!response.isSuccessful()) break;
+
+                String json = response.body().string();
+                JSONObject obj = new JSONObject(json);
+
+                JSONArray results = obj.optJSONArray("results");
+                if (results != null) {
+                    extractArticles(results, articles, seen);
+
+                    // Stop early if we hit 50
+                    if (articles.size() >= 50) break;
+                }
+
+                nextPage = obj.optString("nextPage", null);
+                if (nextPage == null || nextPage.isEmpty()) break;
             }
 
-            String json = response.body().string();
-            JSONObject obj = new JSONObject(json);
-            JSONArray results = obj.optJSONArray("results");
-            if (results == null) return articles;
-
-            for (int i = 0; i < results.length(); i++) {
-                JSONObject a = results.getJSONObject(i);
-                String title = a.optString("title", "").trim();
-                String source = a.optString("source_id", "Unknown").trim();
-                String key = title.toLowerCase() + "|" + source.toLowerCase();
-
-                // Skip duplicates
-                if (title.isEmpty() || seen.contains(key)) continue;
-                seen.add(key);
-
-                articles.add(new Article(
-                        UUID.randomUUID().toString(),
-                        title,
-                        a.optString("description", ""),
-                        a.optString("link", ""),
-                        a.optString("image_url", ""),
-                        source
-                ));
-            }
         } catch (Exception e) {
             System.err.println("Error fetching headlines: " + e.getMessage());
         }
-        return articles;
+
+        return articles.subList(0, Math.min(articles.size(), 50));
     }
 
-    /**
-     * Search by Keyword (Use Case 9)
-     */
     @Override
     public List<Article> searchByKeyword(String keyword) {
         List<Article> articles = new ArrayList<>();
         Set<String> seen = new HashSet<>();
 
         try {
-            String url = "https://newsdata.io/api/1/news?"
-                    + "q=" + keyword
-                    + "&language=en"
-                    + "&removeduplicate=1"
-                    + "&apikey=" + API_KEY;
+            String nextPage = null;
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
+            while (articles.size() < 10000) {
+                String url = SEARCH_URL + keyword;
 
-            Response response = client.newCall(request).execute();
-            if (!response.isSuccessful()) {
-                System.err.println("API Error: HTTP " + response.code());
-                return articles;
+                if (nextPage != null) {
+                    url += "&page=" + nextPage;
+                }
+
+                Request request = new Request.Builder().url(url).build();
+                Response response = client.newCall(request).execute();
+                if (!response.isSuccessful()) break;
+
+                String json = response.body().string();
+                JSONObject obj = new JSONObject(json);
+
+                JSONArray results = obj.optJSONArray("results");
+                if (results != null) {
+                    extractArticles(results, articles, seen);
+
+                    if (articles.size() >= 1000) break;
+                }
+
+                nextPage = obj.optString("nextPage", null);
+                if (nextPage == null || nextPage.isEmpty()) break;
             }
 
-            String json = response.body().string();
-            JSONObject obj = new JSONObject(json);
-            JSONArray results = obj.optJSONArray("results");
-            if (results == null) return articles;
-
-            for (int i = 0; i < results.length(); i++) {
-                JSONObject a = results.getJSONObject(i);
-
-                String title = a.optString("title", "").trim();
-                String source = a.optString("source_id", "Unknown").trim();
-                String key = title.toLowerCase() + "|" + source.toLowerCase();
-
-                if (title.isEmpty() || seen.contains(key)) continue;
-                seen.add(key);
-
-                articles.add(new Article(
-                        UUID.randomUUID().toString(),
-                        title,
-                        a.optString("description", ""),
-                        a.optString("link", ""),
-                        a.optString("image_url", ""),
-                        source
-                ));
-            }
         } catch (Exception e) {
             System.err.println("Error searching news: " + e.getMessage());
         }
 
-        return articles;
+        return articles.subList(0, Math.min(articles.size(), 1000));
     }
 
     /**
