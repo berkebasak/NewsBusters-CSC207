@@ -84,8 +84,7 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
 
         backButton.addActionListener(e -> {
             if (viewManagerModel != null) {
-                viewManagerModel.setState(TopHeadlinesView.VIEW_NAME);
-                viewManagerModel.firePropertyChange();
+                viewManagerModel.changeView(TopHeadlinesView.VIEW_NAME);
             }
         });
 
