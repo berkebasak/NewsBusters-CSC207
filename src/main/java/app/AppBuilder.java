@@ -4,30 +4,36 @@ import interface_adapter.ViewManagerModel;
 import view.ViewManager;
 
 import data_access.DBUserDataAccessObject;
-import interface_adapter.top_headlines.*;
-import use_case.top_headlines.*;
-import view.TopHeadlinesView;
-
+import data_access.FileUserDataAccessObject;
+import interface_adapter.login.*;
+import interface_adapter.signup.*;
 import interface_adapter.search_news.SearchNewsController;
 import interface_adapter.search_news.SearchNewsPresenter;
+import interface_adapter.top_headlines.*;
+import interface_adapter.save_article.*;
+import interface_adapter.discover_page.*;
+import data_access.save_article.FileSaveArticleDataAccess;
+import use_case.login.*;
+import use_case.signup.*;
+import use_case.top_headlines.*;
 import use_case.search_news.SearchNewsInputBoundary;
 import use_case.search_news.SearchNewsInteractor;
 import use_case.search_news.SearchNewsOutputBoundary;
-
-import java.io.IOException;
-
-import data_access.save_article.FileSaveArticleDataAccess;
-import interface_adapter.save_article.*;
 import use_case.save_article.*;
-
-import interface_adapter.discover_page.*;
 import use_case.discover_page.*;
+import view.LoginView;
+import view.SignupView;
+import view.TopHeadlinesView;
 import view.DiscoverPageView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
-
+/**
+ * The AppBuilder class is responsible for building the NewsBusters application.
+ * It provides methods to add different views and use cases to the application.
+ */
 public class AppBuilder {
 
     private final JPanel cardPanel = new JPanel();
@@ -36,21 +42,42 @@ public class AppBuilder {
     private final ViewManager viewManager =
             new ViewManager(cardPanel, cardLayout, viewManagerModel);
     private final DBUserDataAccessObject newsDataAccessObject = new DBUserDataAccessObject();
+    private FileUserDataAccessObject userDataAccessObject;
 
+    private LoginView loginView;
+    private LoginViewModel loginViewModel;
     private TopHeadlinesView topHeadlinesView;
     private TopHeadlinesViewModel topHeadlinesViewModel;
     private SaveArticleViewModel saveArticleViewModel;
     private DiscoverPageView discoverPageView;
     private DiscoverPageViewModel discoverPageViewModel;
+    private SignupView signupView;
+    private SignupViewModel signupViewModel;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
     }
 
+    public AppBuilder addLoginView() {
+        loginViewModel = new LoginViewModel();
+        loginView = new LoginView(loginViewModel);
+        loginView.setViewManagerModel(viewManagerModel);
+        cardPanel.add(loginView, LoginView.VIEW_NAME);
+        return this;
+    }
+
+    public AppBuilder addSignupView() {
+        signupViewModel = new SignupViewModel();
+        signupView = new SignupView(signupViewModel);
+        signupView.setViewManagerModel(viewManagerModel);
+        cardPanel.add(signupView, SignupView.VIEW_NAME);
+        return this;
+    }
+
     public AppBuilder addTopHeadlinesView() {
         topHeadlinesViewModel = new TopHeadlinesViewModel();
         topHeadlinesView = new TopHeadlinesView(null, topHeadlinesViewModel);
-        topHeadlinesView.setViewManagerModel(viewManagerModel);
+        topHeadlinesView.setViewManagerModel(viewManagerModel, loginViewModel);
         cardPanel.add(topHeadlinesView, TopHeadlinesView.VIEW_NAME);
         return this;
     }
@@ -61,6 +88,22 @@ public class AppBuilder {
         TopHeadlinesInputBoundary interactor = new TopHeadlinesInteractor(dao, presenter);
         TopHeadlinesController controller = new TopHeadlinesController(interactor);
         topHeadlinesView.setController(controller);
+        return this;
+    }
+
+    public AppBuilder addLoginUseCase() {
+        LoginOutputBoundary presenter = new LoginPresenter(loginViewModel, viewManagerModel);
+        LoginInputBoundary interactor = new LoginInteractor(getUserDataAccessObject(), presenter);
+        LoginController controller = new LoginController(interactor);
+        loginView.setLoginController(controller);
+        return this;
+    }
+
+    public AppBuilder addSignupUseCase() {
+        SignupOutputBoundary presenter = new SignupPresenter(signupViewModel, viewManagerModel, loginViewModel);
+        SignupInputBoundary interactor = new SignupInteractor(getUserDataAccessObject(), presenter);
+        SignupController controller = new SignupController(interactor);
+        signupView.setSignupController(controller);
         return this;
     }
 
@@ -105,10 +148,24 @@ public class AppBuilder {
     public JFrame build() {
         JFrame application = new JFrame("NewsBusters");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        application.setSize(900, 600);
         application.add(cardPanel);
-        viewManagerModel.setState(TopHeadlinesView.VIEW_NAME);
-        viewManagerModel.firePropertyChange();
+        viewManager.setHostFrame(application);
+        if (loginView != null) {
+            viewManagerModel.changeView(LoginView.VIEW_NAME);
+        } else {
+            viewManagerModel.changeView(TopHeadlinesView.VIEW_NAME);
+        }
         return application;
+    }
+
+    private FileUserDataAccessObject getUserDataAccessObject() {
+        if (userDataAccessObject == null) {
+            try {
+                userDataAccessObject = new FileUserDataAccessObject("data/users.json");
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to initialize user storage", e);
+            }
+        }
+        return userDataAccessObject;
     }
 }
