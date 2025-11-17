@@ -22,6 +22,7 @@ public class FilterNewsView extends JDialog {
 
     private final JButton applyButton = new JButton("Apply Filters");
     private final JButton cancelButton = new JButton("Cancel");
+    private final JButton clearButton = new JButton("Clear Filters");
 
     /**
      * Creates the Filter News popup.
@@ -62,6 +63,7 @@ public class FilterNewsView extends JDialog {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.add(cancelButton);
         buttonPanel.add(applyButton);
+        buttonPanel.add(clearButton);
 
         JLabel header = new JLabel("Select one or more topics:");
         header.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
@@ -75,6 +77,7 @@ public class FilterNewsView extends JDialog {
 
         applyButton.addActionListener(e -> applyFilters());
         cancelButton.addActionListener(e -> setVisible(false));
+        clearButton.addActionListener(e -> clearFilters());
     }
 
      // Collects selected topics and runs the filter use case.
@@ -96,7 +99,16 @@ public class FilterNewsView extends JDialog {
         setVisible(false);
     }
 
-    //Capitalize first letter.
+    private void clearFilters() {
+        for (JCheckBox box : checkboxMap.keySet()) {
+            box.setSelected(false);
+        }
+        filterNewsController.clearFilter();
+
+        setVisible(false);
+    }
+
+    // Capitalize first letter.
     private String capitalize(String s) {
         if (s == null || s.isEmpty()) return s;
         return s.substring(0, 1).toUpperCase() + s.substring(1);

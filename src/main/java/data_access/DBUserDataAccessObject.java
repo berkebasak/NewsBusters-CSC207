@@ -30,6 +30,10 @@ public class DBUserDataAccessObject implements
 
     private final OkHttpClient client = new OkHttpClient();
 
+    private List<Article> currentArticles = new ArrayList<>();
+    private List<String> activeFilterTopics = new ArrayList<>();
+    private final Map<String, Set<String>> articleCategories = new HashMap<>();
+
     @Override
     public List<Article> fetchTopHeadlines() {
         List<Article> articles = new ArrayList<>();
@@ -67,7 +71,9 @@ public class DBUserDataAccessObject implements
             System.err.println("Error fetching headlines: " + e.getMessage());
         }
 
-        return articles.subList(0, Math.min(articles.size(), 50));
+        List<Article> result = articles.subList(0, Math.min(articles.size(), 50));
+        return applyActiveFilter(result);
+
     }
 
     @Override
@@ -103,8 +109,30 @@ public class DBUserDataAccessObject implements
             }
         }
 
-        return articles.subList(0, Math.min(articles.size(), 1000));
+        List<Article> result = articles.subList(0, Math.min(articles.size(), 1000));
+        return applyActiveFilter(result);
+
     }
+
+    private JSONObject executeApi(String url) {
+        Request request = new Request.Builder().url(url).build();
+
+        try (Response response = client.newCall(request).execute()) {
+
+            if (!response.isSuccessful()) {
+                System.err.println("API Error " + response.code());
+                return null;
+            }
+
+            String json = response.body().string();
+            return new JSONObject(json);
+
+        } catch (Exception e) {
+            System.err.println("API Request failed: " + e.getMessage());
+            return null;
+        }
+    }
+
 
     private String buildKeywordUrl(String keyword, String nextPage) {
         StringBuilder url = new StringBuilder(SEARCH_URL)
@@ -130,8 +158,15 @@ public class DBUserDataAccessObject implements
             if (title.isEmpty() || seen.contains(key)) continue;
             seen.add(key);
 
+            // Generate ID so we can store categories against it
+            String id = UUID.randomUUID().toString();
+
+            // Extract categories from JSON and remember them
+            Set<String> categories = extractCategories(a);
+            articleCategories.put(id, categories);
+
             articles.add(new Article(
-                    UUID.randomUUID().toString(),
+                    id,
                     title,
                     a.optString("description", ""),
                     a.optString("link", ""),
@@ -141,68 +176,103 @@ public class DBUserDataAccessObject implements
         }
     }
 
+    /**
+     * Extract categories from the NewsData.io "category" field, which may be
+     * a string or an array. Returns lowercase category names.
+     */
+    private Set<String> extractCategories(JSONObject json) {
+        Set<String> categories = new HashSet<>();
+
+        Object catField = json.opt("category");
+        if (catField instanceof JSONArray arr) {
+            for (int i = 0; i < arr.length(); i++) {
+                String c = arr.optString(i, null);
+                if (c != null && !c.isBlank()) {
+                    categories.add(c.toLowerCase());
+                }
+            }
+        } else if (catField instanceof String str) {
+            String c = str.trim();
+            if (!c.isEmpty()) {
+                categories.add(c.toLowerCase());
+            }
+        }
+
+        return categories;
+    }
+
     @Override
     public List<Article> filterByTopics(List<String> topics) {
-        if (topics == null || topics.isEmpty()) {
+
+        if (currentArticles == null || currentArticles.isEmpty()) {
             return new ArrayList<>();
         }
 
-        List<Article> articles = new ArrayList<>();
-        Set<String> seen = new HashSet<>();
-
-        for (String topic : topics) {
-            fetchArticlesForTopic(topic, articles, seen);
+        // Empty topics → clear active filter and show full feed
+        if (topics == null || topics.isEmpty()) {
+            activeFilterTopics.clear();
+            return new ArrayList<>(currentArticles);
         }
 
-        return articles;
+        List<String> normalizedTopics = topics.stream()
+                .filter(t -> t != null && !t.isBlank())
+                .map(String::toLowerCase)
+                .toList();
+
+        if (normalizedTopics.isEmpty()) {
+            activeFilterTopics.clear();
+            return new ArrayList<>(currentArticles);
+        }
+
+        // Save as active filter so it sticks for future fetches/searches
+        activeFilterTopics = new ArrayList<>(normalizedTopics);
+
+        return applyFilter(currentArticles, activeFilterTopics);
     }
 
-    private void fetchArticlesForTopic(String topic, List<Article> articles, Set<String> seen) {
-        if (topic == null || topic.isBlank()) {
-            return;
+    /**
+     * Returns a new list of articles from 'source' whose categories
+     * match ANY of the given topics.
+     */
+    private List<Article> applyFilter(List<Article> source, List<String> topics) {
+        return new ArrayList<>(
+                source.stream()
+                        .filter(article -> matchesAnyCategory(article, topics))
+                        .toList()
+        );
+    }
+
+    /**
+     * Returns true if this article's categories contain any of the topics.
+     */
+    private boolean matchesAnyCategory(Article article, List<String> topics) {
+        Set<String> categories = articleCategories.get(article.getId());
+        if (categories == null || categories.isEmpty()) {
+            return false;
         }
 
-        try {
-            String url = buildCategoryUrl(topic);
-            JSONObject responseJson = executeApi(url);
-            if (responseJson == null) return;
-
-            JSONArray results = responseJson.optJSONArray("results");
-            if (results != null) {
-                extractArticles(results, articles, seen);
+        for (String t : topics) {
+            if (categories.contains(t)) {
+                return true;
             }
-
-        } catch (Exception e) {
-            System.err.println("Error filtering news by topic: " + e.getMessage());
         }
+        return false;
     }
 
-    private String buildCategoryUrl(String topic) {
-        return "https://newsdata.io/api/1/news?"
-                + "category=" + topic
-                + "&language=en"
-                + "&removeduplicate=1"
-                + "&apikey=" + API_KEY;
-    }
+    /**
+     * Sets currentArticles and returns filtered or unfiltered articles
+     * depending on whether an active filter is present.
+     */
+    private List<Article> applyActiveFilter(List<Article> newResults) {
+        currentArticles = new ArrayList<>(newResults);
 
-    private JSONObject executeApi(String url) {
-        try {
-            Request request = new Request.Builder().url(url).build();
-            Response response = client.newCall(request).execute();
-
-            if (!response.isSuccessful()) {
-                System.err.println("API Error (filterByTopics): HTTP " + response.code());
-                return null;
-            }
-
-            String json = response.body().string();
-            return new JSONObject(json);
-
-        } catch (Exception e) {
-            System.err.println("API Request failed: " + e.getMessage());
-            return null;
+        if (!activeFilterTopics.isEmpty()) {
+            return applyFilter(currentArticles, activeFilterTopics);
         }
+
+        return currentArticles;
     }
+
 
     /**
      * Returns the user's reading history (saved articles) for the Discover page.

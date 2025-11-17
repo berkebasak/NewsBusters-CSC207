@@ -31,25 +31,25 @@ public class FilterNewsInteractor implements FilterNewsInputBoundary {
      */
     @Override
     public void execute(FilterNewsInputData inputData) {
-        List<String> topics = inputData.getTopics();
-
-        if (topics == null || topics.isEmpty()) {
-            filterNewsPresenter.prepareFailView("Please select at least one topic.");
+        if (inputData == null) {
+            filterNewsPresenter.prepareFailView("No filter settings provided.");
             return;
         }
 
+        List<String> topics = inputData.getTopics();
+
+        // DAO will interpret empty topics as "clear filter"
         List<Article> articles = userDataAccessObject.filterByTopics(topics);
 
         if (articles == null || articles.isEmpty()) {
-            filterNewsPresenter.prepareFailView("No articles found for the selected topics.");
+            filterNewsPresenter.prepareFailView("No articles found for these topics.");
             return;
         }
 
-        // Mix articles so they are not grouped by topic
-        Collections.shuffle(articles);
+        java.util.Collections.shuffle(articles);
 
         FilterNewsOutputData outputData = new FilterNewsOutputData(articles, topics);
         filterNewsPresenter.prepareSuccessView(outputData);
-
     }
+
 }
