@@ -2,6 +2,7 @@ package view;
 
 import entity.Article;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.login.LoginViewModel;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
 import interface_adapter.search_news.SearchNewsController;
@@ -24,11 +25,13 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private SaveArticleController saveController;
     private SaveArticleViewModel saveViewModel;
     private ViewManagerModel viewManagerModel;
+    private LoginViewModel loginViewModel;
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
     private final JButton refreshButton = new JButton("Load Top Headlines");
     private final JButton saveButton = new JButton("Save Article");
     private final JButton discoverButton = new JButton("Discover Page");
+    private final JButton signOutButton = new JButton("Sign Out");
 
     private SearchNewsController searchNewsController;
     private final JTextField keywordField = new JTextField(20);
@@ -44,14 +47,24 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         setLayout(new BorderLayout(10, 10));
         setBackground(Color.WHITE);
 
-        JPanel topBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(Color.WHITE);
+
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        leftPanel.setBackground(Color.WHITE);
+        leftPanel.add(signOutButton);
+
+        JPanel controlsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JLabel title = new JLabel("Top News Headlines");
         title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
-        topBar.add(title);
-        topBar.add(refreshButton);
-        topBar.add(saveButton);
-        topBar.add(discoverButton);
-        topBar.setBackground(Color.WHITE);
+        controlsPanel.add(title);
+        controlsPanel.add(refreshButton);
+        controlsPanel.add(saveButton);
+        controlsPanel.add(discoverButton);
+        controlsPanel.setBackground(Color.WHITE);
+
+        headerPanel.add(leftPanel, BorderLayout.WEST);
+        headerPanel.add(controlsPanel, BorderLayout.CENTER);
 
 
         JPanel searchBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -62,7 +75,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-        topPanel.add(topBar);
+        topPanel.add(headerPanel);
         topPanel.add(searchBar);
         topPanel.setBackground(Color.WHITE);
 
@@ -93,8 +106,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
         discoverButton.addActionListener(e -> {
             if (viewManagerModel != null) {
-                viewManagerModel.setState(DiscoverPageView.VIEW_NAME);
-                viewManagerModel.firePropertyChange();
+                viewManagerModel.changeView(DiscoverPageView.VIEW_NAME);
             }
         });
 
@@ -141,8 +153,36 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         this.searchNewsController = searchNewsController;
     }
 
-    public void setViewManagerModel(ViewManagerModel viewManagerModel) {
+    public void setViewManagerModel(ViewManagerModel viewManagerModel, LoginViewModel loginViewModel) {
         this.viewManagerModel = viewManagerModel;
+        this.loginViewModel = loginViewModel;
+
+        for (var listener : signOutButton.getActionListeners()) {
+            signOutButton.removeActionListener(listener);
+        }
+
+        signOutButton.addActionListener(e -> {
+            var window = SwingUtilities.getWindowAncestor(TopHeadlinesView.this);
+            JOptionPane pane = new JOptionPane(
+                    "Signed out successfully."
+            );
+            JDialog dialog = pane.createDialog(window, "Signed Out");
+            dialog.setModal(false);
+            dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
+
+            int delayMillis = 700;
+            new javax.swing.Timer(delayMillis, evt -> {
+                dialog.dispose();
+                ((javax.swing.Timer) evt.getSource()).stop();
+                if (TopHeadlinesView.this.loginViewModel != null) {
+                    TopHeadlinesView.this.loginViewModel.firePropertyChange("reset");
+                }
+                if (TopHeadlinesView.this.viewManagerModel != null) {
+                    TopHeadlinesView.this.viewManagerModel.changeView(LoginView.VIEW_NAME);
+                }
+            }).start();
+        });
     }
 
 
