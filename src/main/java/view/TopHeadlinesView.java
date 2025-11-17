@@ -5,6 +5,7 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
 import interface_adapter.search_news.SearchNewsController;
+import interface_adapter.filter_news.FilterNewsController;
 import interface_adapter.save_article.SaveArticleController;
 import interface_adapter.save_article.SaveArticleViewModel;
 
@@ -12,27 +13,35 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URI;
 
 public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
     public static final String VIEW_NAME = "top_headlines_view";
+
     private TopHeadlinesController controller;
     private final TopHeadlinesViewModel viewModel;
     private SaveArticleController saveController;
     private SaveArticleViewModel saveViewModel;
+
+    private SearchNewsController searchNewsController;
+    private FilterNewsController filterNewsController;
+    private FilterNewsView filterNewsView;
     private ViewManagerModel viewManagerModel;
+
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
+
     private final JButton refreshButton = new JButton("Load Top Headlines");
     private final JButton saveButton = new JButton("Save Article");
     private final JButton discoverButton = new JButton("Discover Page");
 
-    private SearchNewsController searchNewsController;
     private final JTextField keywordField = new JTextField(20);
     private final JButton searchButton = new JButton("Search");
+
+    private final JButton filterButton = new JButton("Filter");
 
     public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
         this.controller = controller;
@@ -44,30 +53,33 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         setLayout(new BorderLayout(10, 10));
         setBackground(Color.WHITE);
 
+        // Top bar with title + main buttons
         JPanel topBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JLabel title = new JLabel("Top News Headlines");
         title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
         topBar.add(title);
         topBar.add(refreshButton);
         topBar.add(saveButton);
+        topBar.add(filterButton);
         topBar.add(discoverButton);
         topBar.setBackground(Color.WHITE);
 
-
+        // Search bar
         JPanel searchBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         searchBar.add(new JLabel("Keyword:"));
         searchBar.add(keywordField);
         searchBar.add(searchButton);
         searchBar.setBackground(Color.WHITE);
 
+        // Stack top bar + search bar
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.add(topBar);
         topPanel.add(searchBar);
         topPanel.setBackground(Color.WHITE);
-
         add(topPanel, BorderLayout.NORTH);
 
+        // Article list
         articleList.setCellRenderer(new ArticleRenderer());
         articleList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         articleList.setBackground(Color.WHITE);
@@ -76,6 +88,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         add(scrollPane, BorderLayout.CENTER);
 
+        // Button actions
         refreshButton.addActionListener(e -> loadArticles());
 
         saveButton.addActionListener(e -> {
@@ -102,17 +115,20 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             if (searchNewsController != null) {
                 String keyword = keywordField.getText().trim();
                 if (!keyword.isEmpty()) {
-                    searchNewsController.excute(keyword);
+                    searchNewsController.execute(keyword);
                 }
             }
         });
 
+        filterButton.addActionListener(e -> openFilter());
 
         articleList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     Article article = articleList.getSelectedValue();
-                    if (article != null) openInBrowser(article.getUrl());
+                    if (article != null) {
+                        openInBrowser(article.getUrl());
+                    }
                 }
             }
         });
@@ -123,7 +139,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     }
 
     public void setSaveArticleUseCase(SaveArticleController controller,
-                                  SaveArticleViewModel viewModel) {
+                                      SaveArticleViewModel viewModel) {
         this.saveController = controller;
         this.saveViewModel = viewModel;
 
@@ -141,10 +157,13 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         this.searchNewsController = searchNewsController;
     }
 
+    public void setFilterNewsController(FilterNewsController filterNewsController) {
+        this.filterNewsController = filterNewsController;
+    }
+
     public void setViewManagerModel(ViewManagerModel viewManagerModel) {
         this.viewManagerModel = viewManagerModel;
     }
-
 
     private void loadArticles() {
         controller.fetchHeadlines();
@@ -167,7 +186,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         listModel.clear();
 
         var state = viewModel.getState();
-
         java.util.List<Article> articles = state.getArticles();
         if (articles != null) {
             for (Article a : articles) {
@@ -185,6 +203,26 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             );
             state.setError(null);
         }
+    }
+
+    private void openFilter() {
+        if (filterNewsController == null) {
+            JOptionPane.showMessageDialog(this, "Filtering is not available.");
+            return;
+        }
+
+        if (filterNewsView == null) {
+            java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+            if (window instanceof JFrame frame) {
+                filterNewsView = new FilterNewsView(frame, filterNewsController);
+            } else {
+                JOptionPane.showMessageDialog(this, "Unable to open filter dialog.");
+                return;
+            }
+        }
+
+        filterNewsView.setLocationRelativeTo(this);
+        filterNewsView.setVisible(true);
     }
 
     static class ArticleRenderer extends JPanel implements ListCellRenderer<Article> {
@@ -223,5 +261,4 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             return this;
         }
     }
-
 }

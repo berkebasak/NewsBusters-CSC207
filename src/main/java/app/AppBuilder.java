@@ -1,6 +1,7 @@
 package app;
 
 import interface_adapter.ViewManagerModel;
+import use_case.filter_news.FilterNewsOutputBoundary;
 import view.ViewManager;
 
 import data_access.DBUserDataAccessObject;
@@ -13,6 +14,13 @@ import interface_adapter.search_news.SearchNewsPresenter;
 import use_case.search_news.SearchNewsInputBoundary;
 import use_case.search_news.SearchNewsInteractor;
 import use_case.search_news.SearchNewsOutputBoundary;
+
+import interface_adapter.filter_news.FilterNewsController;
+import interface_adapter.filter_news.FilterNewsPresenter;
+import use_case.filter_news.FilterNewsInputBoundary;
+import use_case.filter_news.FilterNewsInteractor;
+import use_case.filter_news.FilterNewsUserDataAccessInterface;
+
 
 import java.io.IOException;
 
@@ -33,8 +41,7 @@ public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
-    private final ViewManager viewManager =
-            new ViewManager(cardPanel, cardLayout, viewManagerModel);
+    private final ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
     private final DBUserDataAccessObject newsDataAccessObject = new DBUserDataAccessObject();
 
     private TopHeadlinesView topHeadlinesView;
@@ -69,6 +76,14 @@ public class AppBuilder {
         SearchNewsInputBoundary interactor = new SearchNewsInteractor(newsDataAccessObject, presenter);
         SearchNewsController controller = new SearchNewsController(interactor);
         topHeadlinesView.setSearchNewsController(controller);
+        return this;
+    }
+
+    public AppBuilder addFilterNewsUseCase() {
+        FilterNewsOutputBoundary presenter = new FilterNewsPresenter(topHeadlinesViewModel);
+        FilterNewsInputBoundary interactor = new FilterNewsInteractor(newsDataAccessObject, presenter);
+        FilterNewsController controller = new FilterNewsController(interactor);
+        topHeadlinesView.setFilterNewsController(controller);
         return this;
     }
 
@@ -107,6 +122,7 @@ public class AppBuilder {
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         application.setSize(900, 600);
         application.add(cardPanel);
+
         viewManagerModel.setState(TopHeadlinesView.VIEW_NAME);
         viewManagerModel.firePropertyChange();
         return application;

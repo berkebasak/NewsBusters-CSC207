@@ -5,7 +5,6 @@ import entity.Article;
 
 /**
  * DAO interface for Searching News by Keyword Use Case.
- * Gets articles from a data source
  */
 public interface SearchNewsUserDataAccessInterface {
 
