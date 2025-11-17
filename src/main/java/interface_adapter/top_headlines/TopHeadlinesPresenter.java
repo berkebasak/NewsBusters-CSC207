@@ -13,5 +13,6 @@ public class TopHeadlinesPresenter implements TopHeadlinesOutputBoundary {
     @Override
     public void present(TopHeadlinesOutputData outputData) {
         viewModel.getState().setArticles(outputData.getArticles());
+        viewModel.firePropertyChange();
     }
 }
