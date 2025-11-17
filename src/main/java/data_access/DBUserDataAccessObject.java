@@ -72,42 +72,48 @@ public class DBUserDataAccessObject implements
 
     @Override
     public List<Article> searchByKeyword(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return new ArrayList<>();
+        }
+
         List<Article> articles = new ArrayList<>();
         Set<String> seen = new HashSet<>();
+        String nextPage = null;
 
-        try {
-            String nextPage = null;
+        while (articles.size() < 1000) {
+            String url = buildKeywordUrl(keyword, nextPage);
 
-            while (articles.size() < 1000) {
-                String url = SEARCH_URL + keyword;
-
-                if (nextPage != null) {
-                    url += "&page=" + nextPage;
-                }
-
-                Request request = new Request.Builder().url(url).build();
-                Response response = client.newCall(request).execute();
-                if (!response.isSuccessful()) break;
-
-                String json = response.body().string();
-                JSONObject obj = new JSONObject(json);
-
-                JSONArray results = obj.optJSONArray("results");
-                if (results != null) {
-                    extractArticles(results, articles, seen);
-
-                    if (articles.size() >= 1000) break;
-                }
-
-                nextPage = obj.optString("nextPage", null);
-                if (nextPage == null || nextPage.isEmpty()) break;
+            JSONObject json = executeApi(url);
+            if (json == null) {
+                break; // stop safely, no more pages
             }
 
-        } catch (Exception e) {
-            System.err.println("Error searching news: " + e.getMessage());
+            JSONArray results = json.optJSONArray("results");
+            if (results != null) {
+                extractArticles(results, articles, seen);
+            }
+
+            if (articles.size() >= 1000) {
+                break; // limit reached
+            }
+
+            nextPage = json.optString("nextPage", null);
+            if (nextPage == null || nextPage.isEmpty()) {
+                break; // no more pages
+            }
         }
 
         return articles.subList(0, Math.min(articles.size(), 1000));
+    }
+
+    private String buildKeywordUrl(String keyword, String nextPage) {
+        StringBuilder url = new StringBuilder(SEARCH_URL)
+                .append(keyword);
+
+        if (nextPage != null) {
+            url.append("&page=").append(nextPage);
+        }
+        return url.toString();
     }
 
     private void extractArticles(JSONArray results,
@@ -135,80 +141,67 @@ public class DBUserDataAccessObject implements
         }
     }
 
-    /**
-     * Fetches articles for one or more topics (Use Case 10).
-     * Makes an API call for each topic and merges the results.
-     *
-     * @param topics the topics to filter by (e.g. "sports", "business")
-     * @return a list of articles that match any of the topics
-     */
     @Override
     public List<Article> filterByTopics(List<String> topics) {
+        if (topics == null || topics.isEmpty()) {
+            return new ArrayList<>();
+        }
+
         List<Article> articles = new ArrayList<>();
         Set<String> seen = new HashSet<>();
 
-        if (topics == null || topics.isEmpty()) {
-            return articles;
-        }
-
         for (String topic : topics) {
-            if (topic == null || topic.isBlank()) {
-                continue;
-            }
-
-            try {
-                String url = "https://newsdata.io/api/1/news?"
-                        + "category=" + topic
-                        + "&language=en"
-                        + "&removeduplicate=1"
-                        + "&apikey=" + API_KEY;
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-                if (!response.isSuccessful()) {
-                    System.err.println("API Error (filterByTopics): HTTP " + response.code());
-                    continue;
-                }
-
-                String json = response.body().string();
-                JSONObject obj = new JSONObject(json);
-                JSONArray results = obj.optJSONArray("results");
-
-                if (results == null) {
-                    continue;
-                }
-
-                for (int i = 0; i < results.length(); i++) {
-                    JSONObject a = results.getJSONObject(i);
-
-                    String title = a.optString("title", "").trim();
-                    String source = a.optString("source_id", "Unknown").trim();
-                    String key = (title + "|" + source).toLowerCase();
-
-                    // Skip empty titles and duplicates across topics
-                    if (title.isEmpty() || seen.contains(key)) {
-                        continue;
-                    }
-                    seen.add(key);
-
-                    articles.add(new Article(
-                            UUID.randomUUID().toString(),
-                            title,
-                            a.optString("description", ""),
-                            a.optString("link", ""),
-                            a.optString("image_url", ""),
-                            source
-                    ));
-                }
-            } catch (Exception e) {
-                System.err.println("Error filtering news by topic: " + e.getMessage());
-            }
+            fetchArticlesForTopic(topic, articles, seen);
         }
 
         return articles;
+    }
+
+    private void fetchArticlesForTopic(String topic, List<Article> articles, Set<String> seen) {
+        if (topic == null || topic.isBlank()) {
+            return;
+        }
+
+        try {
+            String url = buildCategoryUrl(topic);
+            JSONObject responseJson = executeApi(url);
+            if (responseJson == null) return;
+
+            JSONArray results = responseJson.optJSONArray("results");
+            if (results != null) {
+                extractArticles(results, articles, seen);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error filtering news by topic: " + e.getMessage());
+        }
+    }
+
+    private String buildCategoryUrl(String topic) {
+        return "https://newsdata.io/api/1/news?"
+                + "category=" + topic
+                + "&language=en"
+                + "&removeduplicate=1"
+                + "&apikey=" + API_KEY;
+    }
+
+    private JSONObject executeApi(String url) {
+        try {
+            Request request = new Request.Builder().url(url).build();
+            Response response = client.newCall(request).execute();
+
+            if (!response.isSuccessful()) {
+                System.err.println("API Error (filterByTopics): HTTP " + response.code());
+                return null;
+            }
+
+            String json = response.body().string();
+            return new JSONObject(json);
+
+        } catch (Exception e) {
+            System.err.println("API Request failed: " + e.getMessage());
+            return null;
+        }
     }
 
     /**

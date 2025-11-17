@@ -157,11 +157,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         this.searchNewsController = searchNewsController;
     }
 
-    /**
-     * Sets the Filter News controller so we can open the filter dialog.
-     *
-     * @param filterNewsController the controller for the filter news use case
-     */
     public void setFilterNewsController(FilterNewsController filterNewsController) {
         this.filterNewsController = filterNewsController;
     }
@@ -217,7 +212,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         }
 
         if (filterNewsView == null) {
-            // Find the parent window (views live inside a frame in CA-lab style).
             java.awt.Window window = SwingUtilities.getWindowAncestor(this);
             if (window instanceof JFrame frame) {
                 filterNewsView = new FilterNewsView(frame, filterNewsController);

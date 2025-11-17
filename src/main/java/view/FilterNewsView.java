@@ -96,7 +96,6 @@ public class FilterNewsView extends JDialog {
         setVisible(false);
     }
 
-
     //Capitalize first letter.
     private String capitalize(String s) {
         if (s == null || s.isEmpty()) return s;

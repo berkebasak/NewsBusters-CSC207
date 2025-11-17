@@ -10,8 +10,6 @@ import java.util.Collections;
 
 /**
  * The Presenter for the Search News Use Case.
- * It updates the SAME ViewModel used by TopHeadlinesView,
- * so the results show up in the headlines list.
  */
 public class SearchNewsPresenter implements SearchNewsOutputBoundary {
 

@@ -7,7 +7,6 @@ import java.util.List;
 
 /**
  * Controller for the Filter News use case.
- * Sends the user's selected topics to the Interactor.
  */
 public class FilterNewsController {
 

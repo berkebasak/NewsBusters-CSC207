@@ -16,7 +16,6 @@ public class FilterNewsInteractor implements FilterNewsInputBoundary {
 
     /**
      * Creates a new FilterNewsInteractor.
-     *
      * @param userDataAccessInterface  the Data Access object used to fetch filtered articles
      * @param filterNewsOutputBoundary the Output Boundary that prepares the view
      */
@@ -28,7 +27,6 @@ public class FilterNewsInteractor implements FilterNewsInputBoundary {
 
     /**
      * Runs the Filter News use case.
-     *
      * @param inputData the topics selected by the user
      */
     @Override

@@ -9,8 +9,6 @@ import java.util.Collections;
 
 /**
  * Presenter for the Filter News use case.
- * Updates the SAME TopHeadlinesViewModel so the filtered results
- * appear in TopHeadlinesView.
  */
 public class FilterNewsPresenter implements FilterNewsOutputBoundary {
 

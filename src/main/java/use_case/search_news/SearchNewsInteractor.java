@@ -27,7 +27,6 @@ public class SearchNewsInteractor implements SearchNewsInputBoundary {
 
     /**
      * Executes the Search News use case with the provided input data.
-     *
      * @param searchNewsInputData the input data with the keyword to search for
      */
     @Override
