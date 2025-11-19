@@ -10,4 +10,9 @@ public class ViewManagerModel extends ViewModel<String> {
         super("view manager");
         this.setState("");
     }
+
+    public void changeView(String viewName) {
+        setState(viewName);
+        firePropertyChange();
+    }
 }

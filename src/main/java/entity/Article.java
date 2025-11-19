@@ -1,6 +1,8 @@
 package entity;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Article {
@@ -11,6 +13,8 @@ public class Article {
     private String imageUrl;
     private String source;
     private Set<String> topics;
+    private String content;
+    private LocalDateTime publicationDate;
     private double trustScore;
     private String confidenceLevel;
     private boolean isSaved;
@@ -29,6 +33,36 @@ public class Article {
         this.confidenceLevel = "Unknown";
         this.isSaved = false;
         this.credibilityScore = null;
+        this.content = null;
+        this.publicationDate = null;
+    }
+
+    public Article(String id,
+                   String title,
+                   String description,
+                   String url,
+                   String imageUrl,
+                   String source,
+                   String content,
+                   LocalDateTime publicationDate,
+                   Set<String> topics,
+                   CredibilityScore credibilityScore,
+                   double trustScore,
+                   String confidenceLevel,
+                   boolean isSaved) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.imageUrl = imageUrl;
+        this.source = source;
+        this.content = content;
+        this.publicationDate = publicationDate;
+        this.topics = topics == null ? new HashSet<>() : new HashSet<>(topics);
+        this.credibilityScore = credibilityScore;
+        this.trustScore = trustScore;
+        this.confidenceLevel = confidenceLevel == null ? "Unknown" : confidenceLevel;
+        this.isSaved = isSaved;
     }
 
     // getter and setter methods
@@ -52,6 +86,12 @@ public class Article {
     }
     public Set<String> getTopics() {
         return topics;
+    }
+    public String getContent() {
+        return content;
+    }
+    public LocalDateTime getPublicationDate() {
+        return publicationDate;
     }
     public double getTrustScore() {
         return trustScore;
@@ -78,8 +118,48 @@ public class Article {
     public void setCredibilityScore(CredibilityScore credibilityScore) {
         this.credibilityScore = credibilityScore;
     }
+    public void setTopics(Set<String> topics) {
+        this.topics = topics == null ? new HashSet<>() : new HashSet<>(topics);
+    }
     public void addTopic(String topic) {
         topics.add(topic);
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
+    public void setPublicationDate(LocalDateTime publicationDate) {
+        this.publicationDate = publicationDate;
+    }
+
+    public Article copyWithSaved(boolean saved) {
+        return new Article(
+                id,
+                title,
+                description,
+                url,
+                imageUrl,
+                source,
+                content,
+                publicationDate,
+                topics,
+                credibilityScore,
+                trustScore,
+                confidenceLevel,
+                saved
+        );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Article)) return false;
+        Article article = (Article) o;
+        return Objects.equals(url, article.url) && Objects.equals(title, article.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(url, title);
     }
 
     @Override
