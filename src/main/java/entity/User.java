@@ -9,22 +9,32 @@ public class User {
     private final String username;
     private String password;
     private final List<Article> savedArticles;
+    private final List<Article> history;
 
     private User(String username, String password, List<Article> savedArticles) {
         this.username = Objects.requireNonNull(username, "username").trim();
         this.password = Objects.requireNonNull(password, "password");
         this.savedArticles = new ArrayList<>(savedArticles == null ? List.of() : savedArticles);
+        this.history = new ArrayList<>();
+    }
+
+    private User(String username, String password, List<Article> savedArticles, List<Article> history) {
+        this.username = Objects.requireNonNull(username, "username").trim();
+        this.password = Objects.requireNonNull(password, "password");
+        this.savedArticles = new ArrayList<>(savedArticles == null ? List.of() : savedArticles);
+        this.history = new ArrayList<>(history == null ? List.of() : history);
     }
 
     public static User create(String username, String plainPassword) {
         if (plainPassword == null || plainPassword.isBlank()) {
             throw new IllegalArgumentException("Password must not be blank");
         }
-        return new User(username, plainPassword, new ArrayList<>());
+        return new User(username, plainPassword, new ArrayList<>(), new ArrayList<>());
     }
 
-    public static User fromPersistence(String username, String password, List<Article> savedArticles) {
-        return new User(username, password, savedArticles);
+    public static User fromPersistence(String username, String password, List<Article> savedArticles,
+            List<Article> history) {
+        return new User(username, password, savedArticles, history);
     }
 
     public String getUsername() {
@@ -71,6 +81,32 @@ public class User {
             return false;
         }
         return savedArticles.removeIf(article -> url.equals(article.getUrl()));
+    }
+
+    public List<Article> getHistory() {
+        return Collections.unmodifiableList(history);
+    }
+
+    public void addToHistory(Article article) {
+        if (article != null) {
+            // Remove if already exists to avoid duplicates and move to top
+            history.removeIf(a -> a.getUrl().equals(article.getUrl()));
+
+            // Create a copy or modify the article to set the timestamp
+            // Since Article is mutable for this field, we can set it directly,
+            // but to be safe and avoid side effects if shared, we might want to copy.
+            // However, given the current architecture, setting it on the object passed in
+            // (which is likely from the list) might be what we want if we want to show
+            // "last accessed" even in the main list? No, probably just for history.
+            // Let's assume we modify the object for now as per plan.
+            article.setAccessedAt(java.time.LocalDateTime.now());
+
+            history.add(0, article);
+            // Limit history size to, say, 20
+            if (history.size() > 20) {
+                history.remove(history.size() - 1);
+            }
+        }
     }
 
 }
