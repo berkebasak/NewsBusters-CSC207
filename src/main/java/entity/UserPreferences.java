@@ -1,15 +1,22 @@
 package entity;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Set;
 
 public class UserPreferences {
-    private final HashSet<String> preferredTopics;
-    private final HashSet<String> blockedSources;
+    private final ArrayList<String> preferredTopics;
+    private final ArrayList<String> blockedSources;
     private String language;
     private String region;
 
-    public UserPreferences(HashSet<String> preferredTopics, HashSet<String> blockedSources,
+    public UserPreferences() {
+        this.preferredTopics = new ArrayList<>();
+        this.blockedSources = new ArrayList<>();
+        this.language = "English";
+        this.region = "Canada";
+    }
+
+    public UserPreferences(ArrayList<String> preferredTopics, ArrayList<String> blockedSources,
                            String language, String region) {
         this.preferredTopics = preferredTopics;
         this.blockedSources = blockedSources;
@@ -17,7 +24,7 @@ public class UserPreferences {
         this.region = region;
     }
 
-    public Set<String> getPreferredTopics() {
+    public ArrayList<String> getPreferredTopics() {
         return preferredTopics;
     }
 
@@ -29,7 +36,7 @@ public class UserPreferences {
         this.preferredTopics.remove(preferredTopicToRemove);
     }
 
-    public Set<String> getBlockedSources() {
+    public ArrayList<String> getBlockedSources() {
         return blockedSources;
     }
 
