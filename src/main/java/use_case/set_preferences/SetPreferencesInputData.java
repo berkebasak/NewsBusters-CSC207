@@ -1,14 +1,14 @@
 package use_case.set_preferences;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 public class SetPreferencesInputData {
-    private final HashSet<String> preferredTopics;
-    private final HashSet<String> blockedSources;
+    private final ArrayList<String> preferredTopics;
+    private final ArrayList<String> blockedSources;
     private String language;
     private String region;
 
-    public SetPreferencesInputData(HashSet<String> preferredTopics, HashSet<String> blockedSources,
+    public SetPreferencesInputData(ArrayList<String> preferredTopics, ArrayList<String> blockedSources,
                            String language, String region) {
         this.preferredTopics = preferredTopics;
         this.blockedSources = blockedSources;
@@ -16,11 +16,11 @@ public class SetPreferencesInputData {
         this.region = region;
     }
 
-    public  HashSet<String> getPreferredTopics() {
+    public ArrayList<String> getPreferredTopics() {
         return preferredTopics;
     }
 
-    public  HashSet<String> getBlockedSources() {
+    public ArrayList<String> getBlockedSources() {
         return blockedSources;
     }
 
