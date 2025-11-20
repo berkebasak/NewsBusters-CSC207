@@ -12,6 +12,7 @@ import interface_adapter.search_news.SearchNewsPresenter;
 import interface_adapter.top_headlines.*;
 import interface_adapter.save_article.*;
 import interface_adapter.discover_page.*;
+import interface_adapter.profile.*;
 import data_access.save_article.FileSaveArticleDataAccess;
 import use_case.login.*;
 import use_case.signup.*;
@@ -21,10 +22,12 @@ import use_case.search_news.SearchNewsInteractor;
 import use_case.search_news.SearchNewsOutputBoundary;
 import use_case.save_article.*;
 import use_case.discover_page.*;
+import use_case.profile.*;
 import view.LoginView;
 import view.SignupView;
 import view.TopHeadlinesView;
 import view.DiscoverPageView;
+import view.ProfileView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,8 +42,7 @@ public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
-    private final ViewManager viewManager =
-            new ViewManager(cardPanel, cardLayout, viewManagerModel);
+    private final ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
     private final DBUserDataAccessObject newsDataAccessObject = new DBUserDataAccessObject();
     private FileUserDataAccessObject userDataAccessObject;
 
@@ -53,6 +55,8 @@ public class AppBuilder {
     private DiscoverPageViewModel discoverPageViewModel;
     private SignupView signupView;
     private SignupViewModel signupViewModel;
+    private ProfileView profileView;
+    private ProfileViewModel profileViewModel;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -117,14 +121,10 @@ public class AppBuilder {
 
     public AppBuilder addSaveArticleUseCase() throws IOException {
         saveArticleViewModel = new SaveArticleViewModel();
-        SaveArticleDataAccessInterface saveDao =
-                new FileSaveArticleDataAccess("data/saved_articles.txt");
-        SaveArticleOutputBoundary savePresenter =
-                new SaveArticlePresenter(saveArticleViewModel);
-        SaveArticleInputBoundary saveInteractor =
-                new SaveArticleInteractor(saveDao, savePresenter);
-        SaveArticleController saveController
-                = new SaveArticleController(saveInteractor);
+        SaveArticleDataAccessInterface saveDao = new FileSaveArticleDataAccess("data/saved_articles.txt");
+        SaveArticleOutputBoundary savePresenter = new SaveArticlePresenter(saveArticleViewModel);
+        SaveArticleInputBoundary saveInteractor = new SaveArticleInteractor(saveDao, savePresenter);
+        SaveArticleController saveController = new SaveArticleController(saveInteractor);
         topHeadlinesView.setSaveArticleUseCase(saveController, saveArticleViewModel);
         return this;
     }
@@ -142,6 +142,28 @@ public class AppBuilder {
         DiscoverPageInputBoundary interactor = new DiscoverPageInteractor(newsDataAccessObject, presenter);
         DiscoverPageController controller = new DiscoverPageController(interactor, discoverPageViewModel);
         discoverPageView.setController(controller);
+        return this;
+    }
+
+    public AppBuilder addProfileView() {
+        profileViewModel = new ProfileViewModel();
+        profileView = new ProfileView(profileViewModel);
+        profileView.setViewManagerModel(viewManagerModel);
+        profileView.setLoginViewModel(loginViewModel);
+        cardPanel.add(profileView, ProfileView.VIEW_NAME);
+        return this;
+    }
+
+    public AppBuilder addProfileUseCase() {
+        ProfileOutputBoundary presenter = new ProfilePresenter(profileViewModel, viewManagerModel);
+        ProfileInputBoundary interactor = new ProfileInteractor(getUserDataAccessObject(), presenter);
+        ProfileController controller = new ProfileController(interactor);
+
+        profileView.setProfileController(controller);
+
+        if (topHeadlinesView != null) {
+            topHeadlinesView.setProfileController(controller);
+        }
         return this;
     }
 
