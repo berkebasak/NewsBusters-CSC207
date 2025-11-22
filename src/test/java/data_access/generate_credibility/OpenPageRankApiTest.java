@@ -10,7 +10,7 @@ class OpenPageRankApiTest {
 
     @Test
     void openPageRankReturnsValidSourceScore() {
-        TextRazorOpenPageRankDataAccessObject dao = new TextRazorOpenPageRankDataAccessObject();
+        GenerateCredibilityAPIsDataAccessObject dao = new GenerateCredibilityAPIsDataAccessObject();
 
         Article article = new Article();
         article.setTitle("Colorado Invests $5.6 Million in Work-Based Learning");

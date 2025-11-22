@@ -1,6 +1,5 @@
-package data_access;
+package data_access.generate_credibility;
 
-import data_access.generate_credibility.TextRazorOpenPageRankDataAccessObject;
 import entity.Article;
 import entity.CredibilityScore;
 import org.junit.jupiter.api.Test;
@@ -11,13 +10,13 @@ class TextRazorApiTest {
 
     @Test
     void textRazorProducesValidTextSignalsOrFallback() {
-        TextRazorOpenPageRankDataAccessObject dao = new TextRazorOpenPageRankDataAccessObject();
+        GenerateCredibilityAPIsDataAccessObject dao = new GenerateCredibilityAPIsDataAccessObject();
 
         Article article = new Article();
         article.setTitle("Global automotive supplier to layoff nearly 200 at Metro Detroit plant");
         article.setSource("mlive");
         article.setContent("News about layoffs and economic impact in Metro Detroit.");
-        article.setUrl(null); // OpenPageRank will return neutral 0.5
+        article.setUrl(null);
 
         CredibilityScore score;
         try {
