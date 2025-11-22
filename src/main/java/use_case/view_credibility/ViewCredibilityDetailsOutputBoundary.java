@@ -1,4 +1,6 @@
 package use_case.view_credibility;
 
-public class ViewCredibilityDetailsOutputBoundary {
+public interface ViewCredibilityDetailsOutputBoundary {
+    void prepareSuccessView(ViewCredibilityDetailsOutputData outputData);
+    void prepareFailView(String message);
 }

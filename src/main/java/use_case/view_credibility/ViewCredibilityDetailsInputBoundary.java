@@ -1,4 +1,5 @@
 package use_case.view_credibility;
 
-public class ViewCredibilityDetailsInputBoundary {
+public interface ViewCredibilityDetailsInputBoundary {
+    void execute(ViewCredibilityDetailsInputData inputData);
 }
