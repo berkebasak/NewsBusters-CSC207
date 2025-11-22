@@ -1,4 +1,5 @@
 package use_case.generate_credibility;
 
-public class GenerateCredibilityInputBoundary {
+public interface GenerateCredibilityInputBoundary {
+    void execute(GenerateCredibilityInputData inputData);
 }

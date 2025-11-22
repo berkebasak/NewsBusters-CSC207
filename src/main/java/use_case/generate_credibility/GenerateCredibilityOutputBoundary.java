@@ -1,4 +1,6 @@
 package use_case.generate_credibility;
 
-public class GenerateCredibilityOutputBoundary {
+public interface GenerateCredibilityOutputBoundary {
+    void prepareSuccessView(GenerateCredibilityOutputData outputData);
+    void prepareFailView(String message);
 }
