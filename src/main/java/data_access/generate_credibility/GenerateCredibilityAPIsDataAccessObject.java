@@ -5,14 +5,14 @@ import entity.CredibilityScore;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import use_case.generate_credibility.CredibilitySignalsDataAccessInterface;
+import use_case.generate_credibility.GenerateCredibilityDataAccessInterface;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 
-public class TextRazorOpenPageRankDataAccessObject implements CredibilitySignalsDataAccessInterface {
+public class GenerateCredibilityAPIsDataAccessObject implements GenerateCredibilityDataAccessInterface {
 
     private static final String TEXTRAZOR_API_KEY =
             getEnvOrThrow("TEXTRAZOR_API_KEY", "TextRazor API key");
@@ -90,8 +90,8 @@ public class TextRazorOpenPageRankDataAccessObject implements CredibilitySignals
 
 
     private static class TextSignals {
-        final double sentimentScore;   // in [0,1]
-        final double claimConfidence;  // in [0,1]
+        final double sentimentScore;
+        final double claimConfidence;
         TextSignals(double sentimentScore, double claimConfidence) {
             this.sentimentScore = sentimentScore;
             this.claimConfidence = claimConfidence;
@@ -166,7 +166,7 @@ public class TextRazorOpenPageRankDataAccessObject implements CredibilitySignals
     private double fetchSourceScoreFromOpenPageRank(String articleUrl) throws IOException {
         if (articleUrl == null || articleUrl.isBlank()) {
             System.out.println("[OpenPageRank] No URL, returning neutral 0.5");
-            return 0.5; // neutral
+            return 0.5;
         }
         String domain = extractDomain(articleUrl);
         if (domain == null) {
