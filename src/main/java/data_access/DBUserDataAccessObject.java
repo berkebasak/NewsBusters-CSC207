@@ -18,8 +18,16 @@ public class DBUserDataAccessObject implements
         SearchNewsUserDataAccessInterface,
         DiscoverPageDataAccessInterface {
 
-    private static final String API_KEY = "pub_24c036e0a4b64b0a82914e3fabe9e090";
+    private static final String API_KEY = getEnvOrThrow("NEWSDATA_API_KEY", "NewsData API key");
 
+    private static String getEnvOrThrow(String envName, String label) {
+        String value = System.getenv(envName);
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException(
+                    label + " not set. Please define environment variable: " + envName);
+        }
+        return value;
+    }
     private static final String TOP_URL =
             "https://newsdata.io/api/1/news?country=us&language=en&category=top&removeduplicate=1&apikey=" + API_KEY;
 
@@ -36,7 +44,7 @@ public class DBUserDataAccessObject implements
         try {
             String nextPage = null;
 
-            while (articles.size() < 50) {
+            while (articles.size() < 20) {
                 String url = TOP_URL;
                 if (nextPage != null) url += "&page=" + nextPage;
 
@@ -51,8 +59,7 @@ public class DBUserDataAccessObject implements
                 if (results != null) {
                     extractArticles(results, articles, seen);
 
-                    // Stop early if we hit 50
-                    if (articles.size() >= 50) break;
+                    if (articles.size() >= 20) break;
                 }
 
                 nextPage = obj.optString("nextPage", null);
@@ -74,7 +81,7 @@ public class DBUserDataAccessObject implements
         try {
             String nextPage = null;
 
-            while (articles.size() < 10000) {
+            while (articles.size() < 1000) {
                 String url = SEARCH_URL + keyword;
 
                 if (nextPage != null) {
@@ -147,8 +154,7 @@ public class DBUserDataAccessObject implements
             return savedArticles;
         }
 
-        // Read the file fresh each time - no caching
-        // Force a fresh read by creating a new FileReader each time
+
         try (FileReader fr = new FileReader(savedFile);
              BufferedReader br = new BufferedReader(fr)) {
             String line;
@@ -310,7 +316,6 @@ public class DBUserDataAccessObject implements
                 
                 nextPage = obj.optString("nextPage", null);
                 if (nextPage == null || nextPage.isEmpty()) {
-                    // No more pages available
                     break;
                 }
                 
