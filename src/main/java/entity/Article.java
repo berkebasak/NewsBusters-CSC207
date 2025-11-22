@@ -65,6 +65,10 @@ public class Article {
         this.isSaved = isSaved;
     }
 
+    public Article() {
+
+    }
+
     // getter and setter methods
     public String getId() {
         return id;
@@ -165,5 +169,17 @@ public class Article {
     @Override
     public String toString() {
         return title + " (" + source + ")";
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
