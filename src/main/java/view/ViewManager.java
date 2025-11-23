@@ -9,7 +9,7 @@ import java.beans.PropertyChangeListener;
 
 public class ViewManager implements PropertyChangeListener {
     private static final Dimension LOGIN_SIZE = new Dimension(720, 520);
-    private static final Dimension DEFAULT_APP_SIZE = new Dimension(1100, 720);
+    private static final Dimension DEFAULT_APP_SIZE = new Dimension(1400, 900);
 
     private final CardLayout cardLayout;
     private final JPanel views;

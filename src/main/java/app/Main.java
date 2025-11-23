@@ -17,6 +17,7 @@ public class Main {
                 .addSearchNewsUseCase()
                 .addDiscoverPageView()
                 .addDiscoverPageUseCase()
+                .addCredibilityUseCases()
                 .build();
 
         application.setLocationRelativeTo(null);

@@ -2,9 +2,9 @@ package app;
 
 import interface_adapter.ViewManagerModel;
 import view.ViewManager;
-
 import data_access.DBUserDataAccessObject;
 import data_access.FileUserDataAccessObject;
+import data_access.generate_credibility.GenerateCredibilityAPIsDataAccessObject;
 import interface_adapter.login.*;
 import interface_adapter.signup.*;
 import interface_adapter.search_news.SearchNewsController;
@@ -12,6 +12,12 @@ import interface_adapter.search_news.SearchNewsPresenter;
 import interface_adapter.top_headlines.*;
 import interface_adapter.save_article.*;
 import interface_adapter.discover_page.*;
+import interface_adapter.generate_credibility.GenerateCredibilityController;
+import interface_adapter.generate_credibility.GenerateCredibilityPresenter;
+import interface_adapter.generate_credibility.DiscoverGenerateCredibilityPresenter;
+import interface_adapter.view_credibility.ViewCredibilityDetailsViewModel;
+import interface_adapter.view_credibility.ViewCredibilityDetailsPresenter;
+import interface_adapter.view_credibility.ViewCredibilityDetailsController;
 import data_access.save_article.FileSaveArticleDataAccess;
 import use_case.login.*;
 import use_case.signup.*;
@@ -21,11 +27,17 @@ import use_case.search_news.SearchNewsInteractor;
 import use_case.search_news.SearchNewsOutputBoundary;
 import use_case.save_article.*;
 import use_case.discover_page.*;
+import use_case.generate_credibility.GenerateCredibilityDataAccessInterface;
+import use_case.generate_credibility.GenerateCredibilityInputBoundary;
+import use_case.generate_credibility.GenerateCredibilityInteractor;
+import use_case.generate_credibility.GenerateCredibilityOutputBoundary;
+import use_case.view_credibility.ViewCredibilityDetailsInputBoundary;
+import use_case.view_credibility.ViewCredibilityDetailsInteractor;
+import use_case.view_credibility.ViewCredibilityDetailsOutputBoundary;
 import view.LoginView;
 import view.SignupView;
 import view.TopHeadlinesView;
 import view.DiscoverPageView;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -53,6 +65,10 @@ public class AppBuilder {
     private DiscoverPageViewModel discoverPageViewModel;
     private SignupView signupView;
     private SignupViewModel signupViewModel;
+
+    private GenerateCredibilityController generateCredibilityController;
+    private ViewCredibilityDetailsViewModel viewCredibilityDetailsViewModel;
+    private ViewCredibilityDetailsController credibilityDetailsController;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -100,7 +116,8 @@ public class AppBuilder {
     }
 
     public AppBuilder addSignupUseCase() {
-        SignupOutputBoundary presenter = new SignupPresenter(signupViewModel, viewManagerModel, loginViewModel);
+        SignupOutputBoundary presenter =
+                new SignupPresenter(signupViewModel, viewManagerModel, loginViewModel);
         SignupInputBoundary interactor = new SignupInteractor(getUserDataAccessObject(), presenter);
         SignupController controller = new SignupController(interactor);
         signupView.setSignupController(controller);
@@ -109,7 +126,8 @@ public class AppBuilder {
 
     public AppBuilder addSearchNewsUseCase() {
         SearchNewsOutputBoundary presenter = new SearchNewsPresenter(topHeadlinesViewModel);
-        SearchNewsInputBoundary interactor = new SearchNewsInteractor(newsDataAccessObject, presenter);
+        SearchNewsInputBoundary interactor =
+                new SearchNewsInteractor(newsDataAccessObject, presenter);
         SearchNewsController controller = new SearchNewsController(interactor);
         topHeadlinesView.setSearchNewsController(controller);
         return this;
@@ -123,8 +141,8 @@ public class AppBuilder {
                 new SaveArticlePresenter(saveArticleViewModel);
         SaveArticleInputBoundary saveInteractor =
                 new SaveArticleInteractor(saveDao, savePresenter);
-        SaveArticleController saveController
-                = new SaveArticleController(saveInteractor);
+        SaveArticleController saveController =
+                new SaveArticleController(saveInteractor);
         topHeadlinesView.setSaveArticleUseCase(saveController, saveArticleViewModel);
         return this;
     }
@@ -139,9 +157,55 @@ public class AppBuilder {
 
     public AppBuilder addDiscoverPageUseCase() {
         DiscoverPageOutputBoundary presenter = new DiscoverPagePresenter(discoverPageViewModel);
-        DiscoverPageInputBoundary interactor = new DiscoverPageInteractor(newsDataAccessObject, presenter);
-        DiscoverPageController controller = new DiscoverPageController(interactor, discoverPageViewModel);
+        DiscoverPageInputBoundary interactor =
+                new DiscoverPageInteractor(newsDataAccessObject, presenter);
+        DiscoverPageController controller =
+                new DiscoverPageController(interactor, discoverPageViewModel);
         discoverPageView.setController(controller);
+        return this;
+    }
+
+
+    public AppBuilder addCredibilityUseCases() {
+        GenerateCredibilityDataAccessInterface signalsDAO =
+                new GenerateCredibilityAPIsDataAccessObject();
+
+        GenerateCredibilityOutputBoundary genPresenterTop =
+                new GenerateCredibilityPresenter(topHeadlinesViewModel);
+        GenerateCredibilityInputBoundary genInteractorTop =
+                new GenerateCredibilityInteractor(signalsDAO, genPresenterTop);
+        GenerateCredibilityController genControllerTop =
+                new GenerateCredibilityController(genInteractorTop);
+
+        GenerateCredibilityOutputBoundary genPresenterDiscover =
+                new DiscoverGenerateCredibilityPresenter(discoverPageViewModel);
+        GenerateCredibilityInputBoundary genInteractorDiscover =
+                new GenerateCredibilityInteractor(signalsDAO, genPresenterDiscover);
+        GenerateCredibilityController genControllerDiscover =
+                new GenerateCredibilityController(genInteractorDiscover);
+
+        viewCredibilityDetailsViewModel = new ViewCredibilityDetailsViewModel();
+        ViewCredibilityDetailsOutputBoundary detailsPresenter =
+                new ViewCredibilityDetailsPresenter(viewCredibilityDetailsViewModel);
+        ViewCredibilityDetailsInputBoundary detailsInteractor =
+                new ViewCredibilityDetailsInteractor(detailsPresenter);
+        credibilityDetailsController =
+                new ViewCredibilityDetailsController(detailsInteractor);
+
+        this.generateCredibilityController = genControllerTop;
+
+        topHeadlinesView.setCredibilityUseCases(
+                genControllerTop,
+                credibilityDetailsController,
+                viewCredibilityDetailsViewModel
+        );
+
+        discoverPageView.setCredibilityUseCases(
+                genControllerDiscover,
+                credibilityDetailsController,
+                viewCredibilityDetailsViewModel
+        );
+
         return this;
     }
 
