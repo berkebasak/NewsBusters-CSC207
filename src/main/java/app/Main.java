@@ -16,7 +16,7 @@ public class Main {
                 .addSaveArticleUseCase()
                 .addSearchNewsUseCase()
                 .addDiscoverPageView()
-                .addDiscoverPageView()
+                .addCredibilityUseCases()
                 .addDiscoverPageUseCase()
                 .addProfileView()
                 .addProfileUseCase()
