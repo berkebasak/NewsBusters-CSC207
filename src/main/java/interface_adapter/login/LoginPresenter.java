@@ -10,7 +10,7 @@ public class LoginPresenter implements LoginOutputBoundary {
     private final ViewManagerModel viewManagerModel;
 
     public LoginPresenter(LoginViewModel loginViewModel,
-                          ViewManagerModel viewManagerModel) {
+            ViewManagerModel viewManagerModel) {
         this.loginViewModel = loginViewModel;
         this.viewManagerModel = viewManagerModel;
     }
@@ -20,6 +20,7 @@ public class LoginPresenter implements LoginOutputBoundary {
         LoginState state = loginViewModel.getState();
         state.setError(null);
         state.setMessage("Welcome back, " + outputData.getUsername() + "!");
+        state.setUsername(outputData.getUsername());
         loginViewModel.firePropertyChange("state");
         int delayMillis = 700;
 

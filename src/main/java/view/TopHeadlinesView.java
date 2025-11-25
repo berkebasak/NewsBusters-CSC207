@@ -5,6 +5,7 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
+import interface_adapter.profile.ProfileController;
 import interface_adapter.search_news.SearchNewsController;
 import interface_adapter.save_article.SaveArticleController;
 import interface_adapter.save_article.SaveArticleViewModel;
@@ -29,6 +30,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     public static final String VIEW_NAME = "top_headlines_view";
 
     private TopHeadlinesController controller;
+    private ProfileController profileController;
     private final TopHeadlinesViewModel viewModel;
 
     private SaveArticleController saveController;
@@ -50,7 +52,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private final JButton refreshButton = new JButton("Load Top Headlines");
     private final JButton saveButton = new JButton("Save Article");
     private final JButton discoverButton = new JButton("Discover Page");
-    private final JButton signOutButton = new JButton("Sign Out");
+    private final JButton profileButton = new JButton("Profile");
 
     // Credibility buttons
     private final JButton generateCredibilityButton = new JButton("Generate Credibility");
@@ -73,9 +75,9 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
 
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        leftPanel.setBackground(Color.WHITE);
-        leftPanel.add(signOutButton);
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        rightPanel.setBackground(Color.WHITE);
+        rightPanel.add(profileButton);
 
         JPanel controlsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         controlsPanel.setBackground(Color.WHITE);
@@ -90,7 +92,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         controlsPanel.add(generateAllCredibilityButton);
         controlsPanel.add(viewDetailsButton);
 
-        headerPanel.add(leftPanel, BorderLayout.WEST);
+        headerPanel.add(rightPanel, BorderLayout.EAST);
         headerPanel.add(controlsPanel, BorderLayout.CENTER);
 
         JPanel searchBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -157,7 +159,13 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     Article article = articleList.getSelectedValue();
-                    if (article != null) openInBrowser(article.getUrl());
+                    if (article != null) {
+                        openInBrowser(article.getUrl());
+                        if (profileController != null && loginViewModel != null) {
+                            String username = loginViewModel.getState().getUsername();
+                            profileController.addHistory(username, article);
+                        }
+                    }
                 }
             }
         });
@@ -214,6 +222,10 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         this.controller = controller;
     }
 
+    public void setProfileController(ProfileController profileController) {
+        this.profileController = profileController;
+    }
+
     public void setSaveArticleUseCase(SaveArticleController controller,
                                       SaveArticleViewModel viewModel) {
         this.saveController = controller;
@@ -237,31 +249,11 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         this.viewManagerModel = viewManagerModel;
         this.loginViewModel = loginViewModel;
 
-        for (var listener : signOutButton.getActionListeners()) {
-            signOutButton.removeActionListener(listener);
-        }
-
-        signOutButton.addActionListener(e -> {
-            var window = SwingUtilities.getWindowAncestor(TopHeadlinesView.this);
-            JOptionPane pane = new JOptionPane(
-                    "Signed out successfully."
-            );
-            JDialog dialog = pane.createDialog(window, "Signed Out");
-            dialog.setModal(false);
-            dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-
-            int delayMillis = 700;
-            new javax.swing.Timer(delayMillis, evt -> {
-                dialog.dispose();
-                ((javax.swing.Timer) evt.getSource()).stop();
-                if (TopHeadlinesView.this.loginViewModel != null) {
-                    TopHeadlinesView.this.loginViewModel.firePropertyChange("reset");
-                }
-                if (TopHeadlinesView.this.viewManagerModel != null) {
-                    TopHeadlinesView.this.viewManagerModel.changeView(LoginView.VIEW_NAME);
-                }
-            }).start();
+        profileButton.addActionListener(e -> {
+            if (profileController != null && loginViewModel != null) {
+                String username = loginViewModel.getState().getUsername();
+                profileController.execute(username);
+            }
         });
     }
 
@@ -402,8 +394,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                     this,
                     error,
                     "Search News",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+                    JOptionPane.INFORMATION_MESSAGE);
             state.setError(null);
         }
     }
