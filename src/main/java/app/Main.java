@@ -16,8 +16,10 @@ public class Main {
                 .addSaveArticleUseCase()
                 .addSearchNewsUseCase()
                 .addDiscoverPageView()
-                .addDiscoverPageUseCase()
                 .addCredibilityUseCases()
+                .addDiscoverPageUseCase()
+                .addProfileView()
+                .addProfileUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);

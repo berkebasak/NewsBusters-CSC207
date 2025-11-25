@@ -19,6 +19,7 @@ import interface_adapter.generate_credibility.DiscoverGenerateCredibilityPresent
 import interface_adapter.view_credibility.ViewCredibilityDetailsViewModel;
 import interface_adapter.view_credibility.ViewCredibilityDetailsPresenter;
 import interface_adapter.view_credibility.ViewCredibilityDetailsController;
+import interface_adapter.profile.*;
 import data_access.save_article.FileSaveArticleDataAccess;
 import use_case.login.*;
 import use_case.signup.*;
@@ -28,6 +29,7 @@ import use_case.search_news.SearchNewsInteractor;
 import use_case.search_news.SearchNewsOutputBoundary;
 import use_case.save_article.*;
 import use_case.discover_page.*;
+import use_case.profile.*;
 import use_case.generate_credibility.GenerateCredibilityDataAccessInterface;
 import use_case.generate_credibility.GenerateCredibilityInputBoundary;
 import use_case.generate_credibility.GenerateCredibilityInteractor;
@@ -39,6 +41,8 @@ import view.LoginView;
 import view.SignupView;
 import view.TopHeadlinesView;
 import view.DiscoverPageView;
+import view.ProfileView;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -66,7 +70,8 @@ public class AppBuilder {
     private DiscoverPageViewModel discoverPageViewModel;
     private SignupView signupView;
     private SignupViewModel signupViewModel;
-
+    private ProfileView profileView;
+    private ProfileViewModel profileViewModel;
     private GenerateCredibilityController generateCredibilityController;
     private ViewCredibilityDetailsViewModel viewCredibilityDetailsViewModel;
     private ViewCredibilityDetailsController credibilityDetailsController;
@@ -164,6 +169,28 @@ public class AppBuilder {
         DiscoverPageController controller =
                 new DiscoverPageController(interactor, discoverPageViewModel);
         discoverPageView.setController(controller);
+        return this;
+    }
+
+    public AppBuilder addProfileView() {
+        profileViewModel = new ProfileViewModel();
+        profileView = new ProfileView(profileViewModel);
+        profileView.setViewManagerModel(viewManagerModel);
+        profileView.setLoginViewModel(loginViewModel);
+        cardPanel.add(profileView, ProfileView.VIEW_NAME);
+        return this;
+    }
+
+    public AppBuilder addProfileUseCase() {
+        ProfileOutputBoundary presenter = new ProfilePresenter(profileViewModel, viewManagerModel);
+        ProfileInputBoundary interactor = new ProfileInteractor(getUserDataAccessObject(), presenter);
+        ProfileController controller = new ProfileController(interactor);
+
+        profileView.setProfileController(controller);
+
+        if (topHeadlinesView != null) {
+            topHeadlinesView.setProfileController(controller);
+        }
         return this;
     }
 
