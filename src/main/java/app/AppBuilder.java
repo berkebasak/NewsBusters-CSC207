@@ -1,5 +1,6 @@
 package app;
 
+import entity.User;
 import interface_adapter.ViewManagerModel;
 import view.ViewManager;
 import data_access.DBUserDataAccessObject;
@@ -135,12 +136,13 @@ public class AppBuilder {
 
     public AppBuilder addSaveArticleUseCase() throws IOException {
         saveArticleViewModel = new SaveArticleViewModel();
+
         SaveArticleDataAccessInterface saveDao =
                 new FileSaveArticleDataAccess("data/saved_articles.txt");
         SaveArticleOutputBoundary savePresenter =
                 new SaveArticlePresenter(saveArticleViewModel);
         SaveArticleInputBoundary saveInteractor =
-                new SaveArticleInteractor(saveDao, savePresenter);
+                new SaveArticleInteractor(saveDao, savePresenter, getUserDataAccessObject(),loginViewModel);
         SaveArticleController saveController =
                 new SaveArticleController(saveInteractor);
         topHeadlinesView.setSaveArticleUseCase(saveController, saveArticleViewModel);

@@ -19,7 +19,9 @@ public class LoginPresenter implements LoginOutputBoundary {
     public void prepareSuccessView(LoginOutputData outputData) {
         LoginState state = loginViewModel.getState();
         state.setError(null);
+        state.setUsername(outputData.getUsername());
         state.setMessage("Welcome back, " + outputData.getUsername() + "!");
+        loginViewModel.setState(state);
         loginViewModel.firePropertyChange("state");
         int delayMillis = 700;
 
