@@ -2,11 +2,9 @@ package data_access;
 
 import entity.Article;
 import entity.User;
-import entity.UserPreferences;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import use_case.login.LoginUserDataAccessInterface;
-import use_case.set_preferences.SetPreferencesDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
 
 import java.io.BufferedReader;
@@ -27,8 +25,7 @@ import java.util.Objects;
 public class FileUserDataAccessObject implements
         UserDataAccessInterface,
         LoginUserDataAccessInterface,
-        SignupUserDataAccessInterface,
-        SetPreferencesDataAccessInterface {
+        SignupUserDataAccessInterface {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     private final File storage;
@@ -79,8 +76,8 @@ public class FileUserDataAccessObject implements
                         ? userObj.getString("password")
                         : userObj.optString("passwordHash", "");
                 List<Article> savedArticles = parseArticles(userObj.optJSONArray("savedArticles"));
-                UserPreferences userPreferences = parseUserPreferences(userObj.getJSONObject("userPreferences"));
-                User user = User.fromPersistence(username, password, savedArticles, userPreferences);
+                List<Article> history = parseArticles(userObj.optJSONArray("history"));
+                User user = User.fromPersistence(username, password, savedArticles, history);
                 users.put(username.toLowerCase(), user);
             }
         }
@@ -151,8 +148,11 @@ public class FileUserDataAccessObject implements
         }
         json.put("savedArticles", saved);
 
-        json.put("userPreferences", serializeUserPreferences(user.getUserPreferences()));
-
+        JSONArray history = new JSONArray();
+        for (Article article : user.getHistory()) {
+            history.put(serializeArticle(article));
+        }
+        json.put("history", history);
         return json;
     }
 
@@ -170,6 +170,9 @@ public class FileUserDataAccessObject implements
         if (article.getPublicationDate() != null) {
             json.put("publicationDate", DATE_FORMATTER.format(article.getPublicationDate()));
         }
+        if (article.getAccessedAt() != null) {
+            json.put("accessedAt", DATE_FORMATTER.format(article.getAccessedAt()));
+        }
         return json;
     }
 
@@ -184,6 +187,12 @@ public class FileUserDataAccessObject implements
             LocalDateTime date = publicationDate == null || publicationDate.isBlank()
                     ? null
                     : LocalDateTime.parse(publicationDate, DATE_FORMATTER);
+
+            String accessedAtStr = json.optString("accessedAt", null);
+            LocalDateTime accessedAt = accessedAtStr == null || accessedAtStr.isBlank()
+                    ? null
+                    : LocalDateTime.parse(accessedAtStr, DATE_FORMATTER);
+
             Article article = new Article(
                     json.optString("id", null),
                     json.optString("title", ""),
@@ -197,56 +206,10 @@ public class FileUserDataAccessObject implements
                     null,
                     0.0,
                     "Unknown",
-                    true
-            );
+                    true);
+            article.setAccessedAt(accessedAt);
             articles.add(article);
         }
         return articles;
-    }
-
-    private JSONObject serializeUserPreferences(UserPreferences userPreferences) {
-        JSONObject json = new JSONObject();
-        JSONArray preferredTopics = new JSONArray();
-        JSONArray blockedSources = new JSONArray();
-
-        for (String topic : userPreferences.getPreferredTopics())
-            preferredTopics.put(topic);
-        for (String source : userPreferences.getBlockedSources())
-            blockedSources.put(source);
-
-        json.put("preferredTopics",  preferredTopics);
-        json.put("blockedSources", blockedSources);
-        json.put("language", userPreferences.getLanguage());
-        json.put("region", userPreferences.getRegion());
-
-        return json;
-    }
-
-    private UserPreferences parseUserPreferences(JSONObject userPreferences) {
-        UserPreferences userPreferences1 = new UserPreferences();
-        JSONArray preferredTopics = userPreferences.optJSONArray("preferredTopics");
-        JSONArray blockedSources = userPreferences.optJSONArray("blockedSources");
-
-        for (int i = 0; i < preferredTopics.length(); i++) {
-            JSONObject topic = preferredTopics.getJSONObject(i);
-            userPreferences1.addPreferredTopic(topic.toString());
-        }
-
-        for (int i = 0; i < blockedSources.length(); i++) {
-            JSONObject source = preferredTopics.getJSONObject(i);
-            userPreferences1.addPreferredTopic(source.toString());
-        }
-
-        userPreferences1.setLanguage(userPreferences.getString("language"));
-        userPreferences1.setRegion(userPreferences.getString("region"));
-
-        return userPreferences1;
-    }
-
-    @Override
-    public void savePreferences(String username, UserPreferences userPreferences) throws Exception {
-        User user = get(username);
-        user.setUserPreferences(userPreferences);
-        update(user);
     }
 }
