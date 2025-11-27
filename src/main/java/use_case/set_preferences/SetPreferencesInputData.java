@@ -1,34 +1,18 @@
 package use_case.set_preferences;
 
-import java.util.ArrayList;
+import entity.User;
+import entity.UserPreferences;
 
 public class SetPreferencesInputData {
-    private final ArrayList<String> preferredTopics;
-    private final ArrayList<String> blockedSources;
-    private String language;
-    private String region;
+    String username;
+    UserPreferences userPreferences;
 
-    public SetPreferencesInputData(ArrayList<String> preferredTopics, ArrayList<String> blockedSources,
-                           String language, String region) {
-        this.preferredTopics = preferredTopics;
-        this.blockedSources = blockedSources;
-        this.language = language;
-        this.region = region;
+    public SetPreferencesInputData(String username, UserPreferences userPreferences) {
+        this.username = username;
+        this.userPreferences = userPreferences;
     }
 
-    public ArrayList<String> getPreferredTopics() {
-        return preferredTopics;
-    }
+    public String getUsername() { return username; }
 
-    public ArrayList<String> getBlockedSources() {
-        return blockedSources;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public String getRegion() {
-        return region;
-    }
+    public UserPreferences getUserPreferences() { return userPreferences; }
 }
