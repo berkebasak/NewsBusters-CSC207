@@ -19,9 +19,8 @@ public class Article {
     private String confidenceLevel;
     private boolean isSaved;
     private CredibilityScore credibilityScore;
-    private LocalDateTime accessedAt;
 
-    // Constructor
+    //Constructor
     public Article(String id, String title, String description, String url, String imageUrl, String source) {
         this.id = id;
         this.title = title;
@@ -39,18 +38,18 @@ public class Article {
     }
 
     public Article(String id,
-            String title,
-            String description,
-            String url,
-            String imageUrl,
-            String source,
-            String content,
-            LocalDateTime publicationDate,
-            Set<String> topics,
-            CredibilityScore credibilityScore,
-            double trustScore,
-            String confidenceLevel,
-            boolean isSaved) {
+                   String title,
+                   String description,
+                   String url,
+                   String imageUrl,
+                   String source,
+                   String content,
+                   LocalDateTime publicationDate,
+                   Set<String> topics,
+                   CredibilityScore credibilityScore,
+                   double trustScore,
+                   String confidenceLevel,
+                   boolean isSaved) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -66,59 +65,43 @@ public class Article {
         this.isSaved = isSaved;
     }
 
-    public Article() {
-
-    }
-
     // getter and setter methods
     public String getId() {
         return id;
     }
-
     public String getTitle() {
         return title;
     }
-
     public String getDescription() {
         return description;
     }
-
     public String getUrl() {
         return url;
     }
-
     public String getImageUrl() {
         return imageUrl;
     }
-
     public String getSource() {
         return source;
     }
-
     public Set<String> getTopics() {
         return topics;
     }
-
     public String getContent() {
         return content;
     }
-
     public LocalDateTime getPublicationDate() {
         return publicationDate;
     }
-
     public double getTrustScore() {
         return trustScore;
     }
-
     public String getConfidenceLevel() {
         return confidenceLevel;
     }
-
     public boolean isSaved() {
         return isSaved;
     }
-
     public CredibilityScore getCredibilityScore() {
         return credibilityScore;
     }
@@ -126,45 +109,30 @@ public class Article {
     public void setTrustScore(double trustScore) {
         this.trustScore = trustScore;
     }
-
     public void setConfidenceLevel(String confidenceLevel) {
         this.confidenceLevel = confidenceLevel;
     }
-
     public void setSaved(boolean saved) {
         isSaved = saved;
     }
-
     public void setCredibilityScore(CredibilityScore credibilityScore) {
         this.credibilityScore = credibilityScore;
     }
-
     public void setTopics(Set<String> topics) {
         this.topics = topics == null ? new HashSet<>() : new HashSet<>(topics);
     }
-
     public void addTopic(String topic) {
         topics.add(topic);
     }
-
     public void setContent(String content) {
         this.content = content;
     }
-
     public void setPublicationDate(LocalDateTime publicationDate) {
         this.publicationDate = publicationDate;
     }
 
-    public LocalDateTime getAccessedAt() {
-        return accessedAt;
-    }
-
-    public void setAccessedAt(LocalDateTime accessedAt) {
-        this.accessedAt = accessedAt;
-    }
-
     public Article copyWithSaved(boolean saved) {
-        Article copy = new Article(
+        return new Article(
                 id,
                 title,
                 description,
@@ -177,17 +145,14 @@ public class Article {
                 credibilityScore,
                 trustScore,
                 confidenceLevel,
-                saved);
-        copy.setAccessedAt(this.accessedAt);
-        return copy;
+                saved
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Article))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof Article)) return false;
         Article article = (Article) o;
         return Objects.equals(url, article.url) && Objects.equals(title, article.title);
     }
@@ -200,17 +165,5 @@ public class Article {
     @Override
     public String toString() {
         return title + " (" + source + ")";
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 }
