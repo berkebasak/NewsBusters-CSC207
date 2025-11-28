@@ -4,18 +4,23 @@ import entity.Article;
 import use_case.save_article.SaveArticleDataAccessInterface;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class FileSaveArticleDataAccess implements SaveArticleDataAccessInterface {
 
     private final File storageFile;
-    private final Set<String> ids = new HashSet<>();
-    private final Set<String> urls = new HashSet<>();
+    private final Map<String, Set<String>> urlsByUser = new HashMap<>();
 
     public FileSaveArticleDataAccess(String filePath) throws IOException{
         this.storageFile = new File(filePath);
         try {
+            File parent = storageFile.getParentFile();
+            if (parent != null && !parent.exists()) {
+                parent.mkdirs(); // ensure directory exists
+            }
             if (!storageFile.exists()){
                 storageFile.createNewFile();
             }
@@ -33,44 +38,51 @@ public class FileSaveArticleDataAccess implements SaveArticleDataAccessInterface
                 if ((line.isBlank())) continue;
 
                 String[] parts = line.split("\\|", 3);
+                if (parts.length < 3) {
+                    // ignore malformed lines
+                    continue;
+                }
+                String username = parts[0].trim();
+                String url = parts[2].trim();
 
-                if (parts.length >= 1 && !parts[0].isBlank()) {
-                    ids.add(parts[0]);
+                if (username.isEmpty() || url.isEmpty()) {
+                    continue;
                 }
-                if (parts.length >= 3 && !parts[2].isBlank()) {
-                    urls.add(parts[2]);
-                }
+
+                urlsByUser
+                        .computeIfAbsent(username, k -> new HashSet<>())
+                        .add(url);
             }
         }
     }
 
     @Override
-    public boolean existsById(String id){
-        return id != null && ids.contains(id);
+    public boolean existsByUserandUrl(String username, String url){
+        if (username == null || url == null) {
+            return false;
+        }
+        Set<String> urls = urlsByUser.get(username);
+        return urls != null && urls.contains(url);
     }
 
     @Override
-    public boolean existsByUrl(String url){
-        return url != null && urls.contains(url);
-    }
+    public void saveForUser(String username, Article article) throws Exception {
+        if (username == null || username.isBlank() || article == null) {
+            return;
+        }
 
-    @Override
-    public void save(Article article) throws Exception{
         try (FileWriter fw = new FileWriter(storageFile, true);
-             BufferedWriter bw = new BufferedWriter(fw)){
+             BufferedWriter bw = new BufferedWriter(fw)) {
 
-            bw.write(article.getId() + "|" + article.getTitle() + "|" + article.getUrl());
+            // username|title|url
+            bw.write(username + "|" + article.getTitle() + "|" + article.getUrl());
             bw.newLine();
-            bw.flush(); // Explicitly flush to ensure data is written to disk immediately
-            fw.flush(); // Also flush the underlying FileWriter
         }
 
-        if (article.getId() != null){
-            ids.add(article.getId());
+        if (article.getUrl() != null) {
+            urlsByUser
+                    .computeIfAbsent(username, k -> new HashSet<>())
+                    .add(article.getUrl());
         }
-        if (article.getUrl() != null){
-            urls.add(article.getUrl());
-        }
-
     }
 }
