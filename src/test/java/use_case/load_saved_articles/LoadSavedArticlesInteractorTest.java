@@ -4,13 +4,13 @@ import data_access.UserDataAccessInterface;
 import entity.Article;
 import entity.User;
 import org.junit.jupiter.api.Test;
-import use_case.save_article.SaveArticleDataAccessInterface;
 
 import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// 100% coverage tests for LoadSavedArticlesInteractor
 class LoadSavedArticlesInteractorTest {
 
     // ---- Simple in-memory User DAO stub ----
@@ -43,25 +43,6 @@ class LoadSavedArticlesInteractorTest {
         }
     }
 
-    // ---- Fake txt DAO to control existsByUserandUrl behaviour ----
-    private static class StubSavedTxtDao implements SaveArticleDataAccessInterface {
-        private final boolean existsResult;
-
-        StubSavedTxtDao(boolean existsResult) {
-            this.existsResult = existsResult;
-        }
-
-        @Override
-        public boolean existsByUserandUrl(String username, String url) {
-            return existsResult;
-        }
-
-        @Override
-        public void saveForUser(String username,Article article) {
-            // no-op for tests
-        }
-    }
-
     // ---- Presenter stub to capture success / fail calls ----
     private static class TestPresenter implements LoadSavedArticlesOutputBoundary {
         LoadSavedArticlesOutputData successData;
@@ -78,7 +59,7 @@ class LoadSavedArticlesInteractorTest {
         }
     }
 
-    // Helper to build a dummy Article (adjust constructor if needed)
+    // Helper to build a dummy Article (adjust constructor if your Article differs)
     private static Article makeArticle(String url) {
         return new Article(
                 "id",
@@ -98,13 +79,26 @@ class LoadSavedArticlesInteractorTest {
     }
 
     @Test
-    void execute_noUsername_failsWithNoLoggedInUser() {
+    void execute_nullUsername_failsWithNoLoggedInUser() {
         InMemoryUserDao userDao = new InMemoryUserDao();
         TestPresenter presenter = new TestPresenter();
         LoadSavedArticlesInteractor interactor =
-                new LoadSavedArticlesInteractor(userDao, presenter, null);
+                new LoadSavedArticlesInteractor(userDao, presenter);
 
         interactor.execute(new LoadSavedArticlesInputData(null));
+
+        assertNull(presenter.successData);
+        assertEquals("No logged-in user.", presenter.failMessage);
+    }
+
+    @Test
+    void execute_blankUsername_failsWithNoLoggedInUser() {
+        InMemoryUserDao userDao = new InMemoryUserDao();
+        TestPresenter presenter = new TestPresenter();
+        LoadSavedArticlesInteractor interactor =
+                new LoadSavedArticlesInteractor(userDao, presenter);
+
+        interactor.execute(new LoadSavedArticlesInputData("   "));
 
         assertNull(presenter.successData);
         assertEquals("No logged-in user.", presenter.failMessage);
@@ -115,7 +109,7 @@ class LoadSavedArticlesInteractorTest {
         InMemoryUserDao userDao = new InMemoryUserDao(); // no user saved
         TestPresenter presenter = new TestPresenter();
         LoadSavedArticlesInteractor interactor =
-                new LoadSavedArticlesInteractor(userDao, presenter, null);
+                new LoadSavedArticlesInteractor(userDao, presenter);
 
         interactor.execute(new LoadSavedArticlesInputData("alice"));
 
@@ -124,15 +118,16 @@ class LoadSavedArticlesInteractorTest {
     }
 
     @Test
-    void execute_success_noTxtCheck() {
+    void execute_success_returnsSavedArticles() {
         InMemoryUserDao userDao = new InMemoryUserDao();
         User user = User.create("alice", "pw");
         user.addSavedArticle(makeArticle("https://example.com/a1"));
+        user.addSavedArticle(makeArticle("https://example.com/a2"));
         userDao.save(user);
 
         TestPresenter presenter = new TestPresenter();
         LoadSavedArticlesInteractor interactor =
-                new LoadSavedArticlesInteractor(userDao, presenter, null);
+                new LoadSavedArticlesInteractor(userDao, presenter);
 
         interactor.execute(new LoadSavedArticlesInputData("alice"));
 
@@ -140,30 +135,11 @@ class LoadSavedArticlesInteractorTest {
         assertNotNull(presenter.successData);
 
         assertEquals("alice", presenter.successData.getUsername());
-        assertEquals(1, presenter.successData.getSavedArticles().size());
+        assertEquals(2, presenter.successData.getSavedArticles().size());
         assertEquals("https://example.com/a1",
                 presenter.successData.getSavedArticles().get(0).getUrl());
-    }
-
-    @Test
-    void execute_success_withTxtCheck_warningPath() {
-        InMemoryUserDao userDao = new InMemoryUserDao();
-        User user = User.create("bob", "pw");
-        user.addSavedArticle(makeArticle("https://example.com/missing"));
-        userDao.save(user);
-
-        TestPresenter presenter = new TestPresenter();
-        // txt DAO returns false so we hit the println warning branch
-        StubSavedTxtDao txtDao = new StubSavedTxtDao(false);
-
-        LoadSavedArticlesInteractor interactor =
-                new LoadSavedArticlesInteractor(userDao, presenter, txtDao);
-
-        interactor.execute(new LoadSavedArticlesInputData("bob"));
-
-        assertNull(presenter.failMessage);
-        assertNotNull(presenter.successData);
-        assertEquals("bob", presenter.successData.getUsername());
-        assertEquals(1, presenter.successData.getSavedArticles().size());
+        assertEquals("https://example.com/a2",
+                presenter.successData.getSavedArticles().get(1).getUrl());
     }
 }
+
