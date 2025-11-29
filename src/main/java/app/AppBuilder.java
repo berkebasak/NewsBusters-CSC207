@@ -1,6 +1,5 @@
 package app;
 
-import entity.User;
 import interface_adapter.ViewManagerModel;
 import view.ViewManager;
 import data_access.DBUserDataAccessObject;
@@ -20,6 +19,8 @@ import interface_adapter.view_credibility.ViewCredibilityDetailsViewModel;
 import interface_adapter.view_credibility.ViewCredibilityDetailsPresenter;
 import interface_adapter.view_credibility.ViewCredibilityDetailsController;
 import interface_adapter.profile.*;
+import interface_adapter.load_saved_articles.*;
+import interface_adapter.profile.ProfileViewModel;
 import data_access.save_article.FileSaveArticleDataAccess;
 import use_case.login.*;
 import use_case.signup.*;
@@ -37,11 +38,14 @@ import use_case.generate_credibility.GenerateCredibilityOutputBoundary;
 import use_case.view_credibility.ViewCredibilityDetailsInputBoundary;
 import use_case.view_credibility.ViewCredibilityDetailsInteractor;
 import use_case.view_credibility.ViewCredibilityDetailsOutputBoundary;
+import use_case.load_saved_articles.*;
+import use_case.save_article.SaveArticleDataAccessInterface;
 import view.LoginView;
 import view.SignupView;
 import view.TopHeadlinesView;
 import view.DiscoverPageView;
 import view.ProfileView;
+import view.LoadSavedArticlesView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -72,6 +76,8 @@ public class AppBuilder {
     private SignupViewModel signupViewModel;
     private ProfileView profileView;
     private ProfileViewModel profileViewModel;
+    private LoadSavedArticlesView loadSavedArticlesView;
+    private LoadSavedArticlesViewModel loadSavedArticlesViewModel;
     private GenerateCredibilityController generateCredibilityController;
     private ViewCredibilityDetailsViewModel viewCredibilityDetailsViewModel;
     private ViewCredibilityDetailsController credibilityDetailsController;
@@ -182,6 +188,15 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addLoadSavedArticlesView() {
+        loadSavedArticlesViewModel = new LoadSavedArticlesViewModel();
+        loadSavedArticlesView = new LoadSavedArticlesView(loadSavedArticlesViewModel);
+        loadSavedArticlesView.setViewManagerModel(viewManagerModel);
+        loadSavedArticlesView.setLoginViewModel(loginViewModel);
+        cardPanel.add(loadSavedArticlesView, LoadSavedArticlesView.VIEW_NAME);
+        return this;
+    }
+
     public AppBuilder addProfileUseCase() {
         ProfileOutputBoundary presenter = new ProfilePresenter(profileViewModel, viewManagerModel);
         ProfileInputBoundary interactor = new ProfileInteractor(getUserDataAccessObject(), presenter);
@@ -195,6 +210,30 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addLoadSavedArticlesUseCase() throws IOException {
+        // use the existing user json DAO
+        var userDao = getUserDataAccessObject();
+
+        // optional: use txt data access for coherence check.
+        SaveArticleDataAccessInterface savedTxtDao =
+                new data_access.save_article.FileSaveArticleDataAccess("data/saved_articles.txt");
+
+        LoadSavedArticlesOutputBoundary presenter =
+                new LoadSavedArticlesPresenter(loadSavedArticlesViewModel, viewManagerModel);
+
+        LoadSavedArticlesInputBoundary interactor =
+                new LoadSavedArticlesInteractor(userDao, presenter, savedTxtDao);
+
+        LoadSavedArticlesController controller =
+                new LoadSavedArticlesController(interactor);
+
+        // give controller to the ProfileView so the sidebar button can use it
+        if (profileView != null) {
+            profileView.setLoadSavedArticlesController(controller);
+        }
+
+        return this;
+    }
 
     public AppBuilder addCredibilityUseCases() {
         GenerateCredibilityDataAccessInterface signalsDAO =
