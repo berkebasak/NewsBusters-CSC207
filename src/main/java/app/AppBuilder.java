@@ -222,7 +222,7 @@ public class AppBuilder {
                 new LoadSavedArticlesPresenter(loadSavedArticlesViewModel, viewManagerModel);
 
         LoadSavedArticlesInputBoundary interactor =
-                new LoadSavedArticlesInteractor(userDao, presenter, savedTxtDao);
+                new LoadSavedArticlesInteractor(userDao, presenter);
 
         LoadSavedArticlesController controller =
                 new LoadSavedArticlesController(interactor);
