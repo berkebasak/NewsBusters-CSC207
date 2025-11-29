@@ -20,6 +20,8 @@ public class Main {
                 .addDiscoverPageUseCase()
                 .addProfileView()
                 .addProfileUseCase()
+                .addLoadSavedArticlesView()
+                .addLoadSavedArticlesUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);
