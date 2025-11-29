@@ -66,11 +66,6 @@ public class SearchNewsInteractor implements SearchNewsInputBoundary {
                 }
             }
 
-            if (filtered.size() > 20) {
-                filtered = new ArrayList<>(filtered.subList(0, 20));
-            }
-
-
             if (filtered.isEmpty()) {
                 searchNewsPresenter.prepareFailView("No articles found.");
             } else {

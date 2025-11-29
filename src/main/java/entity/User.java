@@ -9,32 +9,25 @@ public class User {
     private final String username;
     private String password;
     private final List<Article> savedArticles;
-    private final List<Article> history;
+    private UserPreferences userPreferences;
 
-    private User(String username, String password, List<Article> savedArticles) {
+    private User(String username, String password, List<Article> savedArticles, UserPreferences userPreferences) {
         this.username = Objects.requireNonNull(username, "username").trim();
         this.password = Objects.requireNonNull(password, "password");
         this.savedArticles = new ArrayList<>(savedArticles == null ? List.of() : savedArticles);
-        this.history = new ArrayList<>();
-    }
-
-    private User(String username, String password, List<Article> savedArticles, List<Article> history) {
-        this.username = Objects.requireNonNull(username, "username").trim();
-        this.password = Objects.requireNonNull(password, "password");
-        this.savedArticles = new ArrayList<>(savedArticles == null ? List.of() : savedArticles);
-        this.history = new ArrayList<>(history == null ? List.of() : history);
+        this.userPreferences = userPreferences;
     }
 
     public static User create(String username, String plainPassword) {
         if (plainPassword == null || plainPassword.isBlank()) {
             throw new IllegalArgumentException("Password must not be blank");
         }
-        return new User(username, plainPassword, new ArrayList<>(), new ArrayList<>());
+        return new User(username, plainPassword, new ArrayList<>(), new UserPreferences());
     }
 
-    public static User fromPersistence(String username, String password, List<Article> savedArticles,
-            List<Article> history) {
-        return new User(username, password, savedArticles, history);
+    public static User fromPersistence(String username, String password,
+                                       List<Article> savedArticles, UserPreferences userPreferences) {
+        return new User(username, password, savedArticles, userPreferences);
     }
 
     public String getUsername() {
@@ -83,23 +76,7 @@ public class User {
         return savedArticles.removeIf(article -> url.equals(article.getUrl()));
     }
 
-    public List<Article> getHistory() {
-        return Collections.unmodifiableList(history);
-    }
+    public UserPreferences getUserPreferences() { return userPreferences; }
 
-    public void addToHistory(Article article) {
-        if (article != null) {
-
-            history.removeIf(a -> a.getUrl().equals(article.getUrl()));
-
-            article.setAccessedAt(java.time.LocalDateTime.now());
-
-            history.add(0, article);
-            // Limit history size to, say, 20
-            if (history.size() > 20) {
-                history.remove(history.size() - 1);
-            }
-        }
-    }
-
+    public void setUserPreferences(UserPreferences userPreferences) { this.userPreferences = userPreferences; }
 }
