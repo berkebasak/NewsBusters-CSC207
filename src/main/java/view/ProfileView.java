@@ -7,6 +7,7 @@ import interface_adapter.profile.ProfileController;
 import interface_adapter.profile.ProfileState;
 import interface_adapter.profile.ProfileViewModel;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
+import interface_adapter.load_saved_articles.LoadSavedArticlesController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +24,7 @@ public class ProfileView extends JPanel implements PropertyChangeListener {
     private ProfileController profileController;
     private ViewManagerModel viewManagerModel;
     private LoginViewModel loginViewModel;
+    private LoadSavedArticlesController loadSavedArticlesController;
 
     private final JLabel usernameLabel = new JLabel();
     private final DefaultListModel<Article> historyListModel = new DefaultListModel<>();
@@ -146,7 +148,15 @@ public class ProfileView extends JPanel implements PropertyChangeListener {
 
         // Placeholder listeners for new buttons
         savedArticlesButton
-                .addActionListener(e -> JOptionPane.showMessageDialog(this, "Saved Articles feature coming soon!"));
+                .addActionListener(e -> {
+                    if (loadSavedArticlesController == null || loginViewModel == null) {
+                        JOptionPane.showMessageDialog(this, "Saved Articles not available.");
+                                return;
+                    }
+                    String username = loginViewModel.getState().getUsername();
+                    loadSavedArticlesController.execute(username);
+                    //the presenter will switch to LoadSavedArticlesView
+                });
         preferencesButton
                 .addActionListener(e -> JOptionPane.showMessageDialog(this, "Preferences feature coming soon!"));
         accountSettingsButton
@@ -185,6 +195,10 @@ public class ProfileView extends JPanel implements PropertyChangeListener {
 
     public void setLoginViewModel(LoginViewModel loginViewModel) {
         this.loginViewModel = loginViewModel;
+    }
+
+    public void setLoadSavedArticlesController(LoadSavedArticlesController loadSavedArticlesController) {
+        this.loadSavedArticlesController = loadSavedArticlesController;
     }
 
     private void openInBrowser(String url) {
