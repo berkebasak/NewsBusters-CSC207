@@ -1,8 +1,6 @@
 package use_case.discover_page;
 
 import entity.Article;
-import entity.UserPreferences;
-
 import java.util.List;
 import java.util.Set;
 
@@ -32,5 +30,5 @@ public interface DiscoverPageDataAccessInterface {
      * @param page the page number to fetch (0-based, where 0 is the first page)
      * @return list of articles related to the topics
      */
-    List<Article> searchByTopics(Set<String> topics, int page, UserPreferences userPreferences);
+    List<Article> searchByTopics(Set<String> topics, int page);
 }

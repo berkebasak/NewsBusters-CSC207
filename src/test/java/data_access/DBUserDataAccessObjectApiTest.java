@@ -1,7 +1,6 @@
 package data_access;
 
 import entity.Article;
-import entity.UserPreferences;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,7 +13,7 @@ class DBUserDataAccessObjectApiTest {
     void fetchTopHeadlinesReturnsArticlesOrEmptyGracefully() {
         DBUserDataAccessObject dao = new DBUserDataAccessObject();
 
-        List<Article> articles = dao.fetchTopHeadlines(new UserPreferences());
+        List<Article> articles = dao.fetchTopHeadlines();
         assertNotNull(articles);
 
         if (articles.isEmpty()) {

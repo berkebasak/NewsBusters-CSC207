@@ -7,10 +7,6 @@ public class SetPreferencesInputData {
     String username;
     UserPreferences userPreferences;
 
-    public SetPreferencesInputData(String username) {
-        this.username = username;
-    }
-
     public SetPreferencesInputData(String username, UserPreferences userPreferences) {
         this.username = username;
         this.userPreferences = userPreferences;

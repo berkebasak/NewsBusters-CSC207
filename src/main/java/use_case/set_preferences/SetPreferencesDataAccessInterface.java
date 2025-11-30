@@ -4,7 +4,5 @@ import entity.User;
 import entity.UserPreferences;
 
 public interface SetPreferencesDataAccessInterface {
-    void save(User user);
-    void update(User user);
-    User get(String username);
+    void savePreferences(String username, UserPreferences userPreferences) throws Exception;
 }

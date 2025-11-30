@@ -1,35 +1,22 @@
 package use_case.set_preferences;
 
+import data_access.FileUserDataAccessObject;
 import entity.User;
 import entity.UserPreferences;
 
+import java.io.File;
+
 public class SetPreferencesInteractor implements SetPreferencesInputBoundary {
 
+    private final FileUserDataAccessObject fileUserDataAccessObject;
     private final SetPreferencesDataAccessInterface dataAccessObject;
     private final SetPreferencesOutputBoundary presenter;
 
     public SetPreferencesInteractor(SetPreferencesDataAccessInterface dataAccessObject,
-                                    SetPreferencesOutputBoundary presenter) {
+                                    SetPreferencesOutputBoundary presenter, FileUserDataAccessObject fileUserDataAccessObject) {
+        this.fileUserDataAccessObject = fileUserDataAccessObject;
         this.dataAccessObject = dataAccessObject;
         this.presenter = presenter;
-    }
-
-    @Override
-    public void load(SetPreferencesInputData inputData) {
-        String username = inputData.getUsername();
-
-        if (username == null) {
-            presenter.prepareFailView("You need to login first");
-            return;
-        }
-
-        User user = dataAccessObject.get(username);
-        if (user == null) {
-            presenter.prepareFailView("You need to login first");
-            return;
-        }
-
-        presenter.initPreferenceView(user.getUserPreferences());
     }
 
     @Override
@@ -43,12 +30,6 @@ public class SetPreferencesInteractor implements SetPreferencesInputBoundary {
             return;
         }
 
-        User user = dataAccessObject.get(username);
-        if (user == null) {
-            presenter.prepareFailView("You need to login first");
-            return;
-        }
-
         if (userPreferences == null) {
             presenter.prepareFailView("No user preferences found.");
             return;
@@ -58,9 +39,16 @@ public class SetPreferencesInteractor implements SetPreferencesInputBoundary {
             presenter.prepareFailView("Language and/or Region required.");
         }
 
-        user.setUserPreferences(userPreferences);
-        dataAccessObject.update(user);
-        presenter.prepareSuccessView(new SetPreferencesOutputData(true, "Preferences Saved!",
-                    username, userPreferences));
+        try {
+            dataAccessObject.savePreferences(username, userPreferences);
+            presenter.prepareSuccessView(
+                    new SetPreferencesOutputData(true, "Preferences Saved!",
+                            username, userPreferences));
+        } catch (Exception e) {
+            User user = fileUserDataAccessObject.get(username);
+            presenter.prepareSuccessView(
+                    new SetPreferencesOutputData(false, "Could not save preferences!",
+                            username, user.getUserPreferences()));
+        }
     }
 }

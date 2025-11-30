@@ -94,7 +94,6 @@ public class User {
     public UserPreferences getUserPreferences() { return userPreferences; }
 
     public void setUserPreferences(UserPreferences userPreferences) { this.userPreferences = userPreferences; }
-
     public List<Article> getHistory() {
         return Collections.unmodifiableList(history);
     }
