@@ -11,6 +11,7 @@ import interface_adapter.save_article.SaveArticleController;
 import interface_adapter.save_article.SaveArticleViewModel;
 
 import interface_adapter.generate_credibility.GenerateCredibilityController;
+import interface_adapter.filter_credibility.FilterCredibilityController;
 import interface_adapter.view_credibility.ViewCredibilityDetailsState;
 import interface_adapter.view_credibility.ViewCredibilityDetailsViewModel;
 import interface_adapter.view_credibility.ViewCredibilityDetailsController;
@@ -45,6 +46,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private GenerateCredibilityController generateCredibilityController;
     private ViewCredibilityDetailsController viewCredibilityDetailsController;
     private ViewCredibilityDetailsViewModel viewCredibilityDetailsViewModel;
+    private FilterCredibilityController filterCredibilityController;
 
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
@@ -283,6 +285,9 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         });
     }
 
+    public void setFilterCredibilityController(FilterCredibilityController filterCredibilityController) {
+        this.filterCredibilityController = filterCredibilityController;
+    }
 
     private void loadArticles() {
         if (controller != null) {

@@ -6,6 +6,7 @@ import interface_adapter.discover_page.DiscoverPageController;
 import interface_adapter.discover_page.DiscoverPageViewModel;
 
 import interface_adapter.generate_credibility.GenerateCredibilityController;
+import interface_adapter.filter_credibility.FilterCredibilityController;
 import interface_adapter.view_credibility.ViewCredibilityDetailsViewModel;
 import interface_adapter.view_credibility.ViewCredibilityDetailsController;
 
@@ -29,6 +30,7 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
     private GenerateCredibilityController generateCredibilityController;
     private ViewCredibilityDetailsController viewCredibilityDetailsController;
     private ViewCredibilityDetailsViewModel viewCredibilityDetailsViewModel;
+    private FilterCredibilityController filterCredibilityController;
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
     private final JButton refreshButton = new JButton("Refresh Discover Feed");
@@ -192,6 +194,10 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
         this.generateCredibilityController = generateController;
         this.viewCredibilityDetailsController = detailsController;
         this.viewCredibilityDetailsViewModel = detailsViewModel;
+    }
+
+    public void setFilterCredibilityController(FilterCredibilityController filterCredibilityController) {
+        this.filterCredibilityController = filterCredibilityController;
     }
 
     private void openInBrowser(String url) {
