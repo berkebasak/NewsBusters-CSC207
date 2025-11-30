@@ -29,6 +29,21 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
     public static final String VIEW_NAME = "top_headlines_view";
 
+    private static final int GREEN_R = 0;
+    private static final int GREEN_G = 128;
+    private static final int GREEN_B = 0;
+    private static final Color GREEN_BADGE = new Color(GREEN_R, GREEN_G, GREEN_B);
+
+    private static final int RED_R = 180;
+    private static final int RED_G = 0;
+    private static final int RED_B = 0;
+    private static final Color RED_BADGE = new Color(RED_R, RED_G, RED_B);
+
+    private static final Color BADGE_BG = new Color(240, 240, 240);
+    private static final Color BADGE_BORDER = new Color(200, 200, 200);
+
+    private final JLabel sourceLabel = new JLabel("New Articles", SwingConstants.CENTER);
+
     private TopHeadlinesController controller;
     private ProfileController profileController;
     private final TopHeadlinesViewModel viewModel;
@@ -75,6 +90,16 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
 
+        sourceLabel.setOpaque(true);
+        sourceLabel.setFont(new Font("TimesNewRoman", Font.BOLD, 14));
+        sourceLabel.setBackground(BADGE_BG);
+        sourceLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(BADGE_BORDER, 1),
+                BorderFactory.createEmptyBorder(4, 10, 4, 10)
+        ));
+        sourceLabel.setMaximumSize(sourceLabel.getPreferredSize());
+        sourceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         rightPanel.setBackground(Color.WHITE);
         rightPanel.add(profileButton);
@@ -84,6 +109,10 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         JLabel title = new JLabel("Top News Headlines");
         title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
         controlsPanel.add(title);
+        JPanel badgePanel = new JPanel();
+        badgePanel.setOpaque(false);
+        badgePanel.add(sourceLabel);
+        controlsPanel.add(badgePanel);
         controlsPanel.add(refreshButton);
         controlsPanel.add(saveButton);
         controlsPanel.add(discoverButton);
@@ -388,6 +417,16 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             }
         }
 
+        String srcLabel = state.getArticleSourceLabel();
+        sourceLabel.setText(srcLabel);
+
+        if ("New Articles".equalsIgnoreCase(srcLabel)) {
+            sourceLabel.setForeground(GREEN_BADGE);
+        } else {
+            sourceLabel.setForeground(RED_BADGE);
+        }
+
+
         String error = state.getError();
         if (error != null && !error.isEmpty()) {
             JOptionPane.showMessageDialog(
@@ -397,6 +436,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                     JOptionPane.INFORMATION_MESSAGE);
             state.setError(null);
         }
+
     }
 
 
