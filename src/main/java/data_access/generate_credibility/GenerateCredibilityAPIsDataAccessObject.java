@@ -6,6 +6,7 @@ import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import use_case.generate_credibility.GenerateCredibilityDataAccessInterface;
+import util.EnvLoader;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,7 +24,7 @@ public class GenerateCredibilityAPIsDataAccessObject implements GenerateCredibil
     private static final String OPR_ENDPOINT = "https://openpagerank.com/api/v1.0/getPageRank";
 
     private static String getEnvOrThrow(String envName, String label) {
-        String value = System.getenv(envName);
+        String value = EnvLoader.get(envName);  // <-- Use loader instead
         if (value == null || value.isBlank()) {
             throw new IllegalStateException(
                     label + " not set. Please define environment variable: " + envName);
