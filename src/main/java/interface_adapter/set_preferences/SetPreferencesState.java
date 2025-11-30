@@ -1,19 +1,11 @@
 package interface_adapter.set_preferences;
 
-import entity.User;
 import entity.UserPreferences;
 
-import java.util.ArrayList;
-
 public class SetPreferencesState {
-    private String username;
     private UserPreferences userPreferences;
     private String error;
     private String message;
-
-    public String getUsername() { return username; }
-
-    public void  setUsername(String user) { this.username = username; }
 
     public UserPreferences getUserPreferences() { return userPreferences; }
 
