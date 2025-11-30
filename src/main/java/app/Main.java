@@ -9,6 +9,8 @@ public class Main {
         JFrame application = appBuilder
                 .addLoginView()
                 .addSignupView()
+                .addSetPreferencesView()
+                .addSetPreferencesUseCase()
                 .addTopHeadlinesView()
                 .addTopHeadlinesUseCase()
                 .addLoginUseCase()
