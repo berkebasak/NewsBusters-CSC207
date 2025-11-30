@@ -8,13 +8,22 @@ public class Main {
 
         AppBuilder appBuilder = new AppBuilder();
         JFrame application = appBuilder
+                .addLoginView()
+                .addSignupView()
                 .addTopHeadlinesView()
                 .addDiscoverPageView()
                 .addTopHeadlinesUseCase()
+                .addLoginUseCase()
+                .addSignupUseCase()
                 .addSaveArticleUseCase()
                 .addSearchNewsUseCase()
                 .addFilterNewsUseCase()
+                .addCredibilityUseCases()
                 .addDiscoverPageUseCase()
+                .addProfileView()
+                .addProfileUseCase()
+                .addLoadSavedArticlesView()
+                .addLoadSavedArticlesUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);

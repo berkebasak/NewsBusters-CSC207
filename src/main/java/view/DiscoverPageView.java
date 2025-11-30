@@ -5,6 +5,11 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.discover_page.DiscoverPageController;
 import interface_adapter.discover_page.DiscoverPageViewModel;
 
+import interface_adapter.generate_credibility.GenerateCredibilityController;
+import interface_adapter.view_credibility.ViewCredibilityDetailsViewModel;
+import interface_adapter.view_credibility.ViewCredibilityDetailsController;
+
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -12,6 +17,8 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DiscoverPageView extends JPanel implements PropertyChangeListener {
 
@@ -19,10 +26,16 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
     private DiscoverPageController controller;
     private final DiscoverPageViewModel viewModel;
     private ViewManagerModel viewManagerModel;
+    private GenerateCredibilityController generateCredibilityController;
+    private ViewCredibilityDetailsController viewCredibilityDetailsController;
+    private ViewCredibilityDetailsViewModel viewCredibilityDetailsViewModel;
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
     private final JButton refreshButton = new JButton("Refresh Discover Feed");
     private final JButton backButton = new JButton("Back to Headlines");
+    private final JButton generateCredibilityButton = new JButton("Generate Credibility");
+    private final JButton generateAllCredibilityButton = new JButton("Generate All Scores");
+    private final JButton viewDetailsButton = new JButton("View Details");
     private final JLabel messageLabel = new JLabel();
     private final JPanel messagePanel = new JPanel();
     private final JPanel centerPanel = new JPanel(new CardLayout());
@@ -44,6 +57,9 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
         topBar.add(title);
         topBar.add(refreshButton);
         topBar.add(backButton);
+        topBar.add(generateCredibilityButton);
+        topBar.add(generateAllCredibilityButton);
+        topBar.add(viewDetailsButton);
         topBar.setBackground(Color.WHITE);
 
         JPanel topPanel = new JPanel();
@@ -84,10 +100,56 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
 
         backButton.addActionListener(e -> {
             if (viewManagerModel != null) {
-                viewManagerModel.setState(TopHeadlinesView.VIEW_NAME);
-                viewManagerModel.firePropertyChange();
+                viewManagerModel.changeView(TopHeadlinesView.VIEW_NAME);
             }
         });
+
+        generateCredibilityButton.addActionListener(e -> {
+            if (generateCredibilityController == null) {
+                JOptionPane.showMessageDialog(this, "Credibility feature not available.");
+                return;
+            }
+            Article article = articleList.getSelectedValue();
+            if (article == null) {
+                JOptionPane.showMessageDialog(this, "Please select an article first.");
+                return;
+            }
+            generateCredibilityController.generateForArticle(article);
+        });
+
+        generateAllCredibilityButton.addActionListener(e -> {
+            if (generateCredibilityController == null) {
+                JOptionPane.showMessageDialog(this, "Credibility feature not available.");
+                return;
+            }
+            if (listModel.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No articles to score.");
+                return;
+            }
+            List<Article> all = new ArrayList<>();
+            for (int i = 0; i < listModel.size(); i++) {
+                all.add(listModel.getElementAt(i));
+            }
+            generateCredibilityController.generateForAll(all);
+        });
+
+        viewDetailsButton.addActionListener(e -> {
+            if (viewCredibilityDetailsController == null) {
+                JOptionPane.showMessageDialog(this, "Credibility details feature not available.");
+                return;
+            }
+            Article article = articleList.getSelectedValue();
+            if (article == null) {
+                JOptionPane.showMessageDialog(this, "Please select an article first.");
+                return;
+            }
+            if (article.getCredibilityScore() == null) {
+                JOptionPane.showMessageDialog(this, "Generate a credibility score for this article first.");
+                return;
+            }
+            viewCredibilityDetailsController.showDetails(article);
+        });
+
 
         articleList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -112,6 +174,14 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
 
     public void setViewManagerModel(ViewManagerModel viewManagerModel) {
         this.viewManagerModel = viewManagerModel;
+    }
+
+    public void setCredibilityUseCases(GenerateCredibilityController generateController,
+                                       ViewCredibilityDetailsController detailsController,
+                                       ViewCredibilityDetailsViewModel detailsViewModel) {
+        this.generateCredibilityController = generateController;
+        this.viewCredibilityDetailsController = detailsController;
+        this.viewCredibilityDetailsViewModel = detailsViewModel;
     }
 
     private void openInBrowser(String url) {
@@ -147,7 +217,85 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        int selectedIndex = articleList.getSelectedIndex();
+
         updateView();
+
+        if (selectedIndex >= 0 && selectedIndex < listModel.getSize()) {
+            articleList.setSelectedIndex(selectedIndex);
+            articleList.ensureIndexIsVisible(selectedIndex);
+        }
+    }
+
+    static class DiscoverArticleRenderer extends JPanel implements ListCellRenderer<Article> {
+        private final JLabel titleLabel = new JLabel();
+        private final JLabel sourceLabel = new JLabel();
+        private final JLabel trustLabel = new JLabel();
+
+        public DiscoverArticleRenderer() {
+            setLayout(new BorderLayout(5, 5));
+            setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            setBackground(Color.WHITE);
+
+            titleLabel.setFont(new Font("TimesNewRoman", Font.BOLD, 16));
+            titleLabel.setForeground(Color.BLACK);
+
+            sourceLabel.setFont(new Font("TimesNewRoman", Font.ITALIC, 13));
+            sourceLabel.setForeground(new Color(80, 80, 80));
+
+            trustLabel.setFont(new Font("TimesNewRoman", Font.PLAIN, 13));
+            trustLabel.setForeground(new Color(60, 60, 60));
+
+            JPanel southPanel = new JPanel();
+            southPanel.setLayout(new BoxLayout(southPanel, BoxLayout.Y_AXIS));
+            southPanel.setOpaque(false);
+            southPanel.add(sourceLabel);
+            southPanel.add(trustLabel);
+
+            add(titleLabel, BorderLayout.CENTER);
+            add(southPanel, BorderLayout.SOUTH);
+        }
+
+        @Override
+        public Component getListCellRendererComponent(
+                JList<? extends Article> list,
+                Article article,
+                int index,
+                boolean isSelected,
+                boolean cellHasFocus) {
+
+            titleLabel.setText(article.getTitle());
+            sourceLabel.setText("Source: " + article.getSource());
+
+            String level = article.getConfidenceLevel();
+            double trust = article.getTrustScore();
+
+            if (article.getCredibilityScore() == null ||
+                    level == null ||
+                    "Unknown".equalsIgnoreCase(level)) {
+                trustLabel.setText("Generate credibility score");
+            } else {
+                trustLabel.setText(String.format("Trust: %.2f (%s)", trust, level));
+            }
+
+            Color baseColor = Color.WHITE;
+            if (level != null) {
+                if ("High".equalsIgnoreCase(level)) {
+                    baseColor = new Color(210, 245, 210);
+                } else if ("Medium".equalsIgnoreCase(level)) {
+                    baseColor = new Color(255, 250, 205);
+                } else if ("Low".equalsIgnoreCase(level)) {
+                    baseColor = new Color(255, 220, 220);
+                }
+            }
+
+            if (isSelected) {
+                setBackground(baseColor.darker());
+            } else {
+                setBackground(baseColor);
+            }
+
+            return this;
+        }
     }
 }
-
