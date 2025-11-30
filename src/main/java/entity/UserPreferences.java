@@ -12,8 +12,8 @@ public class UserPreferences {
     public UserPreferences() {
         this.preferredTopics = new ArrayList<>();
         this.blockedSources = new ArrayList<>();
-        this.language = "English";
-        this.region = "Canada";
+        this.language = "en";
+        this.region = "us";
     }
 
     public UserPreferences(ArrayList<String> preferredTopics, ArrayList<String> blockedSources,
