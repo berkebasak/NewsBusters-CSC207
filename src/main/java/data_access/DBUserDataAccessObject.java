@@ -1,6 +1,7 @@
 package data_access;
 
 import entity.Article;
+import entity.UserPreferences;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -32,20 +33,53 @@ public class DBUserDataAccessObject implements
             "https://newsdata.io/api/1/news?country=us&language=en&category=top&removeduplicate=1&apikey=" + API_KEY;
 
     private static final String SEARCH_URL =
-            "https://newsdata.io/api/1/news?language=en&removeduplicate=1&apikey=" + API_KEY + "&q=";
+            "https://newsdata.io/api/1/news?country=us&language=en&removeduplicate=1&apikey=" + API_KEY + "&q=";
 
     private final OkHttpClient client = new OkHttpClient();
 
+    private String applyPreferredTopics(String url, UserPreferences userPreferences) {
+        String query = "";
+        ArrayList<String> preferredTopics = userPreferences.getPreferredTopics();
+
+        for (int i = 0; i < preferredTopics.size(); i++) {
+            if (i > 0)
+                query += " OR ";
+            query += preferredTopics.get(i);
+        }
+
+        try {
+            String replacement = "https://newsdata.io/api/1/news?"
+                    + "q=" + java.net.URLEncoder.encode(query, "UTF-8") + "&";
+            return url.replace("https://newsdata.io/api/1/news?", replacement);
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("Error Applying Preferred Topics: " + e.getMessage());
+        }
+        return url;
+    }
+
+    private String applyLanguageAndCountry(String url, UserPreferences userPreferences) {
+        String language = "language=" + userPreferences.getLanguage();
+        String country = "country=" + userPreferences.getRegion();
+        return url.replace("language=en", language).replace("country=us", country);
+    }
+
+    private boolean isSourceBlocked(String source, UserPreferences userPreferences) {
+        return userPreferences.getBlockedSources().contains(source);
+    }
+
     @Override
-    public List<Article> fetchTopHeadlines() {
+    public List<Article> fetchTopHeadlines(UserPreferences userPreferences) {
         List<Article> articles = new ArrayList<>();
         Set<String> seen = new HashSet<>();
+
+        String customizedURL = applyLanguageAndCountry(TOP_URL, userPreferences);
+        customizedURL = applyPreferredTopics(customizedURL, userPreferences);
 
         try {
             String nextPage = null;
 
             while (articles.size() < 20) {
-                String url = TOP_URL;
+                String url = customizedURL;
                 if (nextPage != null) url += "&page=" + nextPage;
 
                 Request request = new Request.Builder().url(url).build();
@@ -57,7 +91,7 @@ public class DBUserDataAccessObject implements
 
                 JSONArray results = obj.optJSONArray("results");
                 if (results != null) {
-                    extractArticles(results, articles, seen);
+                    extractArticles(results, articles, seen, userPreferences);
 
                     if (articles.size() >= 20) break;
                 }
@@ -74,15 +108,17 @@ public class DBUserDataAccessObject implements
     }
 
     @Override
-    public List<Article> searchByKeyword(String keyword) {
+    public List<Article> searchByKeyword(String keyword, UserPreferences userPreferences) {
         List<Article> articles = new ArrayList<>();
         Set<String> seen = new HashSet<>();
+
+        String customizedSearchURL = applyLanguageAndCountry(SEARCH_URL, userPreferences);
 
         try {
             String nextPage = null;
 
             while (articles.size() < 1000) {
-                String url = SEARCH_URL + keyword;
+                String url = customizedSearchURL + keyword;
 
                 if (nextPage != null) {
                     url += "&page=" + nextPage;
@@ -97,7 +133,7 @@ public class DBUserDataAccessObject implements
 
                 JSONArray results = obj.optJSONArray("results");
                 if (results != null) {
-                    extractArticles(results, articles, seen);
+                    extractArticles(results, articles, seen, userPreferences);
 
                     if (articles.size() >= 1000) break;
                 }
@@ -116,7 +152,8 @@ public class DBUserDataAccessObject implements
 
     private void extractArticles(JSONArray results,
                                  List<Article> articles,
-                                 Set<String> seen) {
+                                 Set<String> seen,
+                                 UserPreferences userPreferences) {
 
         for (int i = 0; i < results.length(); i++) {
             JSONObject a = results.getJSONObject(i);
@@ -125,7 +162,7 @@ public class DBUserDataAccessObject implements
             String source = a.optString("source_id", "Unknown").trim();
 
             String key = title.toLowerCase() + "|" + source.toLowerCase();
-            if (title.isEmpty() || seen.contains(key)) continue;
+            if (title.isEmpty() || seen.contains(key) || isSourceBlocked(source, userPreferences)) continue;
             seen.add(key);
 
             articles.add(new Article(
@@ -238,7 +275,7 @@ public class DBUserDataAccessObject implements
     }
 
     @Override
-    public List<Article> searchByTopics(Set<String> topics, int page) {
+    public List<Article> searchByTopics(Set<String> topics, int page, UserPreferences userPreferences) {
         if (topics == null || topics.isEmpty()) {
             return new ArrayList<>();
         }
@@ -265,10 +302,12 @@ public class DBUserDataAccessObject implements
             while (currentPageIndex <= page) {
                 String url = "https://newsdata.io/api/1/news?"
                         + "q=" + java.net.URLEncoder.encode(query, "UTF-8")
+                        + "&country=us"
                         + "&language=en"
                         + "&removeduplicate=1"
                         + "&apikey=" + API_KEY;
-                
+                url = applyLanguageAndCountry(url, userPreferences);
+
                 if (nextPage != null) {
                     url += "&page=" + nextPage;
                 }
@@ -300,7 +339,7 @@ public class DBUserDataAccessObject implements
                         String source = a.optString("source_id", "Unknown").trim();
                         String key = title.toLowerCase() + "|" + source.toLowerCase();
 
-                        if (title.isEmpty() || seen.contains(key)) continue;
+                        if (title.isEmpty() || seen.contains(key) || isSourceBlocked(source, userPreferences)) continue;
                         seen.add(key);
 
                         articles.add(new Article(
