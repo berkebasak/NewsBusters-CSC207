@@ -10,6 +10,7 @@ import use_case.filter_news.FilterNewsUserDataAccessInterface;
 import use_case.search_news.SearchNewsUserDataAccessInterface;
 import use_case.top_headlines.TopHeadlinesUserDataAccessInterface;
 import use_case.discover_page.DiscoverPageDataAccessInterface;
+import util.EnvLoader;
 
 import java.io.*;
 import java.util.*;
@@ -21,6 +22,15 @@ public class DBUserDataAccessObject implements
         DiscoverPageDataAccessInterface {
 
     private static final String API_KEY = "pub_24c036e0a4b64b0a82914e3fabe9e090";
+
+    private static String getEnvOrThrow(String envName, String label) {
+        String value = EnvLoader.get(envName);  // <-- Use loader instead
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException(
+                    label + " not set. Please define environment variable: " + envName);
+        }
+        return value;
+    }
 
     private static final String TOP_URL =
             "https://newsdata.io/api/1/news?country=us&language=en&category=top&removeduplicate=1&apikey=" + API_KEY;
