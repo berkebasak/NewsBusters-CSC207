@@ -167,7 +167,17 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
 
     public void setController(DiscoverPageController controller) {
         this.controller = controller;
-        if (controller != null) {
+    }
+
+    /**
+     * Loads articles when the view becomes visible.
+     * This ensures articles are loaded after the user has logged in.
+     */
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible && controller != null) {
+            // Load articles when view becomes visible (after login)
             controller.execute();
         }
     }

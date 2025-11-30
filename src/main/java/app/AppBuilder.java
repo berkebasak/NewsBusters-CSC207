@@ -62,7 +62,7 @@ public class AppBuilder {
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
     private final ViewManager viewManager =
             new ViewManager(cardPanel, cardLayout, viewManagerModel);
-    private final DBUserDataAccessObject newsDataAccessObject = new DBUserDataAccessObject();
+    private DBUserDataAccessObject newsDataAccessObject;
     private FileUserDataAccessObject userDataAccessObject;
 
     private LoginView loginView;
@@ -111,6 +111,9 @@ public class AppBuilder {
     }
 
     public AppBuilder addTopHeadlinesUseCase() {
+        if (newsDataAccessObject == null) {
+            newsDataAccessObject = new DBUserDataAccessObject();
+        }
         TopHeadlinesUserDataAccessInterface dao = newsDataAccessObject;
         TopHeadlinesPresenter presenter = new TopHeadlinesPresenter(topHeadlinesViewModel);
         TopHeadlinesInputBoundary interactor = new TopHeadlinesInteractor(dao, presenter);
@@ -137,6 +140,9 @@ public class AppBuilder {
     }
 
     public AppBuilder addSearchNewsUseCase() {
+        if (newsDataAccessObject == null) {
+            newsDataAccessObject = new DBUserDataAccessObject();
+        }
         SearchNewsOutputBoundary presenter = new SearchNewsPresenter(topHeadlinesViewModel);
         SearchNewsInputBoundary interactor =
                 new SearchNewsInteractor(newsDataAccessObject, presenter);
@@ -170,11 +176,19 @@ public class AppBuilder {
     }
 
     public AppBuilder addDiscoverPageUseCase() {
+        // Ensure newsDataAccessObject has FileUserDataAccessObject for Discover Page
+        if (newsDataAccessObject == null) {
+            newsDataAccessObject = new DBUserDataAccessObject(getUserDataAccessObject());
+        } else {
+            // If it was created without userDataAccess, recreate it with userDataAccess
+            // This is safe because DBUserDataAccessObject is stateless except for userDataAccess
+            newsDataAccessObject = new DBUserDataAccessObject(getUserDataAccessObject());
+        }
         DiscoverPageOutputBoundary presenter = new DiscoverPagePresenter(discoverPageViewModel);
         DiscoverPageInputBoundary interactor =
                 new DiscoverPageInteractor(newsDataAccessObject, presenter);
         DiscoverPageController controller =
-                new DiscoverPageController(interactor, discoverPageViewModel);
+                new DiscoverPageController(interactor, discoverPageViewModel, loginViewModel);
         discoverPageView.setController(controller);
         return this;
     }
