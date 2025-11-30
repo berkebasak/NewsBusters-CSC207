@@ -113,12 +113,20 @@ public class AppBuilder {
     public AppBuilder addTopHeadlinesUseCase() {
         TopHeadlinesUserDataAccessInterface dao = newsDataAccessObject;
         TopHeadlinesPresenter presenter = new TopHeadlinesPresenter(topHeadlinesViewModel);
+
         TopHeadlinesInputBoundary interactor =
-                new TopHeadlinesInteractor(dao, newsDataAccessObject, presenter);
+                new TopHeadlinesInteractor(
+                        dao,
+                        getUserDataAccessObject(),
+                        loginViewModel,
+                        presenter
+                );
+
         TopHeadlinesController controller = new TopHeadlinesController(interactor);
         topHeadlinesView.setController(controller);
         return this;
     }
+
 
     public AppBuilder addLoginUseCase() {
         LoginOutputBoundary presenter = new LoginPresenter(loginViewModel, viewManagerModel);
