@@ -2,7 +2,9 @@ package view;
 
 import entity.Article;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.discover_page.DiscoverPageController;
 import interface_adapter.login.LoginViewModel;
+import interface_adapter.set_preferences.SetPreferencesViewModel;
 import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
 import interface_adapter.profile.ProfileController;
@@ -31,10 +33,13 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
     private TopHeadlinesController controller;
     private ProfileController profileController;
+    private DiscoverPageController discoverPageController;
     private final TopHeadlinesViewModel viewModel;
 
     private SaveArticleController saveController;
     private SaveArticleViewModel saveViewModel;
+
+    private SetPreferencesViewModel setPreferencesViewModel;
 
     private ViewManagerModel viewManagerModel;
     private LoginViewModel loginViewModel;
@@ -140,6 +145,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         // Go to Discover Page
         discoverButton.addActionListener(e -> {
             if (viewManagerModel != null) {
+                discoverPageController.execute(setPreferencesViewModel.getState().getUserPreferences());
                 viewManagerModel.changeView(DiscoverPageView.VIEW_NAME);
             }
         });
@@ -149,7 +155,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             if (searchNewsController != null) {
                 String keyword = keywordField.getText().trim();
                 if (!keyword.isEmpty()) {
-                    searchNewsController.excute(keyword);
+                    searchNewsController.excute(keyword, setPreferencesViewModel.getState().getUserPreferences());
                 }
             }
         });
@@ -226,6 +232,10 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         this.profileController = profileController;
     }
 
+    public void setDiscoverPageController(DiscoverPageController discoverPageController) {
+        this.discoverPageController = discoverPageController;
+    }
+
     public void setSaveArticleUseCase(SaveArticleController controller,
                                       SaveArticleViewModel viewModel) {
         this.saveController = controller;
@@ -245,9 +255,11 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         this.searchNewsController = searchNewsController;
     }
 
-    public void setViewManagerModel(ViewManagerModel viewManagerModel, LoginViewModel loginViewModel) {
+    public void setViewManagerModel(ViewManagerModel viewManagerModel, LoginViewModel loginViewModel,
+                                    SetPreferencesViewModel setPreferencesViewModel) {
         this.viewManagerModel = viewManagerModel;
         this.loginViewModel = loginViewModel;
+        this.setPreferencesViewModel = setPreferencesViewModel;
 
         profileButton.addActionListener(e -> {
             if (profileController != null && loginViewModel != null) {
@@ -286,7 +298,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
 
     private void loadArticles() {
         if (controller != null) {
-            controller.fetchHeadlines();
+            controller.fetchHeadlines(setPreferencesViewModel.getState().getUserPreferences());
         }
         listModel.clear();
         if (viewModel.getState().getArticles() != null) {
