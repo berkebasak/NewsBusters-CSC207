@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import use_case.search_news.SearchNewsUserDataAccessInterface;
 import use_case.top_headlines.TopHeadlinesUserDataAccessInterface;
 import use_case.discover_page.DiscoverPageDataAccessInterface;
+import util.EnvLoader;
 
 import java.io.*;
 import java.util.*;
@@ -21,7 +22,7 @@ public class DBUserDataAccessObject implements
     private static final String API_KEY = getEnvOrThrow("NEWSDATA_API_KEY", "NewsData API key");
 
     private static String getEnvOrThrow(String envName, String label) {
-        String value = System.getenv(envName);
+        String value = EnvLoader.get(envName);  // <-- Use loader instead
         if (value == null || value.isBlank()) {
             throw new IllegalStateException(
                     label + " not set. Please define environment variable: " + envName);
