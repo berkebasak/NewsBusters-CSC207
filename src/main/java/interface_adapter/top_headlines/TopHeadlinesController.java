@@ -1,5 +1,6 @@
 package interface_adapter.top_headlines;
 
+import entity.UserPreferences;
 import use_case.top_headlines.TopHeadlinesInputBoundary;
 import use_case.top_headlines.TopHeadlinesInputData;
 
@@ -10,8 +11,8 @@ public class TopHeadlinesController {
         this.interactor = interactor;
     }
 
-    public void fetchHeadlines() {
-        TopHeadlinesInputData inputData = new TopHeadlinesInputData("top");
+    public void fetchHeadlines(UserPreferences userPreferences) {
+        TopHeadlinesInputData inputData = new TopHeadlinesInputData("top", userPreferences);
         interactor.execute(inputData);
     }
 }

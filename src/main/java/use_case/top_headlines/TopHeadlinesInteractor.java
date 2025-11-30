@@ -19,7 +19,7 @@ public class TopHeadlinesInteractor implements TopHeadlinesInputBoundary {
 
     @Override
     public void execute(TopHeadlinesInputData inputData) {
-        List<Article> articles = dataAccess.fetchTopHeadlines();
+        List<Article> articles = dataAccess.fetchTopHeadlines(inputData.getUserPreferences());
 
         if (articles != null && articles.size() > 20) {
             articles = new ArrayList<>(articles.subList(0, 20));

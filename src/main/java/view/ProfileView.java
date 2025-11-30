@@ -6,6 +6,7 @@ import interface_adapter.login.LoginViewModel;
 import interface_adapter.profile.ProfileController;
 import interface_adapter.profile.ProfileState;
 import interface_adapter.profile.ProfileViewModel;
+import interface_adapter.set_preferences.SetPreferencesViewModel;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
 
 import javax.swing.*;
@@ -147,8 +148,9 @@ public class ProfileView extends JPanel implements PropertyChangeListener {
         // Placeholder listeners for new buttons
         savedArticlesButton
                 .addActionListener(e -> JOptionPane.showMessageDialog(this, "Saved Articles feature coming soon!"));
-        preferencesButton
-                .addActionListener(e -> JOptionPane.showMessageDialog(this, "Preferences feature coming soon!"));
+        preferencesButton.addActionListener(e -> {
+            viewManagerModel.changeView(SetPreferencesViewModel.VIEW_NAME);
+        });
         accountSettingsButton
                 .addActionListener(e -> JOptionPane.showMessageDialog(this, "Account Settings feature coming soon!"));
 

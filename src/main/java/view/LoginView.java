@@ -4,6 +4,8 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
+import interface_adapter.set_preferences.SetPreferencesController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -14,6 +16,7 @@ public class LoginView extends JPanel implements PropertyChangeListener {
 
     private final LoginViewModel loginViewModel;
     private LoginController loginController;
+    private SetPreferencesController setPreferencesController;
     private ViewManagerModel viewManagerModel;
 
     private final JTextField usernameField = new JTextField(20);
@@ -99,6 +102,7 @@ public class LoginView extends JPanel implements PropertyChangeListener {
 
         loginButton.addActionListener(e -> {
             if (loginController != null) {
+
                 loginController.login(
                         usernameField.getText(),
                         new String(passwordField.getPassword())
@@ -115,6 +119,10 @@ public class LoginView extends JPanel implements PropertyChangeListener {
 
     public void setLoginController(LoginController loginController) {
         this.loginController = loginController;
+    }
+
+    public void setSetPreferencesController(SetPreferencesController setPreferencesController) {
+        this.setPreferencesController = setPreferencesController;
     }
 
     public void setViewManagerModel(ViewManagerModel viewManagerModel) {
@@ -139,6 +147,8 @@ public class LoginView extends JPanel implements PropertyChangeListener {
         } else if (state.getMessage() != null) {
             messageLabel.setForeground(new Color(0, 128, 0));
             messageLabel.setText(state.getMessage());
+            String username = loginViewModel.getState().getUsername();
+            setPreferencesController.load(username);
             clearFields();
         } else {
             messageLabel.setText(" ");

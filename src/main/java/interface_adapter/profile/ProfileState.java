@@ -1,6 +1,8 @@
 package interface_adapter.profile;
 
 import entity.Article;
+import entity.UserPreferences;
+
 import java.util.ArrayList;
 import java.util.List;
 
