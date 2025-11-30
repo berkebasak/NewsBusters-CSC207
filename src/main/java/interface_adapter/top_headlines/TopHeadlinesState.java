@@ -7,6 +7,7 @@ import java.util.List;
 public class TopHeadlinesState {
     private List<Article> articles = new ArrayList<>();
     private String error;
+    private String articleSourceLabel = "New Articles";
 
     public List<Article> getArticles() {
         return articles;
@@ -31,4 +32,13 @@ public class TopHeadlinesState {
     public void setError(String error) {
         this.error = error;
     }
+
+    public String getArticleSourceLabel() {
+        return articleSourceLabel;
+    }
+
+    public void setArticleSourceLabel(String articleSourceLabel) {
+        this.articleSourceLabel = articleSourceLabel;
+    }
+
 }
