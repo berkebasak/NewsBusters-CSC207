@@ -34,7 +34,7 @@ class DiscoverPageInteractorTest {
         }
 
         @Override
-        public List<Article> getReadingHistory() {
+        public List<Article> getReadingHistory(String username) {
             return readingHistory;
         }
 
@@ -70,7 +70,7 @@ class DiscoverPageInteractorTest {
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(readingHistory, topics, discoveredArticles, null);
         
         // Current topics are different (or null)
-        DiscoverPageInputData input = new DiscoverPageInputData(null, 0);
+        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser");
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -110,7 +110,7 @@ class DiscoverPageInteractorTest {
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(readingHistory, topics, discoveredArticles, null);
         
         // Current topics are the same
-        DiscoverPageInputData input = new DiscoverPageInputData(topics, 0);
+        DiscoverPageInputData input = new DiscoverPageInputData(topics, 0, "testUser");
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -138,7 +138,7 @@ class DiscoverPageInteractorTest {
     @Test
     void failure_noReadingHistory() {
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(new ArrayList<>(), new HashSet<>(), new ArrayList<>(), null);
-        DiscoverPageInputData input = new DiscoverPageInputData(null, 0);
+        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser");
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -167,7 +167,7 @@ class DiscoverPageInteractorTest {
         readingHistory.add(new Article("1", "The a an", "d", "l1", "i1", "s1")); // Only stop words
 
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(readingHistory, new HashSet<>(), new ArrayList<>(), null);
-        DiscoverPageInputData input = new DiscoverPageInputData(null, 0);
+        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser");
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -203,7 +203,7 @@ class DiscoverPageInteractorTest {
 
         // No articles on page 1, but articles on page 0
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(readingHistory, topics, new ArrayList<>(), page0Articles);
-        DiscoverPageInputData input = new DiscoverPageInputData(topics, 0); // Will try page 1, then fallback to 0
+        DiscoverPageInputData input = new DiscoverPageInputData(topics, 0, "testUser"); // Will try page 1, then fallback to 0
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -237,7 +237,7 @@ class DiscoverPageInteractorTest {
 
         // No articles on any page
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(readingHistory, topics, new ArrayList<>(), new ArrayList<>());
-        DiscoverPageInputData input = new DiscoverPageInputData(null, 0);
+        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser");
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -265,7 +265,7 @@ class DiscoverPageInteractorTest {
         // DAO that throws exception
         DiscoverPageDataAccessInterface dao = new DiscoverPageDataAccessInterface() {
             @Override
-            public List<Article> getReadingHistory() {
+            public List<Article> getReadingHistory(String username) {
                 throw new RuntimeException("Database error");
             }
 
@@ -280,7 +280,7 @@ class DiscoverPageInteractorTest {
             }
         };
 
-        DiscoverPageInputData input = new DiscoverPageInputData(null, 0);
+        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser");
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override

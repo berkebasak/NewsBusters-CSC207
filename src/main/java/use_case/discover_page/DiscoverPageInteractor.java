@@ -18,7 +18,8 @@ public class DiscoverPageInteractor implements DiscoverPageInputBoundary {
     @Override
     public void execute(DiscoverPageInputData inputData) {
         try {
-            List<Article> readingHistory = dataAccessObject.getReadingHistory();
+            String username = inputData.getUsername();
+            List<Article> readingHistory = dataAccessObject.getReadingHistory(username);
 
             if (readingHistory == null || readingHistory.isEmpty()) {
                 presenter.prepareNoHistoryView("Save articles to personalize your Discover feed.");

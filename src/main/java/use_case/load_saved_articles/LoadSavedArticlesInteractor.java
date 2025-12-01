@@ -1,9 +1,9 @@
 package use_case.load_saved_articles;
 
-import entity.User;
 import data_access.UserDataAccessInterface;
+import entity.User;
 
-public class LoadSavedArticlesInteractor implements LoadSavedArticlesInputBoundary{
+public class LoadSavedArticlesInteractor implements LoadSavedArticlesInputBoundary {
 
     private final UserDataAccessInterface userDataAccess;
     private final LoadSavedArticlesOutputBoundary presenter;
@@ -16,22 +16,26 @@ public class LoadSavedArticlesInteractor implements LoadSavedArticlesInputBounda
 
     @Override
     public void execute(LoadSavedArticlesInputData inputData) {
-        String username = inputData.getUsername();
+        final String username = inputData.getUsername();
 
         if (username == null || username.isBlank()) {
             presenter.prepareFailView("No logged-in user.");
-            return;
         }
+        else {
+            final User user = userDataAccess.get(username);
 
-        User user = userDataAccess.get(username);
-        if (user == null) {
-            presenter.prepareFailView("User not found.");
-            return;
+            if (user == null) {
+                presenter.prepareFailView("User not found.");
+            }
+            else {
+                presenter.prepareSuccessView(
+                        new LoadSavedArticlesOutputData(
+                                user.getUsername(),
+                                user.getSavedArticles()
+                        )
+                );
+            }
         }
-
-        presenter.prepareSuccessView(
-                new LoadSavedArticlesOutputData(user.getUsername(),
-                        user.getSavedArticles())
-        );
     }
 }
+
