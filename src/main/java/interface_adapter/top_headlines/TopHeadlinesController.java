@@ -11,7 +11,6 @@ public class TopHeadlinesController {
     }
 
     public void fetchHeadlines() {
-        TopHeadlinesInputData inputData = new TopHeadlinesInputData("top");
-        interactor.execute(inputData);
+        interactor.execute(new TopHeadlinesInputData("fetch"));
     }
 }

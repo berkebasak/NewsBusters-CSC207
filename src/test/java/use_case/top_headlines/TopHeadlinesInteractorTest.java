@@ -1,6 +1,9 @@
 package use_case.top_headlines;
 
 import entity.Article;
+import entity.User;
+import data_access.UserDataAccessInterface;
+import interface_adapter.login.LoginViewModel;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,43 +13,163 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TopHeadlinesInteractorTest {
 
-    @Test
-    void limitsToTwentyArticles() {
-        TopHeadlinesUserDataAccessInterface fakeDao = new TopHeadlinesUserDataAccessInterface() {
-            @Override
-            public List<Article> fetchTopHeadlines() {
-                List<Article> list = new ArrayList<>();
-                for (int i = 0; i < 25; i++) {
-                    Article a = new Article();
-                    a.setTitle("Headline " + i);
-                    a.setSource("example-source");
-                    a.setUrl("https://example.com/article-" + i);
-                    list.add(a);
-                }
-                return list;
-            }
-        };
+    private static class FakeLoginViewModel extends LoginViewModel {
+        public FakeLoginViewModel(String username) {
+            this.getState().setUsername(username);
+        }
+    }
 
-        class CapturingPresenter implements TopHeadlinesOutputBoundary {
-            TopHeadlinesOutputData lastData;
+    private static class CapturingPresenter implements TopHeadlinesOutputBoundary {
+        boolean successCalled = false;
+        boolean alternativeCalled = false;
+        TopHeadlinesOutputData lastSuccessData;
+        TopHeadlinesOutputData lastAlternativeData;
+        String lastAlternativeMessage;
 
-            @Override
-            public void present(TopHeadlinesOutputData outputData) {
-                this.lastData = outputData;
-            }
+        @Override
+        public void present(TopHeadlinesOutputData outputData) {
+            successCalled = true;
+            lastSuccessData = outputData;
         }
 
+        @Override
+        public void presentAlternative(TopHeadlinesOutputData outputData, String message) {
+            alternativeCalled = true;
+            lastAlternativeData = outputData;
+            lastAlternativeMessage = message;
+        }
+    }
+
+    private static class FakeUserDao implements UserDataAccessInterface {
+
+        private final User user;
+
+        public FakeUserDao(User user) {
+            this.user = user;
+        }
+
+        @Override
+        public User get(String username) {
+            return user != null && user.getUsername().equals(username) ? user : null;
+        }
+
+        @Override
+        public boolean existsByName(String name) {
+            return user != null && user.getUsername().equals(name);
+        }
+
+        @Override
+        public void save(User user) {
+        }
+
+        @Override
+        public void update(User user) {
+        }
+
+        @Override
+        public List<User> getAll() {
+            return user == null ? new ArrayList<>() : List.of(user);
+        }
+
+    }
+
+    @Test
+    void mainFlowLimitsToTwentyArticles() {
+
+        TopHeadlinesUserDataAccessInterface fakeApi = () -> {
+            List<Article> list = new ArrayList<>();
+            for (int i = 0; i < 25; i++) {
+                Article a = new Article();
+                a.setTitle("Headline " + i);
+                a.setUrl("https://example.com/" + i);
+                list.add(a);
+            }
+            return list;
+        };
+
+        User user = User.fromPersistence("berke", "1234", new ArrayList<>(), new ArrayList<>());
+        FakeUserDao fakeUserDao = new FakeUserDao(user);
+
+        FakeLoginViewModel loginVM = new FakeLoginViewModel("berke");
         CapturingPresenter presenter = new CapturingPresenter();
-        TopHeadlinesInputBoundary interactor = new TopHeadlinesInteractor(fakeDao, presenter);
 
-        TopHeadlinesInputData inputData = new TopHeadlinesInputData("top");
-        interactor.execute(inputData);
+        TopHeadlinesInteractor interactor =
+                new TopHeadlinesInteractor(fakeApi, fakeUserDao, loginVM, presenter);
 
-        assertNotNull(presenter.lastData);
-        List<Article> result = presenter.lastData.getArticles();
-        assertNotNull(result);
+        interactor.execute(new TopHeadlinesInputData("top"));
+
+        assertTrue(presenter.successCalled);
+        assertFalse(presenter.alternativeCalled);
+
+        List<Article> result = presenter.lastSuccessData.getArticles();
         assertEquals(20, result.size());
         assertEquals("Headline 0", result.get(0).getTitle());
         assertEquals("Headline 19", result.get(19).getTitle());
+    }
+
+    @Test
+    void alternativeFlowUsesSavedArticlesFromUser() {
+
+        TopHeadlinesUserDataAccessInterface fakeApi = ArrayList::new;
+
+        List<Article> saved = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Article a = new Article();
+            a.setTitle("Saved " + i);
+            a.setUrl("https://example.com/s-" + i);
+            saved.add(a);
+        }
+
+        User user = User.fromPersistence("berke", "1234", saved, new ArrayList<>());
+        FakeUserDao fakeUserDao = new FakeUserDao(user);
+
+        FakeLoginViewModel loginVM = new FakeLoginViewModel("berke");
+        CapturingPresenter presenter = new CapturingPresenter();
+
+        TopHeadlinesInteractor interactor =
+                new TopHeadlinesInteractor(fakeApi, fakeUserDao, loginVM, presenter);
+
+        interactor.execute(new TopHeadlinesInputData("top"));
+
+        assertFalse(presenter.successCalled);
+        assertTrue(presenter.alternativeCalled);
+
+        List<Article> result = presenter.lastAlternativeData.getArticles();
+        assertEquals(3, result.size());
+        assertEquals("Saved 0", result.get(0).getTitle());
+        assertEquals("Saved 2", result.get(2).getTitle());
+        assertTrue(presenter.lastAlternativeMessage.contains("saved"));
+    }
+
+    @Test
+    void alternativeFlowAlsoLimitsToTwentyArticles() {
+
+        TopHeadlinesUserDataAccessInterface fakeApi = () -> null;
+
+        List<Article> saved = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            Article a = new Article();
+            a.setTitle("Saved " + i);
+            a.setUrl("https://example.com/s-" + i);
+            saved.add(a);
+        }
+
+        User user = User.fromPersistence("berke", "1234", saved, new ArrayList<>());
+        FakeUserDao fakeUserDao = new FakeUserDao(user);
+
+        FakeLoginViewModel loginVM = new FakeLoginViewModel("berke");
+        CapturingPresenter presenter = new CapturingPresenter();
+
+        TopHeadlinesInteractor interactor =
+                new TopHeadlinesInteractor(fakeApi, fakeUserDao, loginVM, presenter);
+
+        interactor.execute(new TopHeadlinesInputData("top"));
+
+        assertTrue(presenter.alternativeCalled);
+
+        List<Article> result = presenter.lastAlternativeData.getArticles();
+        assertEquals(20, result.size());
+        assertEquals("Saved 0", result.get(0).getTitle());
+        assertEquals("Saved 19", result.get(19).getTitle());
     }
 }

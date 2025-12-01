@@ -7,6 +7,7 @@ import java.util.List;
 public class TopHeadlinesState {
     private List<Article> articles = new ArrayList<>();
     private String error;
+    private String articleSourceLabel = "New Articles";
     private List<Article> originalArticles = new ArrayList<>(); // Stores unfiltered articles
     private java.util.Set<String> currentFilterLevels = new java.util.HashSet<>(); // Set of "High", "Medium", "Low" - empty means no filter
 
@@ -32,6 +33,14 @@ public class TopHeadlinesState {
      */
     public void setError(String error) {
         this.error = error;
+    }
+
+    public String getArticleSourceLabel() {
+        return articleSourceLabel;
+    }
+
+    public void setArticleSourceLabel(String articleSourceLabel) {
+        this.articleSourceLabel = articleSourceLabel;
     }
 
     /**
