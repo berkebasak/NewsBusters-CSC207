@@ -244,10 +244,37 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
         filterDialog.setSize(400, 250);
         filterDialog.setLocationRelativeTo(this);
 
-        // Create header label
+        // Create header panel with label and info button
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
+        headerPanel.setBackground(Color.WHITE);
+        headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
         JLabel headerLabel = new JLabel("Filter articles based on credibility score:");
         headerLabel.setFont(new Font("TimesNewRoman", Font.BOLD, 14));
-        headerLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
+        headerLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+        
+        JLabel infoLabel = new JLabel("ⓘ");
+        infoLabel.setFont(new Font("TimesNewRoman", Font.PLAIN, 16));
+        infoLabel.setForeground(new Color(100, 100, 200)); // Blue-ish color for info
+        infoLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        infoLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+        infoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                JOptionPane.showMessageDialog(
+                        filterDialog,
+                        "High: overallTrust >= 0.8\nMedium: overallTrust >= 0.65\nLow: overallTrust < 0.65",
+                        "Trust Score Thresholds",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        });
+        
+        headerPanel.add(headerLabel);
+        headerPanel.add(Box.createHorizontalStrut(3)); // Small gap
+        headerPanel.add(infoLabel);
 
         // Create checkboxes with color icons
         JCheckBox highCheckBox = new JCheckBox("🟢 High Trust");
@@ -276,7 +303,7 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
         buttonPanel.add(applyButton);
         buttonPanel.add(clearButton);
 
-        filterDialog.add(headerLabel, BorderLayout.NORTH);
+        filterDialog.add(headerPanel, BorderLayout.NORTH);
         filterDialog.add(checkboxPanel, BorderLayout.CENTER);
         filterDialog.add(buttonPanel, BorderLayout.SOUTH);
 

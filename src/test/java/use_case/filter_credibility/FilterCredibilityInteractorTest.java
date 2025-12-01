@@ -16,8 +16,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class FilterCredibilityInteractorTest {
 
+    /**
+     * Helper method to create an article with a credibility score.
+     */
     private Article createArticleWithScore(String id, String title, String level) {
-        
+        // Create credibility score that results in the desired level
+        // High: overallTrust >= 0.8
+        // Medium: overallTrust >= 0.65
+        // Low: overallTrust < 0.65
+
         double sourceScore, sentimentScore, claimConfidence;
         
         if ("High".equals(level)) {
