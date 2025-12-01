@@ -2,37 +2,30 @@
 
 **Smart News Aggregation & Fake News Detection**
 
-**Domain:** Smart News / AI Analysis
+**Domain:** News Credibility
 
 ### 📖 About The Project
 
-NewsBusters is a desktop application designed to combat misinformation in the digital age. It allows users to browse current headlines while providing real-time credibility assessments. By combining source reliability metrics with AI-based content analysis, NewsBusters assigns a "Trust Score" to every article, empowering users to consume information confidently.
+NewsBusters is a desktop application designed to combat misinformation in the digital age. It allows users to browse current headlines while providing real-time credibility assessments. By combining powerful API's, NewsBusters assigns a "Trust Score" to every article, empowering users to consume information confidently.
 
 ### ✨ Key Features
 
 **User Experience**
 
-  * **Smart Feed:** Browse top headlines and read full articles directly in the browser.
+  * **Smart Feed:** Browse top headlines in the app and read full articles on the web.
   * **Personalization:** Tailor your feed by setting language and region preferences.
   * **Search & Discovery:** Filter news by topic, search by specific keywords, or use the "Discover" tab for recommendations based on reading history.
-  * **Offline Access:** Save articles locally to read later without an internet connection.
-
-**Credibility & Safety**
-
-  * **Trust Scores:** Every article receives a calculated credibility score.
-  * **Detailed Breakdown:** Expand article cards to view specific signals (Source Reliability, Claim Checks, Sentiment).
-  * **Domain Blocking:** Users can block specific news domains they deem untrustworthy.
-  * **Reporting:** Users can flag articles where the trust score appears inaccurate to help improve the system.
+  * **Trust Scores:** Every article receives a calculated credibility score which you can then filter by to specify your reading experience.
 
 ### 🛠️ Tech Stack & APIs
 
 NewsBusters integrates three distinct external APIs to aggregate news and analyze its veracity. The application is built using **Java** and handles networking via **okhttp3**.
 
-| API Name | Service Provided | Implementation Status |
-| :--- | :--- | :--- |
-| **[NewsData.io](https://newsdata.io/)** | Retrieves global news headlines and supports topic filtering. | ✅ Tested |
-| **[TextRazor](https://www.textrazor.com/)** | Performs NLP (sentiment analysis, entity extraction) to determine content confidence. | ✅ Tested |
-| **[OpenPageRank](https://www.domcop.com/openpagerank/)** | Analyzes domain authority and popularity to determine source reliability. | ✅ Tested |
+| API Name | Service Provided |
+| :--- | :--- |
+| **[NewsData.io](https://newsdata.io/)** | Retrieves global news headlines and supports topic filtering. 
+| **[TextRazor](https://www.textrazor.com/)** | Performs NLP (sentiment analysis, entity extraction) to determine content confidence. 
+| **[OpenPageRank](https://www.domcop.com/openpagerank/)** | Analyzes domain authority and popularity to determine source reliability. 
 
 
 ### 🚀 Getting Started
