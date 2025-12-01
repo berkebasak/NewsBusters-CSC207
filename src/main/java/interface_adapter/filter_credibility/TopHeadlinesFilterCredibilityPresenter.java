@@ -19,6 +19,7 @@ public class TopHeadlinesFilterCredibilityPresenter implements FilterCredibility
     public void presentSuccess(FilterCredibilityOutputData outputData) {
         var state = viewModel.getState();
         state.setArticles(outputData.getFilteredArticles());
+        state.setCurrentFilterLevel(outputData.getFilterLevel());
         state.setError(null); // Clear any previous errors
         viewModel.firePropertyChange();
     }

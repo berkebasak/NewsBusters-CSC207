@@ -19,6 +19,7 @@ public class DiscoverPageFilterCredibilityPresenter implements FilterCredibility
     public void presentSuccess(FilterCredibilityOutputData outputData) {
         var state = viewModel.getState();
         state.setArticles(outputData.getFilteredArticles());
+        state.setCurrentFilterLevel(outputData.getFilterLevel());
         state.setMessage(null); // Clear any previous messages
         state.setHasNoArticles(false);
         state.setHasNoHistory(false);

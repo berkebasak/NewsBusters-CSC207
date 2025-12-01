@@ -61,6 +61,10 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private final JButton generateAllCredibilityButton = new JButton("Generate All Scores");
     private final JButton viewDetailsButton = new JButton("View Details");
 
+    // Filter by trust score
+    private final JLabel filterLabel = new JLabel("Filter by Trust Score:");
+    private final JComboBox<String> filterComboBox = new JComboBox<>(new String[]{"All", "High", "Medium", "Low"});
+
     private final JTextField keywordField = new JTextField(20);
     private final JButton searchButton = new JButton("Search");
 
@@ -93,6 +97,8 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         controlsPanel.add(generateCredibilityButton);
         controlsPanel.add(generateAllCredibilityButton);
         controlsPanel.add(viewDetailsButton);
+        controlsPanel.add(filterLabel);
+        controlsPanel.add(filterComboBox);
 
         headerPanel.add(rightPanel, BorderLayout.EAST);
         headerPanel.add(controlsPanel, BorderLayout.CENTER);
@@ -216,6 +222,40 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                 return;
             }
             viewCredibilityDetailsController.showDetails(article);
+        });
+
+        // Filter by trust score
+        filterComboBox.addActionListener(e -> {
+            if (filterCredibilityController == null) {
+                return; // Filter feature not available yet
+            }
+            String selectedLevel = (String) filterComboBox.getSelectedItem();
+            if (selectedLevel == null) {
+                return;
+            }
+
+            var state = viewModel.getState();
+            List<Article> currentArticles = state.getArticles();
+
+            // Store original articles if not already stored or if we're switching from filtered to unfiltered
+            if (state.getOriginalArticles().isEmpty() && !currentArticles.isEmpty()) {
+                state.setOriginalArticles(currentArticles);
+            }
+
+            // If "All" is selected, restore original articles
+            if ("All".equals(selectedLevel)) {
+                List<Article> originalArticles = state.getOriginalArticles();
+                if (!originalArticles.isEmpty()) {
+                    state.setArticles(new ArrayList<>(originalArticles));
+                    state.setCurrentFilterLevel(null);
+                    viewModel.firePropertyChange();
+                }
+            } else {
+                // Filter articles by the selected level
+                if (!currentArticles.isEmpty()) {
+                    filterCredibilityController.filterArticles(currentArticles, selectedLevel);
+                }
+            }
         });
     }
 
@@ -391,6 +431,14 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             for (Article a : articles) {
                 listModel.addElement(a);
             }
+        }
+
+        // Sync filter combo box with state
+        String currentFilterLevel = state.getCurrentFilterLevel();
+        if (currentFilterLevel == null || "All".equals(currentFilterLevel)) {
+            filterComboBox.setSelectedItem("All");
+        } else {
+            filterComboBox.setSelectedItem(currentFilterLevel);
         }
 
         String error = state.getError();
