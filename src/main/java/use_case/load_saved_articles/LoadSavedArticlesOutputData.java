@@ -1,8 +1,8 @@
 package use_case.load_saved_articles;
 
-import entity.Article;
-
 import java.util.List;
+
+import entity.Article;
 
 public class LoadSavedArticlesOutputData {
     private final String username;
@@ -17,6 +17,7 @@ public class LoadSavedArticlesOutputData {
     public String getUsername() {
         return username;
     }
+
     public List<Article> getSavedArticles() {
         return savedArticles;
     }

@@ -1,9 +1,9 @@
 package interface_adapter.load_saved_articles;
 
-import entity.Article;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import entity.Article;
 
 public class LoadSavedArticlesState {
     private String username = "";
