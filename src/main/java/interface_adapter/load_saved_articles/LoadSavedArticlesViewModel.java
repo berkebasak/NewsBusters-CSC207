@@ -1,9 +1,9 @@
 package interface_adapter.load_saved_articles;
 
-import interface_adapter.ViewModel;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+
+import interface_adapter.ViewModel;
 
 public class LoadSavedArticlesViewModel extends ViewModel<LoadSavedArticlesState> {
 

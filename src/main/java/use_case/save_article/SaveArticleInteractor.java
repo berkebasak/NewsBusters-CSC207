@@ -1,11 +1,11 @@
 package use_case.save_article;
 
+import data_access.FileUserDataAccessObject;
 import entity.Article;
 import entity.User;
-import data_access.FileUserDataAccessObject;
 import interface_adapter.login.LoginViewModel;
 
-public class SaveArticleInteractor implements SaveArticleInputBoundary{
+public class SaveArticleInteractor implements SaveArticleInputBoundary {
 
     private final SaveArticleDataAccessInterface dataAccess;
     private final SaveArticleOutputBoundary presenter;
@@ -24,51 +24,58 @@ public class SaveArticleInteractor implements SaveArticleInputBoundary{
 
     @Override
     public void execute(SaveArticleInputData inputData) {
-        Article article = inputData.getArticle();
+        SaveArticleOutputData outputData;
+
+        final Article article = inputData.getArticle();
 
         if (article == null) {
-            presenter.present(new SaveArticleOutputData(false,
-                    "You need to select an article first."));
-            return;
+            outputData = new SaveArticleOutputData(false,
+                    "You need to select an article first.");
         }
+        else {
+            final String username = loginViewModel.getState().getUsername();
 
-        // basic guard to see if currUser is null
-        String username = loginViewModel.getState().getUsername();
-        if (username == null || username.isBlank()) {
-            presenter.present(new SaveArticleOutputData(false,
-                    "Could not save. No logged-in user."));
-            return;
-        }
-
-        User currUser = userDataAccess.get(username);
-        if (currUser == null) {
-            presenter.present(new SaveArticleOutputData(false,
-                    "Could not save. User not found."));
-            return;
-        }
-
-        try{
-            if (article.getUrl() != null && dataAccess.existsByUserandUrl(username,
-                    article.getUrl())) {
-                presenter.present(new SaveArticleOutputData(false,
-                        "Already saved."));
-                return;
+            if (username == null || username.isBlank()) {
+                outputData = new SaveArticleOutputData(false,
+                        "Could not save. No logged-in user.");
             }
+            else {
+                final User currUser = userDataAccess.get(username);
 
-            // save to txt file
-            dataAccess.saveForUser(username, article);
-            // update domain object
-            currUser.addSavedArticle(article);
-            // save to json
-            userDataAccess.update(currUser);
+                if (currUser == null) {
+                    outputData = new SaveArticleOutputData(false,
+                            "Could not save. User not found.");
+                }
+                else {
+                    try {
+                        boolean alreadySaved = false;
+                        if (article.getUrl() != null && dataAccess.existsByUserandUrl(
+                                username, article.getUrl())) {
+                            alreadySaved = true;
+                        }
 
-            presenter.present(new SaveArticleOutputData(true,
-                    "Saved."));
+                        if (alreadySaved) {
+                            outputData = new SaveArticleOutputData(false,
+                                    "Already saved.");
+                        }
+                        else {
+                            dataAccess.saveForUser(username, article);
+                            currUser.addSavedArticle(article);
+                            userDataAccess.update(currUser);
 
-        } catch (Exception e){
-            e.printStackTrace();
-            presenter.present(new SaveArticleOutputData(false,
-                    "Could not save."));
+                            outputData = new SaveArticleOutputData(true,
+                                    "Saved.");
+                        }
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                        outputData = new SaveArticleOutputData(false,
+                                "Could not save.");
+                    }
+                }
+            }
         }
+
+        presenter.present(outputData);
     }
 }
