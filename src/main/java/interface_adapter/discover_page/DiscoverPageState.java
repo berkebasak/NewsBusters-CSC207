@@ -12,8 +12,8 @@ public class DiscoverPageState {
     private boolean hasNoArticles;
     private Set<String> currentTopics = new java.util.HashSet<>();
     private int currentPage = 0;
-    private List<Article> originalArticles = new ArrayList<>(); // Stores unfiltered articles
-    private java.util.Set<String> currentFilterLevels = new java.util.HashSet<>(); // Set of "High", "Medium", "Low" - empty means no filter
+    private List<Article> originalArticles = new ArrayList<>();
+    private java.util.Set<String> currentFilterLevels = new java.util.HashSet<>();
 
     public List<Article> getArticles() {
         return articles;
