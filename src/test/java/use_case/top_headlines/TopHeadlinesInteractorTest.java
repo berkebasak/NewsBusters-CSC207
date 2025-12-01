@@ -34,6 +34,11 @@ class TopHeadlinesInteractorTest {
             public void present(TopHeadlinesOutputData outputData) {
                 this.lastData = outputData;
             }
+
+            @Override
+            public void prepareFailView(String error) {
+                // fail view not expected in this success test
+            }
         }
 
         CapturingPresenter presenter = new CapturingPresenter();
