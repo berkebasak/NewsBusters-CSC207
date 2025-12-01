@@ -2,6 +2,7 @@ package use_case.search_news;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import entity.Article;
 
 /**
@@ -30,7 +31,7 @@ public class SearchNewsInteractor implements SearchNewsInputBoundary {
      */
     @Override
     public void execute(SearchNewsInputData searchNewsInputData) {
-        String keyword;
+        final String keyword;
 
         if (searchNewsInputData.getKeyword() == null) {
             keyword = "";
@@ -44,18 +45,18 @@ public class SearchNewsInteractor implements SearchNewsInputBoundary {
         }
 
         try {
-            List<Article> articles = userDataAccessObject.searchByKeyword(keyword);
+            final List<Article> articles = userDataAccessObject.searchByKeyword(keyword);
 
             if (articles == null || articles.isEmpty()) {
                 searchNewsPresenter.prepareFailView("No articles found.");
                 return;
             }
 
-            String lowerKeyword = keyword.toLowerCase();
+            final String lowerKeyword = keyword.toLowerCase();
             List<Article> filtered = new ArrayList<>();
 
             for (Article a : articles) {
-                String title = a.getTitle();
+                final String title = a.getTitle();
                 if (title != null && title.toLowerCase().contains(lowerKeyword)) {
                     filtered.add(a);
                 }

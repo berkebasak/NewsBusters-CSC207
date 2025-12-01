@@ -1,6 +1,7 @@
 package use_case.search_news;
 
 import java.util.List;
+
 import entity.Article;
 
 /**
