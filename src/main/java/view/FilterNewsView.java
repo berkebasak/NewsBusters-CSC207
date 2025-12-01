@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Filter News popup window.
- * Lets the user choose one or more news categories.
- * Clean, dynamic, and easy to maintain.
+ * Filter News popup window. Lets the user choose one or more news categories. They can cancel, clear or apply filter.
  */
 public class FilterNewsView extends JDialog {
 
@@ -36,7 +34,7 @@ public class FilterNewsView extends JDialog {
         setLayout(new BorderLayout(10, 10));
         getContentPane().setBackground(Color.WHITE);
 
-        // ===== List of all NewsData.io categories you support =====
+        // List of all NewsData.io categories
         List<String> topics = List.of(
                 "business", "entertainment", "environment", "food", "health",
                 "politics", "science", "sports", "technology", "world",
@@ -46,7 +44,6 @@ public class FilterNewsView extends JDialog {
         JPanel topicsPanel = new JPanel(new GridLayout(0, 2, 8, 8));
         topicsPanel.setBackground(Color.WHITE);
 
-        // Create checkboxes
         for (String topic : topics) {
             String label = capitalize(topic);
             JCheckBox box = new JCheckBox(label);
@@ -80,7 +77,9 @@ public class FilterNewsView extends JDialog {
         clearButton.addActionListener(e -> clearFilters());
     }
 
-     // Collects selected topics and runs the filter use case.
+    /**
+     * Applies the selected topic filters to the news articles.
+     */
     private void applyFilters() {
         List<String> selected = new ArrayList<>();
 
@@ -99,6 +98,9 @@ public class FilterNewsView extends JDialog {
         setVisible(false);
     }
 
+    /**
+     * Collects selected topics and runs the filter use case.
+     */
     private void clearFilters() {
         for (JCheckBox box : checkboxMap.keySet()) {
             box.setSelected(false);
@@ -108,7 +110,11 @@ public class FilterNewsView extends JDialog {
         setVisible(false);
     }
 
-    // Capitalize first letter.
+    /**
+     * Capitalizes the first letter of a string.
+     * @param s the string to capitalize, may be null or empty
+     * @return the capitalized string, or the original string if it is null or empty
+     */
     private String capitalize(String s) {
         if (s == null || s.isEmpty()) return s;
         return s.substring(0, 1).toUpperCase() + s.substring(1);

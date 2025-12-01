@@ -38,8 +38,10 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private SaveArticleViewModel saveViewModel;
 
     private SearchNewsController searchNewsController;
+
     private FilterNewsController filterNewsController;
     private FilterNewsView filterNewsView;
+
     private ViewManagerModel viewManagerModel;
     private LoginViewModel loginViewModel;
 
@@ -65,9 +67,11 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     // Filter by trust score
     private final JButton filterCredibilityButton = new JButton("Filter by Credibility");
 
+    // Search by keyword
     private final JTextField keywordField = new JTextField(20);
     private final JButton searchButton = new JButton("Search");
 
+    // Filter by topics
     private final JButton filterButton = new JButton("Filter");
 
     public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
