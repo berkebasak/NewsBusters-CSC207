@@ -5,7 +5,7 @@ import entity.User;
 import data_access.FileUserDataAccessObject;
 import interface_adapter.login.LoginViewModel;
 
-public class SaveArticleInteractor implements SaveArticleInputBoundary{
+public class SaveArticleInteractor implements SaveArticleInputBoundary {
 
     private final SaveArticleDataAccessInterface dataAccess;
     private final SaveArticleOutputBoundary presenter;
@@ -47,7 +47,7 @@ public class SaveArticleInteractor implements SaveArticleInputBoundary{
             return;
         }
 
-        try{
+        try {
             if (article.getUrl() != null && dataAccess.existsByUserandUrl(username,
                     article.getUrl())) {
                 presenter.present(new SaveArticleOutputData(false,
@@ -65,7 +65,7 @@ public class SaveArticleInteractor implements SaveArticleInputBoundary{
             presenter.present(new SaveArticleOutputData(true,
                     "Saved."));
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             presenter.present(new SaveArticleOutputData(false,
                     "Could not save."));

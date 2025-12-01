@@ -14,14 +14,14 @@ public class FileSaveArticleDataAccess implements SaveArticleDataAccessInterface
     private final File storageFile;
     private final Map<String, Set<String>> urlsByUser = new HashMap<>();
 
-    public FileSaveArticleDataAccess(String filePath) throws IOException{
+    public FileSaveArticleDataAccess(String filePath) throws IOException {
         this.storageFile = new File(filePath);
         try {
             File parent = storageFile.getParentFile();
             if (parent != null && !parent.exists()) {
                 parent.mkdirs(); // ensure directory exists
             }
-            if (!storageFile.exists()){
+            if (!storageFile.exists()) {
                 storageFile.createNewFile();
             }
             loadExisting();
@@ -57,7 +57,7 @@ public class FileSaveArticleDataAccess implements SaveArticleDataAccessInterface
     }
 
     @Override
-    public boolean existsByUserandUrl(String username, String url){
+    public boolean existsByUserandUrl(String username, String url) {
         if (username == null || url == null) {
             return false;
         }
@@ -72,7 +72,7 @@ public class FileSaveArticleDataAccess implements SaveArticleDataAccessInterface
         }
 
         try (FileWriter fw = new FileWriter(storageFile, true);
-             BufferedWriter bw = new BufferedWriter(fw)){
+             BufferedWriter bw = new BufferedWriter(fw)) {
             // username|title|url
             bw.write(username + "|" + article.getTitle() + "|" + article.getUrl());
             bw.newLine();

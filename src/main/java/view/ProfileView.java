@@ -151,7 +151,7 @@ public class ProfileView extends JPanel implements PropertyChangeListener {
                 .addActionListener(e -> {
                     if (loadSavedArticlesController == null || loginViewModel == null) {
                         JOptionPane.showMessageDialog(this, "Saved Articles not available.");
-                                return;
+                        return;
                     }
                     String username = loginViewModel.getState().getUsername();
                     loadSavedArticlesController.execute(username);

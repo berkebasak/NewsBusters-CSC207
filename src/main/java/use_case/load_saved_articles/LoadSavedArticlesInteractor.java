@@ -3,7 +3,7 @@ package use_case.load_saved_articles;
 import entity.User;
 import data_access.UserDataAccessInterface;
 
-public class LoadSavedArticlesInteractor implements LoadSavedArticlesInputBoundary{
+public class LoadSavedArticlesInteractor implements LoadSavedArticlesInputBoundary {
 
     private final UserDataAccessInterface userDataAccess;
     private final LoadSavedArticlesOutputBoundary presenter;
