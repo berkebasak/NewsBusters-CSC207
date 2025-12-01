@@ -10,6 +10,7 @@ import interface_adapter.signup.*;
 import interface_adapter.search_news.SearchNewsController;
 import interface_adapter.search_news.SearchNewsPresenter;
 import interface_adapter.top_headlines.*;
+import interface_adapter.sort_headlines.*;
 import interface_adapter.save_article.*;
 import interface_adapter.discover_page.*;
 import interface_adapter.generate_credibility.GenerateCredibilityController;
@@ -25,6 +26,7 @@ import data_access.save_article.FileSaveArticleDataAccess;
 import use_case.login.*;
 import use_case.signup.*;
 import use_case.top_headlines.*;
+import use_case.sort_headlines.*;
 import use_case.search_news.SearchNewsInputBoundary;
 import use_case.search_news.SearchNewsInteractor;
 import use_case.search_news.SearchNewsOutputBoundary;
@@ -60,8 +62,7 @@ public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
-    private final ViewManager viewManager =
-            new ViewManager(cardPanel, cardLayout, viewManagerModel);
+    private final ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
     private final DBUserDataAccessObject newsDataAccessObject = new DBUserDataAccessObject();
     private FileUserDataAccessObject userDataAccessObject;
 
@@ -119,6 +120,14 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addSortHeadlinesUseCase() {
+        SortHeadlinesPresenter presenter = new SortHeadlinesPresenter(topHeadlinesViewModel);
+        SortHeadlinesInteractor interactor = new SortHeadlinesInteractor(presenter);
+        SortHeadlinesController controller = new SortHeadlinesController(interactor);
+        topHeadlinesView.setSortController(controller);
+        return this;
+    }
+
     public AppBuilder addLoginUseCase() {
         LoginOutputBoundary presenter = new LoginPresenter(loginViewModel, viewManagerModel);
         LoginInputBoundary interactor = new LoginInteractor(getUserDataAccessObject(), presenter);
@@ -128,8 +137,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addSignupUseCase() {
-        SignupOutputBoundary presenter =
-                new SignupPresenter(signupViewModel, viewManagerModel, loginViewModel);
+        SignupOutputBoundary presenter = new SignupPresenter(signupViewModel, viewManagerModel, loginViewModel);
         SignupInputBoundary interactor = new SignupInteractor(getUserDataAccessObject(), presenter);
         SignupController controller = new SignupController(interactor);
         signupView.setSignupController(controller);
@@ -138,8 +146,7 @@ public class AppBuilder {
 
     public AppBuilder addSearchNewsUseCase() {
         SearchNewsOutputBoundary presenter = new SearchNewsPresenter(topHeadlinesViewModel);
-        SearchNewsInputBoundary interactor =
-                new SearchNewsInteractor(newsDataAccessObject, presenter);
+        SearchNewsInputBoundary interactor = new SearchNewsInteractor(newsDataAccessObject, presenter);
         SearchNewsController controller = new SearchNewsController(interactor);
         topHeadlinesView.setSearchNewsController(controller);
         return this;
@@ -148,15 +155,11 @@ public class AppBuilder {
     public AppBuilder addSaveArticleUseCase() throws IOException {
         saveArticleViewModel = new SaveArticleViewModel();
 
-        SaveArticleDataAccessInterface saveDao =
-                new FileSaveArticleDataAccess("data/saved_articles.txt");
-        SaveArticleOutputBoundary savePresenter =
-                new SaveArticlePresenter(saveArticleViewModel);
-        SaveArticleInputBoundary saveInteractor =
-                new SaveArticleInteractor(saveDao, savePresenter,
-                        getUserDataAccessObject(),loginViewModel);
-        SaveArticleController saveController =
-                new SaveArticleController(saveInteractor);
+        SaveArticleDataAccessInterface saveDao = new FileSaveArticleDataAccess("data/saved_articles.txt");
+        SaveArticleOutputBoundary savePresenter = new SaveArticlePresenter(saveArticleViewModel);
+        SaveArticleInputBoundary saveInteractor = new SaveArticleInteractor(saveDao, savePresenter,
+                getUserDataAccessObject(), loginViewModel);
+        SaveArticleController saveController = new SaveArticleController(saveInteractor);
         topHeadlinesView.setSaveArticleUseCase(saveController, saveArticleViewModel);
         return this;
     }
@@ -171,10 +174,8 @@ public class AppBuilder {
 
     public AppBuilder addDiscoverPageUseCase() {
         DiscoverPageOutputBoundary presenter = new DiscoverPagePresenter(discoverPageViewModel);
-        DiscoverPageInputBoundary interactor =
-                new DiscoverPageInteractor(newsDataAccessObject, presenter);
-        DiscoverPageController controller =
-                new DiscoverPageController(interactor, discoverPageViewModel);
+        DiscoverPageInputBoundary interactor = new DiscoverPageInteractor(newsDataAccessObject, presenter);
+        DiscoverPageController controller = new DiscoverPageController(interactor, discoverPageViewModel);
         discoverPageView.setController(controller);
         return this;
     }
@@ -215,17 +216,15 @@ public class AppBuilder {
         var userDao = getUserDataAccessObject();
 
         // optional: use txt data access for coherence check.
-        SaveArticleDataAccessInterface savedTxtDao =
-                new data_access.save_article.FileSaveArticleDataAccess("data/saved_articles.txt");
+        SaveArticleDataAccessInterface savedTxtDao = new data_access.save_article.FileSaveArticleDataAccess(
+                "data/saved_articles.txt");
 
-        LoadSavedArticlesOutputBoundary presenter =
-                new LoadSavedArticlesPresenter(loadSavedArticlesViewModel, viewManagerModel);
+        LoadSavedArticlesOutputBoundary presenter = new LoadSavedArticlesPresenter(loadSavedArticlesViewModel,
+                viewManagerModel);
 
-        LoadSavedArticlesInputBoundary interactor =
-                new LoadSavedArticlesInteractor(userDao, presenter);
+        LoadSavedArticlesInputBoundary interactor = new LoadSavedArticlesInteractor(userDao, presenter);
 
-        LoadSavedArticlesController controller =
-                new LoadSavedArticlesController(interactor);
+        LoadSavedArticlesController controller = new LoadSavedArticlesController(interactor);
 
         // give controller to the ProfileView so the sidebar button can use it
         if (profileView != null) {
@@ -236,44 +235,36 @@ public class AppBuilder {
     }
 
     public AppBuilder addCredibilityUseCases() {
-        GenerateCredibilityDataAccessInterface signalsDAO =
-                new GenerateCredibilityAPIsDataAccessObject();
+        GenerateCredibilityDataAccessInterface signalsDAO = new GenerateCredibilityAPIsDataAccessObject();
 
-        GenerateCredibilityOutputBoundary genPresenterTop =
-                new GenerateCredibilityPresenter(topHeadlinesViewModel);
-        GenerateCredibilityInputBoundary genInteractorTop =
-                new GenerateCredibilityInteractor(signalsDAO, genPresenterTop);
-        GenerateCredibilityController genControllerTop =
-                new GenerateCredibilityController(genInteractorTop);
+        GenerateCredibilityOutputBoundary genPresenterTop = new GenerateCredibilityPresenter(topHeadlinesViewModel);
+        GenerateCredibilityInputBoundary genInteractorTop = new GenerateCredibilityInteractor(signalsDAO,
+                genPresenterTop);
+        GenerateCredibilityController genControllerTop = new GenerateCredibilityController(genInteractorTop);
 
-        GenerateCredibilityOutputBoundary genPresenterDiscover =
-                new DiscoverGenerateCredibilityPresenter(discoverPageViewModel);
-        GenerateCredibilityInputBoundary genInteractorDiscover =
-                new GenerateCredibilityInteractor(signalsDAO, genPresenterDiscover);
-        GenerateCredibilityController genControllerDiscover =
-                new GenerateCredibilityController(genInteractorDiscover);
+        GenerateCredibilityOutputBoundary genPresenterDiscover = new DiscoverGenerateCredibilityPresenter(
+                discoverPageViewModel);
+        GenerateCredibilityInputBoundary genInteractorDiscover = new GenerateCredibilityInteractor(signalsDAO,
+                genPresenterDiscover);
+        GenerateCredibilityController genControllerDiscover = new GenerateCredibilityController(genInteractorDiscover);
 
         viewCredibilityDetailsViewModel = new ViewCredibilityDetailsViewModel();
-        ViewCredibilityDetailsOutputBoundary detailsPresenter =
-                new ViewCredibilityDetailsPresenter(viewCredibilityDetailsViewModel);
-        ViewCredibilityDetailsInputBoundary detailsInteractor =
-                new ViewCredibilityDetailsInteractor(detailsPresenter);
-        credibilityDetailsController =
-                new ViewCredibilityDetailsController(detailsInteractor);
+        ViewCredibilityDetailsOutputBoundary detailsPresenter = new ViewCredibilityDetailsPresenter(
+                viewCredibilityDetailsViewModel);
+        ViewCredibilityDetailsInputBoundary detailsInteractor = new ViewCredibilityDetailsInteractor(detailsPresenter);
+        credibilityDetailsController = new ViewCredibilityDetailsController(detailsInteractor);
 
         this.generateCredibilityController = genControllerTop;
 
         topHeadlinesView.setCredibilityUseCases(
                 genControllerTop,
                 credibilityDetailsController,
-                viewCredibilityDetailsViewModel
-        );
+                viewCredibilityDetailsViewModel);
 
         discoverPageView.setCredibilityUseCases(
                 genControllerDiscover,
                 credibilityDetailsController,
-                viewCredibilityDetailsViewModel
-        );
+                viewCredibilityDetailsViewModel);
 
         return this;
     }
