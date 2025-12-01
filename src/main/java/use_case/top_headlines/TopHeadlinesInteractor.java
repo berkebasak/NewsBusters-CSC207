@@ -46,8 +46,7 @@ public class TopHeadlinesInteractor implements TopHeadlinesInputBoundary {
             return;
         }
 
-        // ALTERNATIVE FLOW: If there is no internet connection or if there is an API Failure
-        // load saved articles
+        // ALTERNATIVE FLOW: If there is an API Failure load saved articles
         String username = loginViewModel.getState().getUsername();
         User user = userDao.get(username);
 
@@ -62,8 +61,8 @@ public class TopHeadlinesInteractor implements TopHeadlinesInputBoundary {
         presenter.presentAlternative(
                 new TopHeadlinesOutputData(saved),
                 saved.isEmpty()
-                        ? "No internet connection or API Failure.\n No saved articles to show."
-                        : "No internet connection or API Failure.\nShowing saved articles."
+                        ? "API Failure.\n No saved articles to show."
+                        : "API Failure.\nShowing saved articles."
         );
     }
 }

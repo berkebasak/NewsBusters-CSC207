@@ -1,33 +1,33 @@
-package interface_adapter.search_news;
+package interface_adapter.filter_news;
 
 import interface_adapter.top_headlines.TopHeadlinesState;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
-import use_case.search_news.SearchNewsOutputBoundary;
-import use_case.search_news.SearchNewsOutputData;
-
+import use_case.filter_news.FilterNewsOutputBoundary;
+import use_case.filter_news.FilterNewsOutputData;
 
 import java.util.Collections;
 
 /**
- * The Presenter for the Search News Use Case.
+ * Presenter for the Filter News use case.
  */
-public class SearchNewsPresenter implements SearchNewsOutputBoundary {
+public class FilterNewsPresenter implements FilterNewsOutputBoundary {
 
     private final TopHeadlinesViewModel topHeadlinesViewModel;
 
     /**
-     * Builds a SearchNewsPresenter.
+     * Creates a FilterNewsPresenter.
      * @param topHeadlinesViewModel the shared ViewModel used by TopHeadlinesView
      */
-    public SearchNewsPresenter(TopHeadlinesViewModel topHeadlinesViewModel) {
+    public FilterNewsPresenter(TopHeadlinesViewModel topHeadlinesViewModel) {
         this.topHeadlinesViewModel = topHeadlinesViewModel;
     }
 
     /**
-     * Updates the state on success and notifies the view.
+     * Called when filtering succeeds.
+     * @param outputData the filtered articles
      */
     @Override
-    public void prepareSuccessView(SearchNewsOutputData outputData) {
+    public void prepareSuccessView(FilterNewsOutputData outputData) {
         TopHeadlinesState state = topHeadlinesViewModel.getState();
         state.setArticles(outputData.getArticles());
         state.setError(null);
@@ -35,13 +35,14 @@ public class SearchNewsPresenter implements SearchNewsOutputBoundary {
     }
 
     /**
-     * Updates the state on failure and notifies the view.
+     * Called when filtering fails.
+     * @param errorMessage a short message to display
      */
     @Override
-    public void prepareFailView(String error) {
+    public void prepareFailView(String errorMessage) {
         TopHeadlinesState state = topHeadlinesViewModel.getState();
         state.setArticles(Collections.emptyList());
-        state.setError(error);
+        state.setError(errorMessage);
         topHeadlinesViewModel.firePropertyChange();
     }
 }

@@ -51,7 +51,6 @@ class SearchNewsInteractorTest {
                 List<Article> results = output.getArticles();
                 assertEquals(2, results.size());
 
-                // Ensure all returned titles contain the keyword
                 for (Article a : results) {
                     assertTrue(a.getTitle().toLowerCase().contains("covid"));
                 }
@@ -72,7 +71,6 @@ class SearchNewsInteractorTest {
         SearchNewsInputData input = new SearchNewsInputData("   ");
         TestSearchNewsDAO dao = new TestSearchNewsDAO(new ArrayList<>());
 
-        // Presenter for failure
         SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
             @Override
             public void prepareSuccessView(SearchNewsOutputData output) {
@@ -88,4 +86,39 @@ class SearchNewsInteractorTest {
         SearchNewsInputBoundary interactor = new SearchNewsInteractor(dao, presenter);
         interactor.execute(input);
     }
+
+    @Test
+    void success_keywordCaseInsensitiveMatching() {
+        String keyword = "COVID";
+
+        List<Article> daoArticles = new ArrayList<>();
+        daoArticles.add(new Article("1", "covid cases rising", "d", "l1", "i1", "s1"));
+        daoArticles.add(new Article("2", "New CoViD treatment discovered", "d", "l2", "i2", "s2"));
+        daoArticles.add(new Article("3", "Market update", "d", "l3", "i3", "s3"));
+
+        TestSearchNewsDAO dao = new TestSearchNewsDAO(daoArticles);
+        SearchNewsInputData input = new SearchNewsInputData(keyword);
+
+        SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
+            @Override
+            public void prepareSuccessView(SearchNewsOutputData output) {
+                List<Article> results = output.getArticles();
+
+                // Should return exactly the 2 titles that contain "covid" in any case
+                assertEquals(2, results.size());
+                for (Article a : results) {
+                    assertTrue(a.getTitle().toLowerCase().contains("covid"));
+                }
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                fail("Should not fail for a valid keyword.");
+            }
+        };
+
+        SearchNewsInputBoundary interactor = new SearchNewsInteractor(dao, presenter);
+        interactor.execute(input);
+    }
+
 }
