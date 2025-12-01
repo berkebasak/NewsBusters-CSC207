@@ -11,6 +11,7 @@ public class Main {
                 .addSignupView()
                 .addTopHeadlinesView()
                 .addTopHeadlinesUseCase()
+                .addSortHeadlinesUseCase()
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addSaveArticleUseCase()
