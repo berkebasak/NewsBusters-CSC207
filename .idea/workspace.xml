@@ -71,7 +71,7 @@
       <recent name="$PROJECT_DIR$/src/main/java/data_access/save_article" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.FilterNewsInteractorTest">
+  <component name="RunManager" selected="JUnit.SearchNewsInteractorTest">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <envs>
         <env name="NEWSDATA_API_KEY" value="pub_24c036e0a4b64b0a82914e3fabe9e090" />
@@ -127,8 +127,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.FilterNewsInteractorTest" />
         <item itemvalue="JUnit.SearchNewsInteractorTest" />
+        <item itemvalue="JUnit.FilterNewsInteractorTest" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main" />
