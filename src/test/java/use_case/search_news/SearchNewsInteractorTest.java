@@ -30,6 +30,26 @@ class SearchNewsInteractorTest {
         }
     }
 
+    /**
+     * DAO that always returns null.
+     */
+    private static class NullReturningDAO implements SearchNewsUserDataAccessInterface {
+        @Override
+        public List<Article> searchByKeyword(String keyword) {
+            return null;
+        }
+    }
+
+    /**
+     * DAO that always throws an exception.
+     */
+    private static class ExceptionThrowingDAO implements SearchNewsUserDataAccessInterface {
+        @Override
+        public List<Article> searchByKeyword(String keyword) {
+            throw new RuntimeException("DAO error");
+        }
+    }
+
     @Test
     void success_onlyArticlesWithKeywordInTitleAreReturned() {
         String keyword = "covid";
@@ -86,6 +106,157 @@ class SearchNewsInteractorTest {
         SearchNewsInputBoundary interactor = new SearchNewsInteractor(dao, presenter);
         interactor.execute(input);
     }
+
+    @Test
+    void failure_nullKeywordIsTreatedAsEmpty() {
+        SearchNewsInputData input = new SearchNewsInputData(null);
+        TestSearchNewsDAO dao = new TestSearchNewsDAO(new ArrayList<>());
+
+        SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
+            @Override
+            public void prepareSuccessView(SearchNewsOutputData output) {
+                fail("Should not succeed when keyword is null.");
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                assertEquals("Please enter a keyword.", error);
+            }
+        };
+
+        SearchNewsInputBoundary interactor = new SearchNewsInteractor(dao, presenter);
+        interactor.execute(input);
+    }
+
+    @Test
+    void failure_noArticlesReturnedFromDAO_emptyList() {
+        String keyword = "covid";
+        TestSearchNewsDAO dao = new TestSearchNewsDAO(new ArrayList<>());
+        SearchNewsInputData input = new SearchNewsInputData(keyword);
+
+        SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
+            @Override
+            public void prepareSuccessView(SearchNewsOutputData output) {
+                fail("Should not succeed when DAO returns empty list.");
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                assertEquals("No articles found.", error);
+            }
+        };
+
+        SearchNewsInputBoundary interactor = new SearchNewsInteractor(dao, presenter);
+        interactor.execute(input);
+    }
+
+    @Test
+    void failure_noArticlesReturnedFromDAO_nullList() {
+        String keyword = "covid";
+        SearchNewsUserDataAccessInterface dao = new NullReturningDAO();
+        SearchNewsInputData input = new SearchNewsInputData(keyword);
+
+        SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
+            @Override
+            public void prepareSuccessView(SearchNewsOutputData output) {
+                fail("Should not succeed when DAO returns null.");
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                assertEquals("No articles found.", error);
+            }
+        };
+
+        SearchNewsInputBoundary interactor = new SearchNewsInteractor(dao, presenter);
+        interactor.execute(input);
+    }
+
+    @Test
+    void failure_noTitlesMatchKeyword_afterFiltering() {
+        String keyword = "covid";
+
+        List<Article> daoArticles = new ArrayList<>();
+        daoArticles.add(new Article("1", "Market update", "d", "l1", "i1", "s1"));
+        daoArticles.add(new Article("2", null, "d", "l2", "i2", "s2")); // title == null branch
+        daoArticles.add(new Article("3", "Sports news", "d", "l3", "i3", "s3"));
+
+        TestSearchNewsDAO dao = new TestSearchNewsDAO(daoArticles);
+        SearchNewsInputData input = new SearchNewsInputData(keyword);
+
+        SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
+            @Override
+            public void prepareSuccessView(SearchNewsOutputData output) {
+                fail("Should not succeed when no titles contain the keyword.");
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                assertEquals("No articles found.", error);
+            }
+        };
+
+        SearchNewsInputBoundary interactor = new SearchNewsInteractor(dao, presenter);
+        interactor.execute(input);
+    }
+
+    @Test
+    void success_resultsAreCappedAtTwentyArticles() {
+        String keyword = "covid";
+
+        List<Article> manyArticles = new ArrayList<>();
+        for (int i = 0; i < 25; i++) {
+            manyArticles.add(new Article(
+                    String.valueOf(i),
+                    "Covid news " + i,
+                    "d", "l" + i, "i" + i, "s" + i));
+        }
+
+        TestSearchNewsDAO dao = new TestSearchNewsDAO(manyArticles);
+        SearchNewsInputData input = new SearchNewsInputData(keyword);
+
+        SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
+            @Override
+            public void prepareSuccessView(SearchNewsOutputData output) {
+                List<Article> results = output.getArticles();
+                assertEquals(20, results.size(), "Results should be capped at 20 articles.");
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                fail("Should not fail when many matching articles are returned.");
+            }
+        };
+
+        SearchNewsInputBoundary interactor = new SearchNewsInteractor(dao, presenter);
+        interactor.execute(input);
+    }
+
+    @Test
+    void failure_whenDaoThrowsException_presenterShowsSearchFailed() {
+        String keyword = "covid";
+        SearchNewsUserDataAccessInterface dao = new ExceptionThrowingDAO();
+        SearchNewsInputData input = new SearchNewsInputData(keyword);
+
+        SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
+            @Override
+            public void prepareSuccessView(SearchNewsOutputData output) {
+                fail("Should not succeed when DAO throws an exception.");
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                assertTrue(error.startsWith("Search failed."),
+                        "Error message should start with 'Search failed.'");
+                assertTrue(error.contains("DAO error"),
+                        "Error message should include the DAO exception message.");
+            }
+        };
+
+        SearchNewsInputBoundary interactor = new SearchNewsInteractor(dao, presenter);
+        interactor.execute(input);
+    }
+
 
     @Test
     void success_keywordCaseInsensitiveMatching() {
