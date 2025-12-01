@@ -7,9 +7,9 @@ import interface_adapter.top_headlines.TopHeadlinesController;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
 import interface_adapter.profile.ProfileController;
 import interface_adapter.search_news.SearchNewsController;
+import interface_adapter.filter_news.FilterNewsController;
 import interface_adapter.save_article.SaveArticleController;
 import interface_adapter.save_article.SaveArticleViewModel;
-
 import interface_adapter.generate_credibility.GenerateCredibilityController;
 import interface_adapter.filter_credibility.FilterCredibilityController;
 import interface_adapter.view_credibility.ViewCredibilityDetailsState;
@@ -20,8 +20,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +37,13 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private SaveArticleController saveController;
     private SaveArticleViewModel saveViewModel;
 
+    private SearchNewsController searchNewsController;
+
+    private FilterNewsController filterNewsController;
+    private FilterNewsView filterNewsView;
+
     private ViewManagerModel viewManagerModel;
     private LoginViewModel loginViewModel;
-
-    private SearchNewsController searchNewsController;
 
     // Credibility use cases
     private GenerateCredibilityController generateCredibilityController;
@@ -62,10 +65,14 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private final JButton viewDetailsButton = new JButton("View Details");
 
     // Filter by trust score
-    private final JButton filterButton = new JButton("Filter by Credibility");
+    private final JButton filterCredibilityButton = new JButton("Filter by Credibility");
 
+    // Search by keyword
     private final JTextField keywordField = new JTextField(20);
     private final JButton searchButton = new JButton("Search");
+
+    // Filter by topics
+    private final JButton filterButton = new JButton("Filter");
 
     public TopHeadlinesView(TopHeadlinesController controller, TopHeadlinesViewModel viewModel) {
         this.controller = controller;
@@ -77,21 +84,28 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         setLayout(new BorderLayout(10, 10));
         setBackground(Color.WHITE);
 
+        // ---------- HEADER (TITLE + BUTTONS + PROFILE) ----------
+
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
 
+        // Right side: profile button
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         rightPanel.setBackground(Color.WHITE);
         rightPanel.add(profileButton);
 
+        // Center controls: title + main buttons + credibility buttons
         JPanel controlsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         controlsPanel.setBackground(Color.WHITE);
+
         JLabel title = new JLabel("Top News Headlines");
         title.setFont(new Font("TimesNewRoman", Font.BOLD, 22));
         controlsPanel.add(title);
         controlsPanel.add(refreshButton);
         controlsPanel.add(saveButton);
+        controlsPanel.add(filterButton);
         controlsPanel.add(discoverButton);
+        controlsPanel.add(filterCredibilityButton);
 
         controlsPanel.add(generateCredibilityButton);
         controlsPanel.add(generateAllCredibilityButton);
@@ -100,6 +114,8 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         headerPanel.add(rightPanel, BorderLayout.EAST);
         headerPanel.add(controlsPanel, BorderLayout.CENTER);
 
+        // ---------- SEARCH BAR ----------
+
         JPanel searchBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         searchBar.setBackground(Color.WHITE);
         searchBar.add(new JLabel("Keyword:"));
@@ -107,6 +123,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         searchBar.add(searchButton);
         searchBar.add(filterButton);
 
+        // Stack header + search bar
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setBackground(Color.WHITE);
@@ -116,6 +133,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         add(topPanel, BorderLayout.NORTH);
 
         // ---------- ARTICLE LIST ----------
+
         articleList.setCellRenderer(new ArticleRenderer());
         articleList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         articleList.setBackground(Color.WHITE);
@@ -155,12 +173,15 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             if (searchNewsController != null) {
                 String keyword = keywordField.getText().trim();
                 if (!keyword.isEmpty()) {
-                    searchNewsController.excute(keyword);
+                    searchNewsController.execute(keyword);
                 }
             }
         });
 
-        // Double-click article to open URL
+        // Filter
+        filterButton.addActionListener(e -> openFilter());
+
+        // Double-click article to open URL and add to profile history
         articleList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -176,6 +197,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             }
         });
 
+        // Generate credibility for selected article
         generateCredibilityButton.addActionListener(e -> {
             if (generateCredibilityController == null) {
                 JOptionPane.showMessageDialog(this, "Credibility feature not available.");
@@ -189,6 +211,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             generateCredibilityController.generateForArticle(article);
         });
 
+        // Generate credibility for all loaded articles
         generateAllCredibilityButton.addActionListener(e -> {
             if (generateCredibilityController == null) {
                 JOptionPane.showMessageDialog(this, "Credibility feature not available.");
@@ -205,6 +228,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             generateCredibilityController.generateForAll(all);
         });
 
+        // View credibility details for selected article
         viewDetailsButton.addActionListener(e -> {
             if (viewCredibilityDetailsController == null) {
                 JOptionPane.showMessageDialog(this, "Credibility details feature not available.");
@@ -223,7 +247,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         });
 
         // Filter by trust score
-        filterButton.addActionListener(e -> {
+        filterCredibilityButton.addActionListener(e -> {
             if (filterCredibilityController == null) {
                 JOptionPane.showMessageDialog(this, "Filter feature not available.");
                 return;
@@ -246,7 +270,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             showFilterDialog();
         });
     }
-
 
     public void setController(TopHeadlinesController controller) {
         this.controller = controller;
@@ -275,7 +298,12 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         this.searchNewsController = searchNewsController;
     }
 
-    public void setViewManagerModel(ViewManagerModel viewManagerModel, LoginViewModel loginViewModel) {
+    public void setFilterNewsController(FilterNewsController filterNewsController) {
+        this.filterNewsController = filterNewsController;
+    }
+
+    public void setViewManagerModel(ViewManagerModel viewManagerModel,
+                                    LoginViewModel loginViewModel) {
         this.viewManagerModel = viewManagerModel;
         this.loginViewModel = loginViewModel;
 
@@ -342,7 +370,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         double rawSentiment = state.getSentimentScore();
         double rawClaim = state.getClaimConfidence();
 
-
         double sourceEff = rawSource;
         if (sourceEff < 0.0) sourceEff = 0.0;
         if (sourceEff > 1.0) sourceEff = 1.0;
@@ -370,7 +397,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         }
         sb.append("<b>Source:</b> ").append(state.getSource()).append("<br><br>");
 
-
         sb.append("<b>Subscores</b><br>");
         sb.append("Domain reputation: ")
                 .append(String.format("%.3f", sourceEff))
@@ -392,7 +418,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                 .append(String.format("%.3f", overallStored))
                 .append(" (").append(level).append(")")
                 .append("<br>");
-
 
         sb.append("<b>Rationale</b><br>")
                 .append(state.getRationale() == null ? "N/A" : state.getRationale())
@@ -520,7 +545,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         listModel.clear();
 
         var state = viewModel.getState();
-        java.util.List<Article> articles = state.getArticles();
+        List<Article> articles = state.getArticles();
         if (articles != null) {
             for (Article a : articles) {
                 listModel.addElement(a);
@@ -538,6 +563,25 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         }
     }
 
+    private void openFilter() {
+        if (filterNewsController == null) {
+            JOptionPane.showMessageDialog(this, "Filtering is not available.");
+            return;
+        }
+
+        if (filterNewsView == null) {
+            java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+            if (window instanceof JFrame frame) {
+                filterNewsView = new FilterNewsView(frame, filterNewsController);
+            } else {
+                JOptionPane.showMessageDialog(this, "Unable to open filter dialog.");
+                return;
+            }
+        }
+
+        filterNewsView.setLocationRelativeTo(this);
+        filterNewsView.setVisible(true);
+    }
 
     static class ArticleRenderer extends JPanel implements ListCellRenderer<Article> {
         private final JLabel titleLabel = new JLabel();

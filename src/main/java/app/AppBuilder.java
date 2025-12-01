@@ -1,6 +1,7 @@
 package app;
 
 import interface_adapter.ViewManagerModel;
+import use_case.filter_news.FilterNewsOutputBoundary;
 import view.ViewManager;
 import data_access.DBUserDataAccessObject;
 import data_access.FileUserDataAccessObject;
@@ -31,6 +32,18 @@ import use_case.top_headlines.*;
 import use_case.search_news.SearchNewsInputBoundary;
 import use_case.search_news.SearchNewsInteractor;
 import use_case.search_news.SearchNewsOutputBoundary;
+
+import interface_adapter.filter_news.FilterNewsController;
+import interface_adapter.filter_news.FilterNewsPresenter;
+import use_case.filter_news.FilterNewsInputBoundary;
+import use_case.filter_news.FilterNewsInteractor;
+import use_case.filter_news.FilterNewsUserDataAccessInterface;
+
+import java.io.IOException;
+
+import data_access.save_article.FileSaveArticleDataAccess;
+import interface_adapter.save_article.*;
+
 import use_case.save_article.*;
 import use_case.discover_page.*;
 import use_case.profile.*;
@@ -154,6 +167,14 @@ public class AppBuilder {
                 new SearchNewsInteractor(newsDataAccessObject, presenter);
         SearchNewsController controller = new SearchNewsController(interactor);
         topHeadlinesView.setSearchNewsController(controller);
+        return this;
+    }
+
+    public AppBuilder addFilterNewsUseCase() {
+        FilterNewsOutputBoundary presenter = new FilterNewsPresenter(topHeadlinesViewModel);
+        FilterNewsInputBoundary interactor = new FilterNewsInteractor(newsDataAccessObject, presenter);
+        FilterNewsController controller = new FilterNewsController(interactor);
+        topHeadlinesView.setFilterNewsController(controller);
         return this;
     }
 
@@ -331,6 +352,10 @@ public class AppBuilder {
         JFrame application = new JFrame("NewsBusters");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         application.add(cardPanel);
+
+        viewManagerModel.setState(TopHeadlinesView.VIEW_NAME);
+        viewManagerModel.firePropertyChange();
+
         viewManager.setHostFrame(application);
         if (loginView != null) {
             viewManagerModel.changeView(LoginView.VIEW_NAME);
