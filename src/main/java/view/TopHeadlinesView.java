@@ -15,6 +15,8 @@ import interface_adapter.view_credibility.ViewCredibilityDetailsState;
 import interface_adapter.view_credibility.ViewCredibilityDetailsViewModel;
 import interface_adapter.view_credibility.ViewCredibilityDetailsController;
 
+import interface_adapter.sort_headlines.SortHeadlinesController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -30,6 +32,12 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     public static final String VIEW_NAME = "top_headlines_view";
 
     private TopHeadlinesController controller;
+    private SortHeadlinesController sortController;
+
+    public void setSortController(SortHeadlinesController sortController) {
+        this.sortController = sortController;
+    }
+
     private ProfileController profileController;
     private final TopHeadlinesViewModel viewModel;
 
@@ -100,6 +108,26 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         searchBar.add(new JLabel("Keyword:"));
         searchBar.add(keywordField);
         searchBar.add(searchButton);
+
+        String[] sortOptions = { "Sort by...", "Highest Trust", "Lowest Trust" };
+        JComboBox<String> sortDropdown = new JComboBox<>(sortOptions);
+        searchBar.add(sortDropdown);
+
+        sortDropdown.addActionListener(e -> {
+            String selected = (String) sortDropdown.getSelectedItem();
+            if (this.sortController != null) {
+                List<Article> articles = new ArrayList<>();
+                for (int i = 0; i < listModel.size(); i++) {
+                    articles.add(listModel.getElementAt(i));
+                }
+
+                if ("Highest Trust".equals(selected)) {
+                    this.sortController.execute("high", articles);
+                } else if ("Lowest Trust".equals(selected)) {
+                    this.sortController.execute("low", articles);
+                }
+            }
+        });
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
@@ -217,7 +245,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         });
     }
 
-
     public void setController(TopHeadlinesController controller) {
         this.controller = controller;
     }
@@ -227,7 +254,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     }
 
     public void setSaveArticleUseCase(SaveArticleController controller,
-                                      SaveArticleViewModel viewModel) {
+            SaveArticleViewModel viewModel) {
         this.saveController = controller;
         this.saveViewModel = viewModel;
 
@@ -258,8 +285,8 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     }
 
     public void setCredibilityUseCases(GenerateCredibilityController generateController,
-                                       ViewCredibilityDetailsController detailsController,
-                                       ViewCredibilityDetailsViewModel detailsViewModel) {
+            ViewCredibilityDetailsController detailsController,
+            ViewCredibilityDetailsViewModel detailsViewModel) {
         this.generateCredibilityController = generateController;
         this.viewCredibilityDetailsController = detailsController;
         this.viewCredibilityDetailsViewModel = detailsViewModel;
@@ -276,13 +303,11 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                             this,
                             state.getError(),
                             "Credibility Details",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
     }
-
 
     private void loadArticles() {
         if (controller != null) {
@@ -309,19 +334,24 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         double rawSentiment = state.getSentimentScore();
         double rawClaim = state.getClaimConfidence();
 
-
         double sourceEff = rawSource;
-        if (sourceEff < 0.0) sourceEff = 0.0;
-        if (sourceEff > 1.0) sourceEff = 1.0;
+        if (sourceEff < 0.0)
+            sourceEff = 0.0;
+        if (sourceEff > 1.0)
+            sourceEff = 1.0;
         double SOURCE_REF = 0.7;
         sourceEff = sourceEff / SOURCE_REF;
-        if (sourceEff > 1.0) sourceEff = 1.0;
+        if (sourceEff > 1.0)
+            sourceEff = 1.0;
 
         double textRaw = 0.5 * rawSentiment + 0.5 * rawClaim;
-        if (textRaw < 0.0) textRaw = 0.0;
-        if (textRaw > 1.0) textRaw = 1.0;
+        if (textRaw < 0.0)
+            textRaw = 0.0;
+        if (textRaw > 1.0)
+            textRaw = 1.0;
         double textEff = Math.pow(textRaw, 0.85);
-        if (textEff > 1.0) textEff = 1.0;
+        if (textEff > 1.0)
+            textEff = 1.0;
 
         double wSource = 0.7;
         double wAI = 0.3;
@@ -336,7 +366,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             sb.append("<b>").append(state.getTitle()).append("</b><br><br>");
         }
         sb.append("<b>Source:</b> ").append(state.getSource()).append("<br><br>");
-
 
         sb.append("<b>Subscores</b><br>");
         sb.append("Domain reputation: ")
@@ -360,7 +389,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                 .append(" (").append(level).append(")")
                 .append("<br>");
 
-
         sb.append("<b>Rationale</b><br>")
                 .append(state.getRationale() == null ? "N/A" : state.getRationale())
                 .append("<br>");
@@ -371,10 +399,8 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                 this,
                 new JLabel(sb.toString()),
                 "Credibility Details",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+                JOptionPane.INFORMATION_MESSAGE);
     }
-
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -398,7 +424,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             state.setError(null);
         }
     }
-
 
     static class ArticleRenderer extends JPanel implements ListCellRenderer<Article> {
         private final JLabel titleLabel = new JLabel();
