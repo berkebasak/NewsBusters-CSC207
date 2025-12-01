@@ -19,6 +19,7 @@ public class Main {
                 .addSearchNewsUseCase()
                 .addFilterNewsUseCase()
                 .addCredibilityUseCases()
+                .addFilterCredibilityUseCase()
                 .addDiscoverPageUseCase()
                 .addProfileView()
                 .addProfileUseCase()

@@ -11,6 +11,7 @@ import interface_adapter.filter_news.FilterNewsController;
 import interface_adapter.save_article.SaveArticleController;
 import interface_adapter.save_article.SaveArticleViewModel;
 import interface_adapter.generate_credibility.GenerateCredibilityController;
+import interface_adapter.filter_credibility.FilterCredibilityController;
 import interface_adapter.view_credibility.ViewCredibilityDetailsState;
 import interface_adapter.view_credibility.ViewCredibilityDetailsViewModel;
 import interface_adapter.view_credibility.ViewCredibilityDetailsController;
@@ -46,6 +47,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private GenerateCredibilityController generateCredibilityController;
     private ViewCredibilityDetailsController viewCredibilityDetailsController;
     private ViewCredibilityDetailsViewModel viewCredibilityDetailsViewModel;
+    private FilterCredibilityController filterCredibilityController;
 
     private final DefaultListModel<Article> listModel = new DefaultListModel<>();
     private final JList<Article> articleList = new JList<>(listModel);
@@ -59,6 +61,9 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private final JButton generateCredibilityButton = new JButton("Generate Credibility");
     private final JButton generateAllCredibilityButton = new JButton("Generate All Scores");
     private final JButton viewDetailsButton = new JButton("View Details");
+
+    // Filter by trust score
+    private final JButton filterCredibilityButton = new JButton("Filter by Credibility");
 
     private final JTextField keywordField = new JTextField(20);
     private final JButton searchButton = new JButton("Search");
@@ -96,6 +101,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         controlsPanel.add(saveButton);
         controlsPanel.add(filterButton);
         controlsPanel.add(discoverButton);
+        controlsPanel.add(filterCredibilityButton);
 
         controlsPanel.add(generateCredibilityButton);
         controlsPanel.add(generateAllCredibilityButton);
@@ -111,6 +117,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         searchBar.add(new JLabel("Keyword:"));
         searchBar.add(keywordField);
         searchBar.add(searchButton);
+        searchBar.add(filterButton);
 
         // Stack header + search bar
         JPanel topPanel = new JPanel();
@@ -234,6 +241,30 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             }
             viewCredibilityDetailsController.showDetails(article);
         });
+
+        // Filter by trust score
+        filterCredibilityButton.addActionListener(e -> {
+            if (filterCredibilityController == null) {
+                JOptionPane.showMessageDialog(this, "Filter feature not available.");
+                return;
+            }
+
+            var state = viewModel.getState();
+            List<Article> currentArticles = state.getArticles();
+
+            if (currentArticles.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No articles to filter.");
+                return;
+            }
+
+            // Store original articles if not already stored
+            if (state.getOriginalArticles().isEmpty()) {
+                state.setOriginalArticles(new ArrayList<>(currentArticles));
+            }
+
+            // Create filter dialog
+            showFilterDialog();
+        });
     }
 
     public void setController(TopHeadlinesController controller) {
@@ -304,6 +335,10 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                 }
             }
         });
+    }
+
+    public void setFilterCredibilityController(FilterCredibilityController filterCredibilityController) {
+        this.filterCredibilityController = filterCredibilityController;
     }
 
     private void loadArticles() {
@@ -392,6 +427,113 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                 "Credibility Details",
                 JOptionPane.INFORMATION_MESSAGE
         );
+    }
+
+    private void showFilterDialog() {
+        var state = viewModel.getState();
+        java.util.Set<String> currentFilterLevels = state.getCurrentFilterLevels();
+
+        // Create dialog
+        JDialog filterDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Filter by Credibility", true);
+        filterDialog.setLayout(new BorderLayout(10, 10));
+        filterDialog.setSize(400, 250);
+        filterDialog.setLocationRelativeTo(this);
+
+        // Create header panel with label and info button
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
+        headerPanel.setBackground(Color.WHITE);
+        headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        JLabel headerLabel = new JLabel("Filter articles based on credibility score:");
+        headerLabel.setFont(new Font("TimesNewRoman", Font.BOLD, 14));
+        headerLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+        
+        JLabel infoLabel = new JLabel("ⓘ");
+        infoLabel.setFont(new Font("TimesNewRoman", Font.PLAIN, 16));
+        infoLabel.setForeground(new Color(100, 100, 200)); // Blue-ish color for info
+        infoLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        infoLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+        infoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                JOptionPane.showMessageDialog(
+                        filterDialog,
+                        "High: overallTrust >= 0.8\nMedium: overallTrust >= 0.65\nLow: overallTrust < 0.65",
+                        "Trust Score Thresholds",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        });
+        
+        headerPanel.add(headerLabel);
+        headerPanel.add(Box.createHorizontalStrut(3)); // Small gap
+        headerPanel.add(infoLabel);
+
+        // Create checkboxes with color icons
+        JCheckBox highCheckBox = new JCheckBox("🟢 High Trust");
+        JCheckBox mediumCheckBox = new JCheckBox("🟡 Medium Trust");
+        JCheckBox lowCheckBox = new JCheckBox("🔴 Low Trust");
+
+        // Pre-select based on current filter state
+        highCheckBox.setSelected(currentFilterLevels.contains("High"));
+        mediumCheckBox.setSelected(currentFilterLevels.contains("Medium"));
+        lowCheckBox.setSelected(currentFilterLevels.contains("Low"));
+
+        // Create checkbox panel
+        JPanel checkboxPanel = new JPanel();
+        checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.Y_AXIS));
+        checkboxPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        checkboxPanel.add(highCheckBox);
+        checkboxPanel.add(Box.createVerticalStrut(10));
+        checkboxPanel.add(mediumCheckBox);
+        checkboxPanel.add(Box.createVerticalStrut(10));
+        checkboxPanel.add(lowCheckBox);
+
+        // Create button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        JButton applyButton = new JButton("Apply Filter");
+        JButton clearButton = new JButton("Clear Filter");
+        buttonPanel.add(applyButton);
+        buttonPanel.add(clearButton);
+
+        filterDialog.add(headerPanel, BorderLayout.NORTH);
+        filterDialog.add(checkboxPanel, BorderLayout.CENTER);
+        filterDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Apply button action
+        applyButton.addActionListener(e -> {
+            java.util.Set<String> selectedLevels = new java.util.HashSet<>();
+            if (highCheckBox.isSelected()) {
+                selectedLevels.add("High");
+            }
+            if (mediumCheckBox.isSelected()) {
+                selectedLevels.add("Medium");
+            }
+            if (lowCheckBox.isSelected()) {
+                selectedLevels.add("Low");
+            }
+
+            List<Article> currentArticles = state.getArticles();
+            if (!currentArticles.isEmpty()) {
+                filterCredibilityController.filterArticles(currentArticles, selectedLevels);
+            }
+            filterDialog.dispose();
+        });
+
+        // Clear button action
+        clearButton.addActionListener(e -> {
+            List<Article> originalArticles = state.getOriginalArticles();
+            if (!originalArticles.isEmpty()) {
+                state.setArticles(new ArrayList<>(originalArticles));
+                state.setCurrentFilterLevels(new java.util.HashSet<>());
+                viewModel.firePropertyChange();
+            }
+            filterDialog.dispose();
+        });
+
+        filterDialog.setVisible(true);
     }
 
     @Override

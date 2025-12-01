@@ -12,7 +12,6 @@ import use_case.top_headlines.TopHeadlinesUserDataAccessInterface;
 import use_case.discover_page.DiscoverPageDataAccessInterface;
 import util.EnvLoader;
 
-import java.io.*;
 import java.util.*;
 
 public class DBUserDataAccessObject implements
@@ -21,7 +20,16 @@ public class DBUserDataAccessObject implements
         FilterNewsUserDataAccessInterface,
         DiscoverPageDataAccessInterface {
 
-    private static final String API_KEY = "pub_24c036e0a4b64b0a82914e3fabe9e090";
+    private static final String API_KEY = getEnvOrThrow("NEWSDATA_API_KEY", "NewsData API key");
+    private final FileUserDataAccessObject userDataAccess;
+
+    public DBUserDataAccessObject() {
+        this.userDataAccess = null;
+    }
+
+    public DBUserDataAccessObject(FileUserDataAccessObject userDataAccess) {
+        this.userDataAccess = userDataAccess;
+    }
 
     private static String getEnvOrThrow(String envName, String label) {
         String value = EnvLoader.get(envName);  // <-- Use loader instead
@@ -288,41 +296,25 @@ public class DBUserDataAccessObject implements
      * Returns the user's reading history (saved articles) for the Discover page.
      */
     @Override
-    public List<Article> getReadingHistory() {
+    public List<Article> getReadingHistory(String username) {
         List<Article> savedArticles = new ArrayList<>();
-        // Use the same path as FileSaveArticleDataAccess for consistency
-        File savedFile = new File("data/saved_articles.txt");
-
-        // Resolve to absolute path to avoid confusion
-        String absolutePath = savedFile.getAbsolutePath();
-        savedFile = new File(absolutePath);
-
-        if (!savedFile.exists()) {
+        
+        if (userDataAccess == null) {
+            System.err.println("Error: FileUserDataAccessObject not initialized");
             return savedArticles;
         }
 
-        // Read the file fresh each time - no caching
-        try (FileReader fr = new FileReader(savedFile);
-             BufferedReader br = new BufferedReader(fr)) {
+        if (username == null || username.isBlank()) {
+            return savedArticles;
+        }
 
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.isBlank()) continue;
-
-                String[] parts = line.split("\\|", 3);
-                if (parts.length >= 3) {
-                    String id = parts[0].trim();
-                    String title = parts[1].trim();
-                    String url = parts[2].trim();
-
-                    if (!title.isEmpty() && !url.isEmpty()) {
-                        Article article = new Article(id, title, "", url, "", "Unknown");
-                        savedArticles.add(article);
-                    }
-                }
+        try {
+            entity.User user = userDataAccess.get(username);
+            if (user != null) {
+                savedArticles = new ArrayList<>(user.getSavedArticles());
             }
-        } catch (IOException e) {
-            System.err.println("Error reading saved articles: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error reading saved articles for user " + username + ": " + e.getMessage());
         }
 
         return savedArticles;
