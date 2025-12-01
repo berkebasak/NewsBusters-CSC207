@@ -2,7 +2,7 @@
 
 **Smart News Aggregation & Fake News Detection**
 
-**Domain:** News Credibility
+**Domain:** News Credibility/Smart News
 
 ### 📖 About The Project
 
@@ -16,6 +16,7 @@ NewsBusters is a desktop application designed to combat misinformation in the di
   * **Personalization:** Tailor your feed by setting language and region preferences.
   * **Search & Discovery:** Filter news by topic, search by specific keywords, or use the "Discover" tab for recommendations based on reading history.
   * **Trust Scores:** Every article receives a calculated credibility score which you can then filter by to specify your reading experience.
+  * **Detailed Breakdown"** Click view details on article cards to view specific signals (Subscores, Domain Reputation Score, AI analysis score, etc.).
 
 ### 🛠️ Tech Stack & APIs
 
@@ -33,7 +34,7 @@ NewsBusters integrates three distinct external APIs to aggregate news and analyz
 #### Prerequisites
 
   * Java Development Kit (JDK) 11 or higher
-  * Maven/Gradle (depending on your build tool)
+  * Maven
   * Internet connection for API access
 
 #### Installation
@@ -59,7 +60,7 @@ NewsBusters integrates three distinct external APIs to aggregate news and analyz
 1.  **Login:** Enter your credentials to access your personalized profile.
 2.  **Set Preferences:** Select your region and language in the Profile menu.
 3.  **Browse & Filter:** Use the main dashboard to view top headlines. Sort by **"Highest Trust"** to prioritize reliable news.
-4.  **Save:** Click the "Save" icon on any article to store it for offline viewing in your Profile.
+4.  **Save:** Click the "Save" icon on any article to store it for later viewing in your Profile.
 
 ### 🧩 System Design (Use Cases)
 
