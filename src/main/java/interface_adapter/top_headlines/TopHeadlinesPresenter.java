@@ -28,9 +28,4 @@ public class TopHeadlinesPresenter implements TopHeadlinesOutputBoundary {
         viewModel.firePropertyChange();
     }
 
-    @Override
-    public void prepareFailView(String error) {
-        viewModel.getState().setError(error);
-        viewModel.firePropertyChange();
-    }
 }
