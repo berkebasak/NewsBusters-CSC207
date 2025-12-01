@@ -187,7 +187,7 @@ public class AppBuilder {
                 new SaveArticlePresenter(saveArticleViewModel);
         SaveArticleInputBoundary saveInteractor =
                 new SaveArticleInteractor(saveDao, savePresenter,
-                        getUserDataAccessObject(),loginViewModel);
+                        getUserDataAccessObject(), loginViewModel);
         SaveArticleController saveController =
                 new SaveArticleController(saveInteractor);
         topHeadlinesView.setSaveArticleUseCase(saveController, saveArticleViewModel);

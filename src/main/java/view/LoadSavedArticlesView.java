@@ -1,5 +1,30 @@
 package view;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Desktop;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
+
 import entity.Article;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.load_saved_articles.LoadSavedArticlesState;
@@ -7,15 +32,17 @@ import interface_adapter.load_saved_articles.LoadSavedArticlesViewModel;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.profile.ProfileViewModel;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.net.URI;
-
 public class LoadSavedArticlesView extends JPanel implements PropertyChangeListener {
+
+    private static final int BOARDER_VALUE_1 = 20;
+    private static final int BOARDER_VALUE_2 = 5;
+    private static final int FONT_VALUE_1 = 28;
+    private static final int FONT_VALUE_2 = 16;
+    private static final int FONT_VALUE_3 = 14;
+    private static final int FONT_VALUE_4 = 12;
+    private static final int COLOR_R = 225;
+    private static final int COLOR_G = 235;
+    private static final int COLOR_B = 255;
 
     public static final String VIEW_NAME = LoadSavedArticlesViewModel.VIEW_NAME;
 
@@ -38,17 +65,18 @@ public class LoadSavedArticlesView extends JPanel implements PropertyChangeListe
         setBackground(Color.WHITE);
 
         // Header
-        JPanel headerPanel = new JPanel(new BorderLayout());
+        final JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(Color.WHITE);
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(BOARDER_VALUE_1, BOARDER_VALUE_1,
+                BOARDER_VALUE_1, BOARDER_VALUE_1));
 
-        JLabel title = new JLabel("Saved Articles");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        final JLabel title = new JLabel("Saved Articles");
+        title.setFont(new Font("Segoe UI", Font.BOLD, FONT_VALUE_1));
         headerPanel.add(title, BorderLayout.WEST);
 
-        usernameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        usernameLabel.setFont(new Font("Segoe UI", Font.PLAIN, FONT_VALUE_2));
 
-        JPanel headerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        final JPanel headerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         headerRight.setBackground(Color.WHITE);
         headerRight.add(usernameLabel);
         headerRight.add(backButton);
@@ -57,11 +85,11 @@ public class LoadSavedArticlesView extends JPanel implements PropertyChangeListe
         add(headerPanel, BorderLayout.NORTH);
 
         // List + ScrollPane
-        JPanel listPanel = new JPanel(new BorderLayout());
+        final JPanel listPanel = new JPanel(new BorderLayout());
         listPanel.setBackground(Color.WHITE);
         listPanel.setBorder(
                 BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(0, 20, 20, 20),
+                        BorderFactory.createEmptyBorder(0, BOARDER_VALUE_1, BOARDER_VALUE_1, BOARDER_VALUE_1),
                         BorderFactory.createTitledBorder("Your Saved Articles")
                 )
         );
@@ -69,14 +97,14 @@ public class LoadSavedArticlesView extends JPanel implements PropertyChangeListe
         savedList.setCellRenderer(new ArticleRenderer());
         savedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        JScrollPane scrollPane = new JScrollPane(savedList);  // ✅ scrollable list
+        final JScrollPane scrollPane = new JScrollPane(savedList);
         scrollPane.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         listPanel.add(scrollPane, BorderLayout.CENTER);
 
         add(listPanel, BorderLayout.CENTER);
 
         // Listeners
-        backButton.addActionListener(e -> {
+        backButton.addActionListener(event -> {
             if (viewManagerModel != null) {
                 viewManagerModel.changeView(ProfileViewModel.VIEW_NAME);
                 viewManagerModel.firePropertyChange();
@@ -86,8 +114,9 @@ public class LoadSavedArticlesView extends JPanel implements PropertyChangeListe
         savedList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) { // double click
-                    Article article = savedList.getSelectedValue();
+                if (e.getClickCount() == 2) {
+                    // double click
+                    final Article article = savedList.getSelectedValue();
                     if (article != null) {
                         openInBrowser(article.getUrl());
                     }
@@ -108,18 +137,20 @@ public class LoadSavedArticlesView extends JPanel implements PropertyChangeListe
     private void openInBrowser(String url) {
         if (url == null || url.isBlank()) {
             JOptionPane.showMessageDialog(this, "No URL available for this article.");
-            return;
         }
-        try {
-            Desktop.getDesktop().browse(new URI(url));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Cannot open link: " + e.getMessage());
+        else {
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            }
+            catch (IOException | URISyntaxException ex) {
+                JOptionPane.showMessageDialog(this, "Cannot open link: " + ex.getMessage());
+            }
         }
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        LoadSavedArticlesState state = viewModel.getState();
+        final LoadSavedArticlesState state = viewModel.getState();
         usernameLabel.setText("User: " + state.getUsername());
 
         savedListModel.clear();
@@ -138,13 +169,14 @@ public class LoadSavedArticlesView extends JPanel implements PropertyChangeListe
         private final JLabel titleLabel = new JLabel();
         private final JLabel sourceLabel = new JLabel();
 
-        public ArticleRenderer() {
-            setLayout(new BorderLayout(5, 5));
-            setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        ArticleRenderer() {
+            setLayout(new BorderLayout(BOARDER_VALUE_2, BOARDER_VALUE_2));
+            setBorder(BorderFactory.createEmptyBorder(BOARDER_VALUE_2, BOARDER_VALUE_2,
+                    BOARDER_VALUE_2, BOARDER_VALUE_2));
             setBackground(Color.WHITE);
 
-            titleLabel.setFont(new Font("TimesNewRoman", Font.BOLD, 14));
-            sourceLabel.setFont(new Font("TimesNewRoman", Font.ITALIC, 12));
+            titleLabel.setFont(new Font("TimesNewRoman", Font.BOLD, FONT_VALUE_3));
+            sourceLabel.setFont(new Font("TimesNewRoman", Font.ITALIC, FONT_VALUE_4));
             sourceLabel.setForeground(Color.GRAY);
 
             add(titleLabel, BorderLayout.CENTER);
@@ -160,12 +192,20 @@ public class LoadSavedArticlesView extends JPanel implements PropertyChangeListe
                 boolean cellHasFocus) {
 
             titleLabel.setText(value.getTitle());
-            String src = value.getSource() == null ? "" : value.getSource();
+            final String src;
+            if (value.getSource() == null) {
+                src = "";
+            }
+            else {
+                src = value.getSource();
+            }
+
             sourceLabel.setText(src);
 
             if (isSelected) {
-                setBackground(new Color(225, 235, 255));
-            } else {
+                setBackground(new Color(COLOR_R, COLOR_G, COLOR_B));
+            }
+            else {
                 setBackground(Color.WHITE);
             }
             return this;

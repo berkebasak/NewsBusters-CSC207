@@ -4,7 +4,7 @@ import interface_adapter.ViewManagerModel;
 import use_case.load_saved_articles.LoadSavedArticlesOutputBoundary;
 import use_case.load_saved_articles.LoadSavedArticlesOutputData;
 
-public class LoadSavedArticlesPresenter  implements LoadSavedArticlesOutputBoundary {
+public class LoadSavedArticlesPresenter implements LoadSavedArticlesOutputBoundary {
 
     private final LoadSavedArticlesViewModel viewModel;
     private final ViewManagerModel viewManagerModel;
@@ -17,7 +17,7 @@ public class LoadSavedArticlesPresenter  implements LoadSavedArticlesOutputBound
 
     @Override
     public void prepareSuccessView(LoadSavedArticlesOutputData outputData) {
-        LoadSavedArticlesState state = viewModel.getState();
+        final LoadSavedArticlesState state = viewModel.getState();
         state.setUsername(outputData.getUsername());
         state.setSavedArticles(outputData.getSavedArticles());
         state.setError(null);
@@ -31,7 +31,7 @@ public class LoadSavedArticlesPresenter  implements LoadSavedArticlesOutputBound
 
     @Override
     public void prepareFailView(String error) {
-        LoadSavedArticlesState state = viewModel.getState();
+        final LoadSavedArticlesState state = viewModel.getState();
         state.setError(error);
         viewModel.setState(state);
         viewModel.firePropertyChange();
