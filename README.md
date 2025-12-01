@@ -47,21 +47,19 @@ NewsBusters integrates three distinct external APIs to aggregate news and analyz
     cd NewsBusters
     ```
 3.  **Install dependencies**
-    *(If using Maven)*
     ```sh
     mvn install
     ```
 4.  **Configure API Keys**
-      * Create a configuration file (e.g., `config.properties`) in the resources folder.
-      * Add your keys for NewsData, TextRazor, and OpenPageRank.
+      * Existing API keys exsist in the .env_example file for immediate program usage
+      * Create your own .env file to use your personal keys.
 
 ### 🕹️ Usage Guide
 
 1.  **Login:** Enter your credentials to access your personalized profile.
-2.  **Set Preferences:** On your first login, select your region and language in the Settings menu.
+2.  **Set Preferences:** Select your region and language in the Profile menu.
 3.  **Browse & Filter:** Use the main dashboard to view top headlines. Sort by **"Highest Trust"** to prioritize reliable news.
-4.  **Check Credibility:** Click the **Credibility Badge** on any article to see why it was rated High, Medium, or Low.
-5.  **Save:** Click the "Save" icon on any article to store it for offline viewing in your Profile.
+4.  **Save:** Click the "Save" icon on any article to store it for offline viewing in your Profile.
 
 ### 🧩 System Design (Use Cases)
 
