@@ -1,10 +1,10 @@
 package interface_adapter.filter_news;
 
-import use_case.filter_news.FilterNewsInputBoundary;
-import use_case.filter_news.FilterNewsInputData;
-
 import java.util.Collections;
 import java.util.List;
+
+import use_case.filter_news.FilterNewsInputBoundary;
+import use_case.filter_news.FilterNewsInputData;
 
 /**
  * Controller for the Filter News use case.
@@ -34,7 +34,7 @@ public class FilterNewsController {
      * Clears the filter by sending an empty topics list.
      */
     public void clearFilter() {
-        FilterNewsInputData inputData =
+        final FilterNewsInputData inputData =
                 new FilterNewsInputData(Collections.emptyList());
         filterNewsUseCaseInteractor.execute(inputData);
     }

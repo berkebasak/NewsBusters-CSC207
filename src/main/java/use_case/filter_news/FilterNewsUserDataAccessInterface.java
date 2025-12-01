@@ -1,7 +1,8 @@
 package use_case.filter_news;
 
-import entity.Article;
 import java.util.List;
+
+import entity.Article;
 
 /**
  * Data Access Interface for the Filter News use case.

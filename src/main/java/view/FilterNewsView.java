@@ -1,13 +1,14 @@
 package view;
 
-import interface_adapter.filter_news.FilterNewsController;
-
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import interface_adapter.filter_news.FilterNewsController;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Filter News popup window. Lets the user choose one or more news categories. They can cancel, clear or apply filter.
@@ -35,34 +36,34 @@ public class FilterNewsView extends JDialog {
         getContentPane().setBackground(Color.WHITE);
 
         // List of all NewsData.io categories
-        List<String> topics = List.of(
+        final List<String> topics = List.of(
                 "business", "entertainment", "environment", "food", "health",
                 "politics", "science", "sports", "technology", "world",
                 "lifestyle", "education", "crime", "tourism", "automobile"
         );
 
-        JPanel topicsPanel = new JPanel(new GridLayout(0, 2, 8, 8));
+        final JPanel topicsPanel = new JPanel(new GridLayout(0, 2, 8, 8));
         topicsPanel.setBackground(Color.WHITE);
 
         for (String topic : topics) {
-            String label = capitalize(topic);
-            JCheckBox box = new JCheckBox(label);
+            final String label = capitalize(topic);
+            final JCheckBox box = new JCheckBox(label);
             box.setBackground(Color.WHITE);
 
             checkboxMap.put(box, topic);
             topicsPanel.add(box);
         }
 
-        JScrollPane scrollPane = new JScrollPane(topicsPanel);
+        final JScrollPane scrollPane = new JScrollPane(topicsPanel);
         scrollPane.setPreferredSize(new Dimension(350, 240));
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.add(cancelButton);
         buttonPanel.add(applyButton);
         buttonPanel.add(clearButton);
 
-        JLabel header = new JLabel("Select one or more topics:");
+        final JLabel header = new JLabel("Select one or more topics:");
         header.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
         add(header, BorderLayout.NORTH);
@@ -81,7 +82,7 @@ public class FilterNewsView extends JDialog {
      * Applies the selected topic filters to the news articles.
      */
     private void applyFilters() {
-        List<String> selected = new ArrayList<>();
+        final List<String> selected = new ArrayList<>();
 
         for (var entry : checkboxMap.entrySet()) {
             if (entry.getKey().isSelected()) {
@@ -116,7 +117,9 @@ public class FilterNewsView extends JDialog {
      * @return the capitalized string, or the original string if it is null or empty
      */
     private String capitalize(String s) {
-        if (s == null || s.isEmpty()) return s;
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
         return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 }
