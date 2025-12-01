@@ -1,9 +1,8 @@
 package use_case.filter_news;
 
-import entity.Article;
-
-import java.util.Collections;
 import java.util.List;
+
+import entity.Article;
 
 /**
  * Interactor for the Filter News use case.
@@ -36,10 +35,10 @@ public class FilterNewsInteractor implements FilterNewsInputBoundary {
             return;
         }
 
-        List<String> topics = inputData.getTopics();
+        final List<String> topics = inputData.getTopics();
 
         // DAO will interpret empty topics as "clear filter"
-        List<Article> articles = userDataAccessObject.filterByTopics(topics);
+        final List<Article> articles = userDataAccessObject.filterByTopics(topics);
 
         if (articles == null || articles.isEmpty()) {
             filterNewsPresenter.prepareFailView("No articles found for these topics.");
@@ -48,7 +47,7 @@ public class FilterNewsInteractor implements FilterNewsInputBoundary {
 
         java.util.Collections.shuffle(articles);
 
-        FilterNewsOutputData outputData = new FilterNewsOutputData(articles, topics);
+        final FilterNewsOutputData outputData = new FilterNewsOutputData(articles, topics);
         filterNewsPresenter.prepareSuccessView(outputData);
     }
 

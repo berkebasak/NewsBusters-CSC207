@@ -19,6 +19,7 @@ public class FilterNewsInputData {
     }
 
     /**
+     * Returns a list of topics selected by user for filtering
      * @return the list of selected topics
      */
     public List<String> getTopics() {

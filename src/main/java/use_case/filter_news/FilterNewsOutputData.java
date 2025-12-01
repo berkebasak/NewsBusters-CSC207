@@ -1,7 +1,8 @@
 package use_case.filter_news;
 
-import entity.Article;
 import java.util.List;
+
+import entity.Article;
 
 /**
  * Output data for the Filter News use case.
@@ -22,6 +23,7 @@ public class FilterNewsOutputData {
     }
 
     /**
+     * Returns a list of filtered articles.
      * @return the list of filtered articles
      */
     public List<Article> getArticles() {
@@ -29,6 +31,7 @@ public class FilterNewsOutputData {
     }
 
     /**
+     * Returns the topics used for filtering.
      * @return the topics used for filtering
      */
     public List<String> getTopics() {

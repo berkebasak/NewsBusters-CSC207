@@ -1,11 +1,11 @@
 package interface_adapter.filter_news;
 
+import java.util.Collections;
+
 import interface_adapter.top_headlines.TopHeadlinesState;
 import interface_adapter.top_headlines.TopHeadlinesViewModel;
 import use_case.filter_news.FilterNewsOutputBoundary;
 import use_case.filter_news.FilterNewsOutputData;
-
-import java.util.Collections;
 
 /**
  * Presenter for the Filter News use case.
@@ -28,7 +28,7 @@ public class FilterNewsPresenter implements FilterNewsOutputBoundary {
      */
     @Override
     public void prepareSuccessView(FilterNewsOutputData outputData) {
-        TopHeadlinesState state = topHeadlinesViewModel.getState();
+        final TopHeadlinesState state = topHeadlinesViewModel.getState();
         state.setArticles(outputData.getArticles());
         state.setError(null);
         topHeadlinesViewModel.firePropertyChange();
@@ -40,7 +40,7 @@ public class FilterNewsPresenter implements FilterNewsOutputBoundary {
      */
     @Override
     public void prepareFailView(String errorMessage) {
-        TopHeadlinesState state = topHeadlinesViewModel.getState();
+        final TopHeadlinesState state = topHeadlinesViewModel.getState();
         state.setArticles(Collections.emptyList());
         state.setError(errorMessage);
         topHeadlinesViewModel.firePropertyChange();
