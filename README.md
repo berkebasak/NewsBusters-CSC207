@@ -16,7 +16,7 @@ NewsBusters is a desktop application designed to combat misinformation in the di
   * **Personalization:** Tailor your feed by setting language and region preferences.
   * **Search & Discovery:** Filter news by topic, search by specific keywords, or use the "Discover" tab for recommendations based on reading history.
   * **Trust Scores:** Every article receives a calculated credibility score which you can then filter by to specify your reading experience.
-  * **Detailed Breakdown"** Click view details on article cards to view specific signals (Subscores, Domain Reputation Score, AI analysis score, etc.).
+  * **Detailed Breakdown:** Click view details on article cards to view specific signals (Subscores, Domain Reputation Score, AI analysis score, etc.).
 
 ### 🛠️ Tech Stack & APIs
 
