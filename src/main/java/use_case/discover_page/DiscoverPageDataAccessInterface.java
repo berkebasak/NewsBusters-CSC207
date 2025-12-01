@@ -11,10 +11,11 @@ import java.util.Set;
 public interface DiscoverPageDataAccessInterface {
 
     /**
-     * Gets all saved articles (reading history) from storage.
+     * Gets all saved articles (reading history) from storage for a specific user.
+     * @param username the username of the logged-in user
      * @return list of saved articles, or empty list if none exist
      */
-    List<Article> getReadingHistory();
+    List<Article> getReadingHistory(String username);
 
     /**
      * Extracts top topics from a list of articles based on word frequency in titles.
