@@ -15,4 +15,10 @@ public class TopHeadlinesPresenter implements TopHeadlinesOutputBoundary {
         viewModel.getState().setArticles(outputData.getArticles());
         viewModel.firePropertyChange();
     }
+
+    @Override
+    public void prepareFailView(String error) {
+        viewModel.getState().setError(error);
+        viewModel.firePropertyChange();
+    }
 }
