@@ -5,6 +5,7 @@ import use_case.filter_credibility.FilterCredibilityInputBoundary;
 import use_case.filter_credibility.FilterCredibilityInputData;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Controller for the filter credibility use case.
@@ -18,13 +19,14 @@ public class FilterCredibilityController {
     }
 
     /**
-     * Filters articles by the specified trust score level.
+     * Filters articles by the specified trust score levels.
      * 
      * @param articles the list of articles to filter
-     * @param filterLevel the trust level to filter by ("High", "Medium", "Low", or "All"/null for all articles)
+     * @param filterLevels the set of trust levels to filter by ("High", "Medium", "Low")
+     *                      Empty set means show all articles
      */
-    public void filterArticles(List<Article> articles, String filterLevel) {
-        FilterCredibilityInputData inputData = new FilterCredibilityInputData(articles, filterLevel);
+    public void filterArticles(List<Article> articles, Set<String> filterLevels) {
+        FilterCredibilityInputData inputData = new FilterCredibilityInputData(articles, filterLevels);
         interactor.execute(inputData);
     }
 }

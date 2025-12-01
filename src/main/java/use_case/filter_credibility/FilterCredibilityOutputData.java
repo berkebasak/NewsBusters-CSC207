@@ -2,25 +2,26 @@ package use_case.filter_credibility;
 
 import entity.Article;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Output data for the filter credibility use case.
- * Contains the filtered articles and the filter level that was applied.
+ * Contains the filtered articles and the filter levels that were applied.
  */
 public class FilterCredibilityOutputData {
     private final List<Article> filteredArticles;
-    private final String filterLevel;
+    private final Set<String> filterLevels;
 
-    public FilterCredibilityOutputData(List<Article> filteredArticles, String filterLevel) {
+    public FilterCredibilityOutputData(List<Article> filteredArticles, Set<String> filterLevels) {
         this.filteredArticles = filteredArticles;
-        this.filterLevel = filterLevel;
+        this.filterLevels = filterLevels;
     }
 
     public List<Article> getFilteredArticles() {
         return filteredArticles;
     }
 
-    public String getFilterLevel() {
-        return filterLevel;
+    public Set<String> getFilterLevels() {
+        return filterLevels;
     }
 }

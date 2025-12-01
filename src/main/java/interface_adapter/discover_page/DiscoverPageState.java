@@ -13,7 +13,7 @@ public class DiscoverPageState {
     private Set<String> currentTopics = new java.util.HashSet<>();
     private int currentPage = 0;
     private List<Article> originalArticles = new ArrayList<>(); // Stores unfiltered articles
-    private String currentFilterLevel; // "High", "Medium", "Low", "All", or null
+    private java.util.Set<String> currentFilterLevels = new java.util.HashSet<>(); // Set of "High", "Medium", "Low" - empty means no filter
 
     public List<Article> getArticles() {
         return articles;
@@ -80,27 +80,27 @@ public class DiscoverPageState {
     }
 
     /**
-     * Gets the current filter level.
-     * @return the current filter level ("High", "Medium", "Low", "All", or null)
+     * Gets the current filter levels.
+     * @return the set of current filter levels ("High", "Medium", "Low") - empty set means no filter
      */
-    public String getCurrentFilterLevel() {
-        return currentFilterLevel;
+    public java.util.Set<String> getCurrentFilterLevels() {
+        return currentFilterLevels;
     }
 
     /**
-     * Sets the current filter level.
-     * @param currentFilterLevel the filter level to set ("High", "Medium", "Low", "All", or null)
+     * Sets the current filter levels.
+     * @param currentFilterLevels the set of filter levels to set ("High", "Medium", "Low") - empty set means no filter
      */
-    public void setCurrentFilterLevel(String currentFilterLevel) {
-        this.currentFilterLevel = currentFilterLevel;
+    public void setCurrentFilterLevels(java.util.Set<String> currentFilterLevels) {
+        this.currentFilterLevels = currentFilterLevels != null ? new java.util.HashSet<>(currentFilterLevels) : new java.util.HashSet<>();
     }
 
     /**
      * Checks if articles are currently filtered.
-     * @return true if filtering is active (filter level is not null and not "All"), false otherwise
+     * @return true if filtering is active (filter levels set is not empty), false otherwise
      */
     public boolean isFiltered() {
-        return currentFilterLevel != null && !"All".equalsIgnoreCase(currentFilterLevel);
+        return currentFilterLevels != null && !currentFilterLevels.isEmpty();
     }
 }
 

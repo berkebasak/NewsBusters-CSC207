@@ -62,8 +62,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private final JButton viewDetailsButton = new JButton("View Details");
 
     // Filter by trust score
-    private final JLabel filterLabel = new JLabel("Filter by Trust Score:");
-    private final JComboBox<String> filterComboBox = new JComboBox<>(new String[]{"All", "High", "Medium", "Low"});
+    private final JButton filterButton = new JButton("Filter by Credibility");
 
     private final JTextField keywordField = new JTextField(20);
     private final JButton searchButton = new JButton("Search");
@@ -97,8 +96,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         controlsPanel.add(generateCredibilityButton);
         controlsPanel.add(generateAllCredibilityButton);
         controlsPanel.add(viewDetailsButton);
-        controlsPanel.add(filterLabel);
-        controlsPanel.add(filterComboBox);
 
         headerPanel.add(rightPanel, BorderLayout.EAST);
         headerPanel.add(controlsPanel, BorderLayout.CENTER);
@@ -108,6 +105,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         searchBar.add(new JLabel("Keyword:"));
         searchBar.add(keywordField);
         searchBar.add(searchButton);
+        searchBar.add(filterButton);
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
@@ -225,37 +223,27 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         });
 
         // Filter by trust score
-        filterComboBox.addActionListener(e -> {
+        filterButton.addActionListener(e -> {
             if (filterCredibilityController == null) {
-                return; // Filter feature not available yet
-            }
-            String selectedLevel = (String) filterComboBox.getSelectedItem();
-            if (selectedLevel == null) {
+                JOptionPane.showMessageDialog(this, "Filter feature not available.");
                 return;
             }
 
             var state = viewModel.getState();
             List<Article> currentArticles = state.getArticles();
 
-            // Store original articles if not already stored or if we're switching from filtered to unfiltered
-            if (state.getOriginalArticles().isEmpty() && !currentArticles.isEmpty()) {
-                state.setOriginalArticles(currentArticles);
+            if (currentArticles.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No articles to filter.");
+                return;
             }
 
-            // If "All" is selected, restore original articles
-            if ("All".equals(selectedLevel)) {
-                List<Article> originalArticles = state.getOriginalArticles();
-                if (!originalArticles.isEmpty()) {
-                    state.setArticles(new ArrayList<>(originalArticles));
-                    state.setCurrentFilterLevel(null);
-                    viewModel.firePropertyChange();
-                }
-            } else {
-                // Filter articles by the selected level
-                if (!currentArticles.isEmpty()) {
-                    filterCredibilityController.filterArticles(currentArticles, selectedLevel);
-                }
+            // Store original articles if not already stored
+            if (state.getOriginalArticles().isEmpty()) {
+                state.setOriginalArticles(new ArrayList<>(currentArticles));
             }
+
+            // Create filter dialog
+            showFilterDialog();
         });
     }
 
@@ -420,6 +408,85 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         );
     }
 
+    private void showFilterDialog() {
+        var state = viewModel.getState();
+        java.util.Set<String> currentFilterLevels = state.getCurrentFilterLevels();
+
+        // Create dialog
+        JDialog filterDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Filter by Credibility", true);
+        filterDialog.setLayout(new BorderLayout(10, 10));
+        filterDialog.setSize(400, 250);
+        filterDialog.setLocationRelativeTo(this);
+
+        // Create header label
+        JLabel headerLabel = new JLabel("Filter articles based on credibility score:");
+        headerLabel.setFont(new Font("TimesNewRoman", Font.BOLD, 14));
+        headerLabel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
+
+        // Create checkboxes with color icons
+        JCheckBox highCheckBox = new JCheckBox("🟢 High Trust");
+        JCheckBox mediumCheckBox = new JCheckBox("🟡 Medium Trust");
+        JCheckBox lowCheckBox = new JCheckBox("🔴 Low Trust");
+
+        // Pre-select based on current filter state
+        highCheckBox.setSelected(currentFilterLevels.contains("High"));
+        mediumCheckBox.setSelected(currentFilterLevels.contains("Medium"));
+        lowCheckBox.setSelected(currentFilterLevels.contains("Low"));
+
+        // Create checkbox panel
+        JPanel checkboxPanel = new JPanel();
+        checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.Y_AXIS));
+        checkboxPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        checkboxPanel.add(highCheckBox);
+        checkboxPanel.add(Box.createVerticalStrut(10));
+        checkboxPanel.add(mediumCheckBox);
+        checkboxPanel.add(Box.createVerticalStrut(10));
+        checkboxPanel.add(lowCheckBox);
+
+        // Create button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        JButton applyButton = new JButton("Apply Filter");
+        JButton clearButton = new JButton("Clear Filter");
+        buttonPanel.add(applyButton);
+        buttonPanel.add(clearButton);
+
+        filterDialog.add(headerLabel, BorderLayout.NORTH);
+        filterDialog.add(checkboxPanel, BorderLayout.CENTER);
+        filterDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Apply button action
+        applyButton.addActionListener(e -> {
+            java.util.Set<String> selectedLevels = new java.util.HashSet<>();
+            if (highCheckBox.isSelected()) {
+                selectedLevels.add("High");
+            }
+            if (mediumCheckBox.isSelected()) {
+                selectedLevels.add("Medium");
+            }
+            if (lowCheckBox.isSelected()) {
+                selectedLevels.add("Low");
+            }
+
+            List<Article> currentArticles = state.getArticles();
+            if (!currentArticles.isEmpty()) {
+                filterCredibilityController.filterArticles(currentArticles, selectedLevels);
+            }
+            filterDialog.dispose();
+        });
+
+        // Clear button action
+        clearButton.addActionListener(e -> {
+            List<Article> originalArticles = state.getOriginalArticles();
+            if (!originalArticles.isEmpty()) {
+                state.setArticles(new ArrayList<>(originalArticles));
+                state.setCurrentFilterLevels(new java.util.HashSet<>());
+                viewModel.firePropertyChange();
+            }
+            filterDialog.dispose();
+        });
+
+        filterDialog.setVisible(true);
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -431,14 +498,6 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             for (Article a : articles) {
                 listModel.addElement(a);
             }
-        }
-
-        // Sync filter combo box with state
-        String currentFilterLevel = state.getCurrentFilterLevel();
-        if (currentFilterLevel == null || "All".equals(currentFilterLevel)) {
-            filterComboBox.setSelectedItem("All");
-        } else {
-            filterComboBox.setSelectedItem(currentFilterLevel);
         }
 
         String error = state.getError();

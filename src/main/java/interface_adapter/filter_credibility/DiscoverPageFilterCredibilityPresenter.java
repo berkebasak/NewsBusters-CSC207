@@ -19,7 +19,7 @@ public class DiscoverPageFilterCredibilityPresenter implements FilterCredibility
     public void presentSuccess(FilterCredibilityOutputData outputData) {
         var state = viewModel.getState();
         state.setArticles(outputData.getFilteredArticles());
-        state.setCurrentFilterLevel(outputData.getFilterLevel());
+        state.setCurrentFilterLevels(outputData.getFilterLevels());
         state.setMessage(null); // Clear any previous messages
         state.setHasNoArticles(false);
         state.setHasNoHistory(false);
@@ -30,7 +30,8 @@ public class DiscoverPageFilterCredibilityPresenter implements FilterCredibility
     public void presentError(String errorMessage) {
         var state = viewModel.getState();
         state.setMessage(errorMessage);
-        state.setHasNoArticles(true); // Show message view
+        // Don't set hasNoArticles = true, keep articles visible and show error in popup
+        state.setHasNoArticles(false);
         state.setHasNoHistory(false);
         viewModel.firePropertyChange();
     }

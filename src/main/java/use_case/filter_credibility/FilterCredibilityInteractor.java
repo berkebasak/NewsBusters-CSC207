@@ -2,7 +2,9 @@ package use_case.filter_credibility;
 
 import entity.Article;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interactor for filtering articles by trust score level.
@@ -18,7 +20,7 @@ public class FilterCredibilityInteractor implements FilterCredibilityInputBounda
     @Override
     public void execute(FilterCredibilityInputData inputData) {
         List<Article> articles = inputData.getArticles();
-        String filterLevel = inputData.getFilterLevel();
+        Set<String> filterLevels = inputData.getFilterLevels();
 
         // Alternative Flow 1: Check if all articles have trust scores
         if (!allArticlesHaveScores(articles)) {
@@ -26,24 +28,24 @@ public class FilterCredibilityInteractor implements FilterCredibilityInputBounda
             return;
         }
 
-        // If filterLevel is "All" or null, return all articles
-        if (filterLevel == null || "All".equalsIgnoreCase(filterLevel)) {
-            FilterCredibilityOutputData outputData = new FilterCredibilityOutputData(articles, "All");
+        // If filterLevels is empty or null, return all articles
+        if (filterLevels == null || filterLevels.isEmpty()) {
+            FilterCredibilityOutputData outputData = new FilterCredibilityOutputData(articles, new HashSet<>());
             presenter.presentSuccess(outputData);
             return;
         }
 
-        // Filter articles by the selected trust level
-        List<Article> filteredArticles = filterByLevel(articles, filterLevel);
+        // Filter articles by the selected trust levels (matching any of the selected levels)
+        List<Article> filteredArticles = filterByLevels(articles, filterLevels);
 
         // Alternative Flow 2: Check if any articles match the filter
         if (filteredArticles.isEmpty()) {
-            presenter.presentError("No articles found at this trust level.");
+            presenter.presentError("No articles found at the selected trust levels.");
             return;
         }
 
         // Main Flow: Successfully filtered articles
-        FilterCredibilityOutputData outputData = new FilterCredibilityOutputData(filteredArticles, filterLevel);
+        FilterCredibilityOutputData outputData = new FilterCredibilityOutputData(filteredArticles, filterLevels);
         presenter.presentSuccess(outputData);
     }
 
@@ -73,18 +75,27 @@ public class FilterCredibilityInteractor implements FilterCredibilityInputBounda
     }
 
     /**
-     * Filters articles by the specified trust level.
+     * Filters articles by the specified trust levels.
+     * Returns articles that match any of the selected levels.
      * 
      * @param articles the list of articles to filter
-     * @param filterLevel the trust level to filter by ("High", "Medium", or "Low")
-     * @return a list of articles matching the filter level
+     * @param filterLevels the set of trust levels to filter by ("High", "Medium", "Low")
+     * @return a list of articles matching any of the filter levels
      */
-    private List<Article> filterByLevel(List<Article> articles, String filterLevel) {
+    private List<Article> filterByLevels(List<Article> articles, Set<String> filterLevels) {
         List<Article> filtered = new ArrayList<>();
+        
+        // Normalize filter levels to case-insensitive comparison
+        Set<String> normalizedLevels = new HashSet<>();
+        for (String level : filterLevels) {
+            if (level != null) {
+                normalizedLevels.add(level.toLowerCase());
+            }
+        }
         
         for (Article article : articles) {
             String articleLevel = article.getConfidenceLevel();
-            if (articleLevel != null && articleLevel.equalsIgnoreCase(filterLevel)) {
+            if (articleLevel != null && normalizedLevels.contains(articleLevel.toLowerCase())) {
                 filtered.add(article);
             }
         }
