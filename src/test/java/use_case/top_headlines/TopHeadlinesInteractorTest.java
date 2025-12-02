@@ -3,6 +3,7 @@ package use_case.top_headlines;
 import entity.Article;
 import entity.User;
 import data_access.UserDataAccessInterface;
+import entity.UserPreferences;
 import interface_adapter.login.LoginViewModel;
 import org.junit.jupiter.api.Test;
 
@@ -76,7 +77,7 @@ class TopHeadlinesInteractorTest {
     @Test
     void mainFlowLimitsToTwentyArticles() {
 
-        TopHeadlinesUserDataAccessInterface fakeApi = () -> {
+        TopHeadlinesUserDataAccessInterface fakeApi = (up) -> {
             List<Article> list = new ArrayList<>();
             for (int i = 0; i < 25; i++) {
                 Article a = new Article();
@@ -87,7 +88,8 @@ class TopHeadlinesInteractorTest {
             return list;
         };
 
-        User user = User.fromPersistence("berke", "1234", new ArrayList<>(), new ArrayList<>());
+        User user = User.fromPersistence("berke", "1234", new ArrayList<>(),
+                new ArrayList<>(), new UserPreferences());
         FakeUserDao fakeUserDao = new FakeUserDao(user);
 
         FakeLoginViewModel loginVM = new FakeLoginViewModel("berke");
@@ -96,7 +98,7 @@ class TopHeadlinesInteractorTest {
         TopHeadlinesInteractor interactor =
                 new TopHeadlinesInteractor(fakeApi, fakeUserDao, loginVM, presenter);
 
-        interactor.execute(new TopHeadlinesInputData("top"));
+        interactor.execute(new TopHeadlinesInputData("top", user.getUserPreferences()));
 
         assertTrue(presenter.successCalled);
         assertFalse(presenter.alternativeCalled);
@@ -110,7 +112,7 @@ class TopHeadlinesInteractorTest {
     @Test
     void alternativeFlowUsesSavedArticlesFromUser() {
 
-        TopHeadlinesUserDataAccessInterface fakeApi = ArrayList::new;
+        TopHeadlinesUserDataAccessInterface fakeApi = (up) -> {return new ArrayList<>();};
 
         List<Article> saved = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -120,7 +122,8 @@ class TopHeadlinesInteractorTest {
             saved.add(a);
         }
 
-        User user = User.fromPersistence("berke", "1234", saved, new ArrayList<>());
+        User user = User.fromPersistence("berke", "1234", saved,
+                new ArrayList<>(), new UserPreferences());
         FakeUserDao fakeUserDao = new FakeUserDao(user);
 
         FakeLoginViewModel loginVM = new FakeLoginViewModel("berke");
@@ -129,7 +132,7 @@ class TopHeadlinesInteractorTest {
         TopHeadlinesInteractor interactor =
                 new TopHeadlinesInteractor(fakeApi, fakeUserDao, loginVM, presenter);
 
-        interactor.execute(new TopHeadlinesInputData("top"));
+        interactor.execute(new TopHeadlinesInputData("top", user.getUserPreferences()));
 
         assertFalse(presenter.successCalled);
         assertTrue(presenter.alternativeCalled);
@@ -144,7 +147,7 @@ class TopHeadlinesInteractorTest {
     @Test
     void alternativeFlowAlsoLimitsToTwentyArticles() {
 
-        TopHeadlinesUserDataAccessInterface fakeApi = () -> null;
+        TopHeadlinesUserDataAccessInterface fakeApi = (up) -> null;
 
         List<Article> saved = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
@@ -154,7 +157,8 @@ class TopHeadlinesInteractorTest {
             saved.add(a);
         }
 
-        User user = User.fromPersistence("berke", "1234", saved, new ArrayList<>());
+        User user = User.fromPersistence("berke", "1234", saved,
+                new ArrayList<>(), new UserPreferences());
         FakeUserDao fakeUserDao = new FakeUserDao(user);
 
         FakeLoginViewModel loginVM = new FakeLoginViewModel("berke");
@@ -163,7 +167,7 @@ class TopHeadlinesInteractorTest {
         TopHeadlinesInteractor interactor =
                 new TopHeadlinesInteractor(fakeApi, fakeUserDao, loginVM, presenter);
 
-        interactor.execute(new TopHeadlinesInputData("top"));
+        interactor.execute(new TopHeadlinesInputData("top", user.getUserPreferences()));
 
         assertTrue(presenter.alternativeCalled);
 
