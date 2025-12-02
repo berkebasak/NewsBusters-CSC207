@@ -176,4 +176,129 @@ class TopHeadlinesInteractorTest {
         assertEquals("Saved 0", result.get(0).getTitle());
         assertEquals("Saved 19", result.get(19).getTitle());
     }
+
+    @Test
+    void alternativeFlowWhenUserDoesNotExist() {
+
+        // API returns empty list → alternative flow
+        TopHeadlinesUserDataAccessInterface fakeApi = (up) -> new ArrayList<>();
+
+        FakeUserDao dao = new FakeUserDao(null);  // ← no user returned
+        FakeLoginViewModel loginVM = new FakeLoginViewModel("ghostUser");
+        CapturingPresenter presenter = new CapturingPresenter();
+
+        TopHeadlinesInteractor interactor =
+                new TopHeadlinesInteractor(fakeApi, dao, loginVM, presenter);
+
+        interactor.execute(new TopHeadlinesInputData("top", new UserPreferences()));
+
+        assertTrue(presenter.alternativeCalled);
+        assertEquals(0, presenter.lastAlternativeData.getArticles().size());
+    }
+
+
+    @Test
+    void alternativeFlowHandlesNullSavedArticles() {
+
+        // API returning null triggers alternative flow
+        TopHeadlinesUserDataAccessInterface fakeApi = (up) -> null;
+
+        // savedArticles = null
+        User user = User.fromPersistence(
+                "berke",
+                "1234",
+                null,               // ← saved articles = null
+                new ArrayList<>(),
+                new UserPreferences()
+        );
+
+        FakeUserDao dao = new FakeUserDao(user);
+        FakeLoginViewModel loginVM = new FakeLoginViewModel("berke");
+        CapturingPresenter presenter = new CapturingPresenter();
+
+        TopHeadlinesInteractor interactor =
+                new TopHeadlinesInteractor(fakeApi, dao, loginVM, presenter);
+
+        interactor.execute(new TopHeadlinesInputData("top", user.getUserPreferences()));
+
+        assertTrue(presenter.alternativeCalled);
+        assertNotNull(presenter.lastAlternativeData.getArticles());
+        assertEquals(0, presenter.lastAlternativeData.getArticles().size());
+        assertTrue(presenter.lastAlternativeMessage.contains("No saved articles"));
+    }
+
+
+    @Test
+    void apiThrowsExceptionTriggersAlternativeFlow() {
+
+        // API throws → triggers catch block
+        TopHeadlinesUserDataAccessInterface failingApi = (up) -> {
+            throw new RuntimeException("API failure");
+        };
+
+        // user with saved articles
+        List<Article> saved = new ArrayList<>();
+        Article s = new Article();
+        s.setTitle("Saved X");
+        saved.add(s);
+
+        User user = User.fromPersistence(
+                "berke",
+                "1234",
+                saved,
+                new ArrayList<>(),
+                new UserPreferences()
+        );
+
+        FakeUserDao dao = new FakeUserDao(user);
+        FakeLoginViewModel loginVM = new FakeLoginViewModel("berke");
+        CapturingPresenter presenter = new CapturingPresenter();
+
+        TopHeadlinesInteractor interactor =
+                new TopHeadlinesInteractor(failingApi, dao, loginVM, presenter);
+
+        interactor.execute(new TopHeadlinesInputData("top", user.getUserPreferences()));
+
+        assertTrue(presenter.alternativeCalled);
+        assertEquals("Saved X",
+                presenter.lastAlternativeData.getArticles().get(0).getTitle());
+    }
+
+
+    @Test
+    void mainFlowExactlyTwentyArticlesNoTrimming() {
+
+        TopHeadlinesUserDataAccessInterface fakeApi = (up) -> {
+            List<Article> list = new ArrayList<>();
+            for (int i = 0; i < 20; i++) {
+                Article a = new Article();
+                a.setTitle("Headline " + i);
+                a.setUrl("https://example.com/" + i);
+                list.add(a);
+            }
+            return list; // EXACTLY 20
+        };
+
+        User user = User.fromPersistence(
+                "berke",
+                "1234",
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new UserPreferences()
+        );
+
+        FakeUserDao dao = new FakeUserDao(user);
+        CapturingPresenter presenter = new CapturingPresenter();
+        FakeLoginViewModel loginVM = new FakeLoginViewModel("berke");
+
+        TopHeadlinesInteractor interactor =
+                new TopHeadlinesInteractor(fakeApi, dao, loginVM, presenter);
+
+        interactor.execute(new TopHeadlinesInputData("top", user.getUserPreferences()));
+
+        assertTrue(presenter.successCalled);
+        assertEquals(20, presenter.lastSuccessData.getArticles().size());
+    }
+
+
 }
