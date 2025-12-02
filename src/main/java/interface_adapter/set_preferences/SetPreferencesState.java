@@ -7,9 +7,13 @@ public class SetPreferencesState {
     private String error;
     private String message;
 
-    public UserPreferences getUserPreferences() { return userPreferences; }
+    public UserPreferences getUserPreferences() {
+        return userPreferences;
+    }
 
-    public void setUserPreferences(UserPreferences userPreferences) { this.userPreferences = userPreferences; }
+    public void setUserPreferences(UserPreferences userPreferences) {
+        this.userPreferences = userPreferences;
+    }
 
     public String getError() {
         return error;

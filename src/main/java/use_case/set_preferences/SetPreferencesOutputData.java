@@ -1,6 +1,5 @@
 package use_case.set_preferences;
 
-import entity.User;
 import entity.UserPreferences;
 
 public class SetPreferencesOutputData {
@@ -17,11 +16,17 @@ public class SetPreferencesOutputData {
         this.message = message;
     }
 
-    public String getUsername() { return username; }
+    public String getUsername() {
+        return username;
+    }
 
-    public  UserPreferences getUserPreferences() { return userPreferences; }
+    public UserPreferences getUserPreferences() {
+        return userPreferences;
+    }
 
-    public boolean isSuccess() { return success; }
+    public boolean isSuccess() {
+        return success;
+    }
 
     public String getMessage() {
         return message;

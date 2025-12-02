@@ -5,8 +5,6 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.profile.ProfileViewModel;
-import interface_adapter.save_article.SaveArticleController;
-import interface_adapter.save_article.SaveArticleViewModel;
 import interface_adapter.set_preferences.SetPreferencesController;
 import interface_adapter.set_preferences.SetPreferencesState;
 import interface_adapter.set_preferences.SetPreferencesViewModel;
@@ -32,9 +30,9 @@ public class SetPreferencesView extends JPanel implements PropertyChangeListener
     private LoginViewModel loginViewModel;
 
     // Utility classes for data retrieval
+    NewsTopicExtractor newsTopicExtractor = new NewsTopicExtractor("news-topics.txt");
     CountryCodeConverter countryConverter = new CountryCodeConverter("country-codes.txt");
     LanguageCodeConverter languageConverter = new LanguageCodeConverter("language-codes.txt");
-    NewsTopicExtractor newsTopicExtractor = new NewsTopicExtractor("news-topics.txt");
 
     // UI Components
     private final ArrayList<JCheckBox> preferredTopicCheckBoxes = new ArrayList<>();
@@ -56,6 +54,7 @@ public class SetPreferencesView extends JPanel implements PropertyChangeListener
         // --- Main Layout Setup: Use GridBagLayout for better control ---
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(20, 30, 20, 30));
+        setSize(400,300);
         GridBagConstraints gbc = new GridBagConstraints();
 
         // Title and Message Label (Row 0)
@@ -131,6 +130,8 @@ public class SetPreferencesView extends JPanel implements PropertyChangeListener
                 if (!source.isEmpty() && !blockedSourcesListModel.contains(source)) {
                     blockedSourcesListModel.addElement(source);
                     blockedSourceInputField.setText("");
+                } else if (!source.isEmpty() && blockedSourcesListModel.contains(source)) {
+                    JOptionPane.showMessageDialog(blockedSourcesPanel.getParent(), "Source already blocked.");
                 }
             }
         });
@@ -141,6 +142,8 @@ public class SetPreferencesView extends JPanel implements PropertyChangeListener
                 int selectedIndex = blockedSourcesList.getSelectedIndex();
                 if (selectedIndex != -1) {
                     blockedSourcesListModel.remove(selectedIndex);
+                } else {
+                    JOptionPane.showMessageDialog(blockedSourcesPanel.getParent(), "No sources selected.");
                 }
             }
         });

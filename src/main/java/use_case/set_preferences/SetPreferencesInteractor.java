@@ -16,29 +16,26 @@ public class SetPreferencesInteractor implements SetPreferencesInputBoundary {
 
     @Override
     public void load(SetPreferencesInputData inputData) {
-        String username = inputData.getUsername();
+        final String username = inputData.getUsername();
 
         if (username == null) {
             presenter.prepareFailView("You need to login first");
-            return;
         }
-
-        User user = dataAccessObject.get(username);
-        if (user == null) {
+        else if (dataAccessObject.get(username) == null) {
             presenter.prepareFailView("You need to login first");
-            return;
         }
-
-        presenter.initPreferenceView(user.getUserPreferences());
+        else {
+            presenter.initPreferenceView(dataAccessObject.get(username).getUserPreferences());
+        }
     }
 
     @Override
     public void execute(SetPreferencesInputData inputData) {
 
-        String username = inputData.getUsername();
-        UserPreferences userPreferences = inputData.getUserPreferences();
+        final String username = inputData.getUsername();
+        final UserPreferences userPreferences = inputData.getUserPreferences();
 
-        User user = dataAccessObject.get(username);
+        final User user = dataAccessObject.get(username);
 
         if (userPreferences.getLanguage() == null || userPreferences.getRegion() == null) {
             presenter.prepareFailView("Language and/or Region required.");

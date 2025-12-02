@@ -11,13 +11,22 @@ public class SetPreferencesController {
         this.setPreferencesInteractor = setPreferencesInteractor;
     }
 
+    /**
+     * Loads the initial preferences data for view.
+     * @param username username of the user.
+     */
     public void load(String username) {
-        SetPreferencesInputData inputData = new SetPreferencesInputData(username);
+        final SetPreferencesInputData inputData = new SetPreferencesInputData(username);
         setPreferencesInteractor.load(inputData);
     }
 
+    /**
+     * Saves userPreferences to user when he clicks the save button.
+     * @param username username of the user.
+     * @param userPreferences the user's preferences.
+     */
     public void save(String username, UserPreferences userPreferences) {
-        SetPreferencesInputData inputData = new SetPreferencesInputData(username, userPreferences);
+        final SetPreferencesInputData inputData = new SetPreferencesInputData(username, userPreferences);
         setPreferencesInteractor.execute(inputData);
     }
 }
