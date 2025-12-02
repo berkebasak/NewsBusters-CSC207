@@ -13,6 +13,7 @@ public class Main {
                 .addTopHeadlinesView()
                 .addDiscoverPageView()
                 .addTopHeadlinesUseCase()
+                .addSortHeadlinesUseCase()
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addSaveArticleUseCase()

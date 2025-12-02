@@ -16,6 +16,8 @@ import interface_adapter.view_credibility.ViewCredibilityDetailsState;
 import interface_adapter.view_credibility.ViewCredibilityDetailsViewModel;
 import interface_adapter.view_credibility.ViewCredibilityDetailsController;
 
+import interface_adapter.sort_headlines.SortHeadlinesController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -46,6 +48,12 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     private final JLabel sourceLabel = new JLabel("New Articles", SwingConstants.CENTER);
 
     private TopHeadlinesController controller;
+    private SortHeadlinesController sortController;
+
+    public void setSortController(SortHeadlinesController sortController) {
+        this.sortController = sortController;
+    }
+
     private ProfileController profileController;
     private final TopHeadlinesViewModel viewModel;
 
@@ -152,7 +160,26 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         searchBar.add(searchButton);
         searchBar.add(filterButton);
 
-        // Stack header + search bar
+        String[] sortOptions = { "Sort by...", "Highest Trust", "Lowest Trust" };
+        JComboBox<String> sortDropdown = new JComboBox<>(sortOptions);
+        searchBar.add(sortDropdown);
+
+        sortDropdown.addActionListener(e -> {
+            String selected = (String) sortDropdown.getSelectedItem();
+            if (this.sortController != null) {
+                List<Article> articles = new ArrayList<>();
+                for (int i = 0; i < listModel.size(); i++) {
+                    articles.add(listModel.getElementAt(i));
+                }
+
+                if ("Highest Trust".equals(selected)) {
+                    this.sortController.execute("high", articles);
+                } else if ("Lowest Trust".equals(selected)) {
+                    this.sortController.execute("low", articles);
+                }
+            }
+        });
+
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setBackground(Color.WHITE);
@@ -309,7 +336,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     }
 
     public void setSaveArticleUseCase(SaveArticleController controller,
-                                      SaveArticleViewModel viewModel) {
+            SaveArticleViewModel viewModel) {
         this.saveController = controller;
         this.saveViewModel = viewModel;
 
@@ -345,8 +372,8 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
     }
 
     public void setCredibilityUseCases(GenerateCredibilityController generateController,
-                                       ViewCredibilityDetailsController detailsController,
-                                       ViewCredibilityDetailsViewModel detailsViewModel) {
+            ViewCredibilityDetailsController detailsController,
+            ViewCredibilityDetailsViewModel detailsViewModel) {
         this.generateCredibilityController = generateController;
         this.viewCredibilityDetailsController = detailsController;
         this.viewCredibilityDetailsViewModel = detailsViewModel;
@@ -363,8 +390,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                             this,
                             state.getError(),
                             "Credibility Details",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -400,17 +426,23 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         double rawClaim = state.getClaimConfidence();
 
         double sourceEff = rawSource;
-        if (sourceEff < 0.0) sourceEff = 0.0;
-        if (sourceEff > 1.0) sourceEff = 1.0;
+        if (sourceEff < 0.0)
+            sourceEff = 0.0;
+        if (sourceEff > 1.0)
+            sourceEff = 1.0;
         double SOURCE_REF = 0.7;
         sourceEff = sourceEff / SOURCE_REF;
-        if (sourceEff > 1.0) sourceEff = 1.0;
+        if (sourceEff > 1.0)
+            sourceEff = 1.0;
 
         double textRaw = 0.5 * rawSentiment + 0.5 * rawClaim;
-        if (textRaw < 0.0) textRaw = 0.0;
-        if (textRaw > 1.0) textRaw = 1.0;
+        if (textRaw < 0.0)
+            textRaw = 0.0;
+        if (textRaw > 1.0)
+            textRaw = 1.0;
         double textEff = Math.pow(textRaw, 0.85);
-        if (textEff > 1.0) textEff = 1.0;
+        if (textEff > 1.0)
+            textEff = 1.0;
 
         double wSource = 0.7;
         double wAI = 0.3;
@@ -425,6 +457,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
             sb.append("<b>").append(state.getTitle()).append("</b><br><br>");
         }
         sb.append("<b>Source:</b> ").append(state.getSource()).append("<br><br>");
+
 
         sb.append("<b>Subscores</b><br>");
         sb.append("Domain reputation: ")
@@ -458,8 +491,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                 this,
                 new JLabel(sb.toString()),
                 "Credibility Details",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void showFilterDialog() {
@@ -478,11 +510,11 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
         headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         JLabel headerLabel = new JLabel("Filter articles based on credibility score:");
         headerLabel.setFont(new Font("TimesNewRoman", Font.BOLD, 14));
         headerLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
-        
+
         JLabel infoLabel = new JLabel("ⓘ");
         infoLabel.setFont(new Font("TimesNewRoman", Font.PLAIN, 16));
         infoLabel.setForeground(new Color(100, 100, 200)); // Blue-ish color for info
@@ -499,7 +531,7 @@ public class TopHeadlinesView extends JPanel implements PropertyChangeListener {
                 );
             }
         });
-        
+
         headerPanel.add(headerLabel);
         headerPanel.add(Box.createHorizontalStrut(3)); // Small gap
         headerPanel.add(infoLabel);

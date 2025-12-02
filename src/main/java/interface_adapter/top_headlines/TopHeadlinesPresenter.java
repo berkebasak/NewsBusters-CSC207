@@ -27,4 +27,5 @@ public class TopHeadlinesPresenter implements TopHeadlinesOutputBoundary {
         state.setArticleSourceLabel("Saved Articles");
         viewModel.firePropertyChange();
     }
+
 }
