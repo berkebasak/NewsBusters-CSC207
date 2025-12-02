@@ -36,10 +36,6 @@ public class User {
         return new User(username, plainPassword, new ArrayList<>(), new ArrayList<>(), new UserPreferences());
     }
 
-    public static User fromPersistence(String username, String password,
-                                       List<Article> savedArticles, UserPreferences userPreferences) {
-        return new User(username, password, savedArticles, userPreferences);
-    }
     public static User fromPersistence(String username, String password, List<Article> savedArticles,
             List<Article> history, UserPreferences userPreferences) {
         return new User(username, password, savedArticles, history, userPreferences);

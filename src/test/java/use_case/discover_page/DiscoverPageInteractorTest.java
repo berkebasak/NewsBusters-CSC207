@@ -1,6 +1,7 @@
 package use_case.discover_page;
 
 import entity.Article;
+import entity.UserPreferences;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ class DiscoverPageInteractorTest {
         }
 
         @Override
-        public List<Article> searchByTopics(Set<String> topics, int page) {
+        public List<Article> searchByTopics(Set<String> topics, int page, UserPreferences up) {
             if (page == 0 && page0Articles != null) {
                 return page0Articles;
             }
@@ -70,7 +71,8 @@ class DiscoverPageInteractorTest {
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(readingHistory, topics, discoveredArticles, null);
         
         // Current topics are different (or null)
-        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser");
+        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser",
+                new UserPreferences());
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -110,7 +112,8 @@ class DiscoverPageInteractorTest {
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(readingHistory, topics, discoveredArticles, null);
         
         // Current topics are the same
-        DiscoverPageInputData input = new DiscoverPageInputData(topics, 0, "testUser");
+        DiscoverPageInputData input = new DiscoverPageInputData(topics, 0, "testUser",
+                new UserPreferences());
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -138,7 +141,8 @@ class DiscoverPageInteractorTest {
     @Test
     void failure_noReadingHistory() {
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(new ArrayList<>(), new HashSet<>(), new ArrayList<>(), null);
-        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser");
+        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser",
+                new UserPreferences());
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -167,7 +171,8 @@ class DiscoverPageInteractorTest {
         readingHistory.add(new Article("1", "The a an", "d", "l1", "i1", "s1")); // Only stop words
 
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(readingHistory, new HashSet<>(), new ArrayList<>(), null);
-        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser");
+        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser",
+                new UserPreferences());
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -203,7 +208,8 @@ class DiscoverPageInteractorTest {
 
         // No articles on page 1, but articles on page 0
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(readingHistory, topics, new ArrayList<>(), page0Articles);
-        DiscoverPageInputData input = new DiscoverPageInputData(topics, 0, "testUser"); // Will try page 1, then fallback to 0
+        DiscoverPageInputData input = new DiscoverPageInputData(topics, 0, "testUser",
+                new UserPreferences()); // Will try page 1, then fallback to 0
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -237,7 +243,8 @@ class DiscoverPageInteractorTest {
 
         // No articles on any page
         TestDiscoverPageDAO dao = new TestDiscoverPageDAO(readingHistory, topics, new ArrayList<>(), new ArrayList<>());
-        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser");
+        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser",
+                new UserPreferences());
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override
@@ -275,12 +282,13 @@ class DiscoverPageInteractorTest {
             }
 
             @Override
-            public List<Article> searchByTopics(Set<String> topics, int page) {
+            public List<Article> searchByTopics(Set<String> topics, int page, UserPreferences userPreferences) {
                 return new ArrayList<>();
             }
         };
 
-        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser");
+        DiscoverPageInputData input = new DiscoverPageInputData(null, 0, "testUser",
+                new UserPreferences());
 
         DiscoverPageOutputBoundary presenter = new DiscoverPageOutputBoundary() {
             @Override

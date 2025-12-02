@@ -36,7 +36,7 @@ class SearchNewsInteractorTest {
      */
     private static class NullReturningDAO implements SearchNewsUserDataAccessInterface {
         @Override
-        public List<Article> searchByKeyword(String keyword) {
+        public List<Article> searchByKeyword(String keyword, UserPreferences userPreferences) {
             return null;
         }
     }
@@ -46,7 +46,7 @@ class SearchNewsInteractorTest {
      */
     private static class ExceptionThrowingDAO implements SearchNewsUserDataAccessInterface {
         @Override
-        public List<Article> searchByKeyword(String keyword) {
+        public List<Article> searchByKeyword(String keyword, UserPreferences userPreferences) {
             throw new RuntimeException("DAO error");
         }
     }
@@ -110,7 +110,7 @@ class SearchNewsInteractorTest {
 
     @Test
     void failure_nullKeywordIsTreatedAsEmpty() {
-        SearchNewsInputData input = new SearchNewsInputData(null);
+        SearchNewsInputData input = new SearchNewsInputData(null, new UserPreferences());
         TestSearchNewsDAO dao = new TestSearchNewsDAO(new ArrayList<>());
 
         SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
@@ -133,7 +133,7 @@ class SearchNewsInteractorTest {
     void failure_noArticlesReturnedFromDAO_emptyList() {
         String keyword = "covid";
         TestSearchNewsDAO dao = new TestSearchNewsDAO(new ArrayList<>());
-        SearchNewsInputData input = new SearchNewsInputData(keyword);
+        SearchNewsInputData input = new SearchNewsInputData(keyword, new UserPreferences());
 
         SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
             @Override
@@ -155,7 +155,7 @@ class SearchNewsInteractorTest {
     void failure_noArticlesReturnedFromDAO_nullList() {
         String keyword = "covid";
         SearchNewsUserDataAccessInterface dao = new NullReturningDAO();
-        SearchNewsInputData input = new SearchNewsInputData(keyword);
+        SearchNewsInputData input = new SearchNewsInputData(keyword, new UserPreferences());
 
         SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
             @Override
@@ -183,7 +183,7 @@ class SearchNewsInteractorTest {
         daoArticles.add(new Article("3", "Sports news", "d", "l3", "i3", "s3"));
 
         TestSearchNewsDAO dao = new TestSearchNewsDAO(daoArticles);
-        SearchNewsInputData input = new SearchNewsInputData(keyword);
+        SearchNewsInputData input = new SearchNewsInputData(keyword, new UserPreferences());
 
         SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
             @Override
@@ -214,7 +214,7 @@ class SearchNewsInteractorTest {
         }
 
         TestSearchNewsDAO dao = new TestSearchNewsDAO(manyArticles);
-        SearchNewsInputData input = new SearchNewsInputData(keyword);
+        SearchNewsInputData input = new SearchNewsInputData(keyword, new UserPreferences());
 
         SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
             @Override
@@ -237,7 +237,7 @@ class SearchNewsInteractorTest {
     void failure_whenDaoThrowsException_presenterShowsSearchFailed() {
         String keyword = "covid";
         SearchNewsUserDataAccessInterface dao = new ExceptionThrowingDAO();
-        SearchNewsInputData input = new SearchNewsInputData(keyword);
+        SearchNewsInputData input = new SearchNewsInputData(keyword, new UserPreferences());
 
         SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
             @Override
@@ -269,7 +269,7 @@ class SearchNewsInteractorTest {
         daoArticles.add(new Article("3", "Market update", "d", "l3", "i3", "s3"));
 
         TestSearchNewsDAO dao = new TestSearchNewsDAO(daoArticles);
-        SearchNewsInputData input = new SearchNewsInputData(keyword);
+        SearchNewsInputData input = new SearchNewsInputData(keyword, new UserPreferences());
 
         SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
             @Override
