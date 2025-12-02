@@ -1,0 +1,19 @@
+{"users": [{
+  "password": "000",
+  "savedArticles": [{
+    "imageUrl": "",
+    "description": "Hunt, Richard \"Dick\" B. Nov. 24, 2025. Visit, Dec. 8, 10 a.m. \u2013 11 a.m., funeral, 11 a.m., Livingstone Community ...",
+    "id": "d8bcdd52-4cf4-4e1f-b1cb-1489e06a57e9",
+    "source": "pressherald",
+    "title": "Death Notice: Richard \u201cDick\u201d B. Hunt",
+    "url": "https://www.pressherald.com/2025/12/02/obituaryrichard-dick-b-hunt/"
+  }],
+  "userPreferences": {
+    "preferredTopics": [],
+    "language": "en",
+    "region": "us",
+    "blockedSources": []
+  },
+  "history": [],
+  "username": "user"
+}]}
