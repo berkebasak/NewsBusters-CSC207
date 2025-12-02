@@ -4,13 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad0693ef-8800-4e3d-ac90-8c0989a99209" name="Changes" comment="Resolved Merge Conflicts">
-      <change afterPath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="ad0693ef-8800-4e3d-ac90-8c0989a99209" name="Changes" comment="update">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/saved_articles.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/data_access/save_article/FileSaveArticleDataAccess.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/save_article/SaveArticleController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/save_article/SaveArticlePresenter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/save_article/SaveArticleViewModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleDataAccessInterface.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleInputBoundary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleInputData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleInteractor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleOutputBoundary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleOutputData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/saved_articles.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/saved_articles.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/users.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/users.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/use_case/top_headlines/TopHeadlinesInteractor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/use_case/top_headlines/TopHeadlinesInteractor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/AppBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/AppBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/view/TopHeadlinesView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/view/TopHeadlinesView.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -28,29 +38,29 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Sort_Headlines_By_Trust_Level_UC8_IshaaqK" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "sauerkraut33"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;sauerkraut33&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/berkebasak/NewsBusters-CSC207.git",
-    "accountId": "b71dc40a-9b2f-4c0c-98e4-1683ed52bf74"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/berkebasak/NewsBusters-CSC207.git&quot;,
+    &quot;accountId&quot;: &quot;449a0ba0-82c9-4b82-a12a-cfe640927db2&quot;
   }
-}]]></component>
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
-        &quot;associatedIndex&quot;: 4
-        }</component>
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="35LcCF0oyUMdU66VwCiz7d4OjVV" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -59,16 +69,11 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Main.executor": "Run",
-    "JUnit.FilterNewsInteractorTest.executor": "Run",
-    "JUnit.SearchNewsInteractorTest.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SONARLINT_PRECOMMIT_ANALYSIS": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
+    "git-widget-placeholder": "#4 on Merging search__news__UC9__lana",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/nnlan/OneDrive/Documents/GitHub/NewsBusters-CSC207-2",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2"
@@ -79,13 +84,8 @@
       <recent name="$PROJECT_DIR$/src/main/java/data_access/save_article" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <envs>
-        <env name="NEWSDATA_API_KEY" value="$NEWSDATA_API_KEY$" />
-        <env name="TEXTRAZOR_API_KEY" value="$TEXTRAZOR_API_KEY$" />
-        <env name="OPENPAGERANK_API_KEY" value="80kgoskwkos8skckwks8sgswcskkcc0o088k44oc" />
-      </envs>
       <option name="MAIN_CLASS_NAME" value="app.Main" />
       <module name="NewsBusters" />
       <extension name="coverage">
@@ -98,48 +98,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="FilterNewsInteractorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="NewsBusters" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="use_case.filter_news.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="use_case.filter_news" />
-      <option name="MAIN_CLASS_NAME" value="use_case.filter_news.FilterNewsInteractorTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="SearchNewsInteractorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="NewsBusters" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="use_case.search_news.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="use_case.search_news" />
-      <option name="MAIN_CLASS_NAME" value="use_case.search_news.SearchNewsInteractorTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Application.Main" />
-      <item itemvalue="JUnit.FilterNewsInteractorTest" />
-      <item itemvalue="JUnit.SearchNewsInteractorTest" />
-    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
-        <item itemvalue="JUnit.SearchNewsInteractorTest" />
-        <item itemvalue="JUnit.FilterNewsInteractorTest" />
         <item itemvalue="Application.Main" />
-        <item itemvalue="JUnit.SearchNewsInteractorTest" />
+        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -268,16 +231,5 @@
     <MESSAGE value="Updated TopHeadlinesView for UC11" />
     <MESSAGE value="update" />
     <option name="LAST_COMMIT_MESSAGE" value="update" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/view/TopHeadlinesView.java</url>
-          <line>415</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
