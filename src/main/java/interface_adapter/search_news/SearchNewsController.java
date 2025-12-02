@@ -4,26 +4,23 @@ import use_case.search_news.SearchNewsInputBoundary;
 import use_case.search_news.SearchNewsInputData;
 
 /**
- * The Controller for the Search News use case.
+ * Controller for the Search News use case.
  */
 public class SearchNewsController {
-    private final SearchNewsInputBoundary searchNewsUseCaseInteractor;
 
-    /**
-     * Creates a new SearchNewsController.
-     * @param searchNewsUseCaseInteractor the use case Interactor that runs the search logic
-     */
-    public SearchNewsController(SearchNewsInputBoundary searchNewsUseCaseInteractor) {
-        this.searchNewsUseCaseInteractor = searchNewsUseCaseInteractor;
+    private final SearchNewsInputBoundary searchNewsInteractor;
+
+    public SearchNewsController(SearchNewsInputBoundary searchNewsInteractor) {
+        this.searchNewsInteractor = searchNewsInteractor;
     }
 
     /**
-     * Called when the user clicks the Search button or presses Enter.
+     * Executes the Search News use case with the given keyword.
+     *
      * @param keyword the keyword entered by the user
      */
     public void execute(String keyword) {
-        final SearchNewsInputData searchNewsInputData = new SearchNewsInputData(keyword);
-        searchNewsUseCaseInteractor.execute(searchNewsInputData);
+        SearchNewsInputData inputData = new SearchNewsInputData(keyword);
+        searchNewsInteractor.execute(inputData);
     }
-
 }

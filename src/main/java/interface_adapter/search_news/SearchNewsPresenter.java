@@ -1,46 +1,39 @@
 package interface_adapter.search_news;
 
-import java.util.Collections;
-
-import interface_adapter.top_headlines.TopHeadlinesState;
-import interface_adapter.top_headlines.TopHeadlinesViewModel;
+import interface_adapter.ViewManagerModel;
 import use_case.search_news.SearchNewsOutputBoundary;
 import use_case.search_news.SearchNewsOutputData;
 
+import java.util.Collections;
+
 /**
- * The Presenter for the Search News Use Case.
+ * Presenter for the Search News use case.
  */
 public class SearchNewsPresenter implements SearchNewsOutputBoundary {
 
-    private final TopHeadlinesViewModel topHeadlinesViewModel;
+    private final SearchNewsViewModel searchNewsViewModel;
 
-    /**
-     * Builds a SearchNewsPresenter.
-     * @param topHeadlinesViewModel the shared ViewModel used by TopHeadlinesView
-     */
-    public SearchNewsPresenter(TopHeadlinesViewModel topHeadlinesViewModel) {
-        this.topHeadlinesViewModel = topHeadlinesViewModel;
+    public SearchNewsPresenter(SearchNewsViewModel searchNewsViewModel) {
+        this.searchNewsViewModel = searchNewsViewModel;
     }
 
-    /**
-     * Updates the state on success and notifies the view.
-     */
     @Override
     public void prepareSuccessView(SearchNewsOutputData outputData) {
-        final TopHeadlinesState state = topHeadlinesViewModel.getState();
+        SearchNewsState state = searchNewsViewModel.getState();
         state.setArticles(outputData.getArticles());
         state.setError(null);
-        topHeadlinesViewModel.firePropertyChange();
+        state.setKeyword(outputData.getKeyword());
+        state.setArticleSourceLabel("Search Results");
+        searchNewsViewModel.setState(state);
+        searchNewsViewModel.firePropertyChange();
     }
 
-    /**
-     * Updates the state on failure and notifies the view.
-     */
     @Override
-    public void prepareFailView(String error) {
-        final TopHeadlinesState state = topHeadlinesViewModel.getState();
+    public void prepareFailView(String message) {
+        SearchNewsState state = searchNewsViewModel.getState();
         state.setArticles(Collections.emptyList());
-        state.setError(error);
-        topHeadlinesViewModel.firePropertyChange();
+        state.setError(message);
+        state.setArticleSourceLabel("Search Results");
+        searchNewsViewModel.firePropertyChange();
     }
 }
