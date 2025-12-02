@@ -13,6 +13,7 @@ import use_case.top_headlines.TopHeadlinesUserDataAccessInterface;
 import use_case.discover_page.DiscoverPageDataAccessInterface;
 import util.EnvLoader;
 
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 public class DBUserDataAccessObject implements

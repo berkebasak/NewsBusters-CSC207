@@ -17,6 +17,7 @@ public class DiscoverPageController {
                                   LoginViewModel loginViewModel) {
         this.discoverPageUseCaseInteractor = discoverPageUseCaseInteractor;
         this.discoverPageViewModel = discoverPageViewModel;
+        this.loginViewModel = loginViewModel;
     }
 
     public void execute(UserPreferences userPreferences) {
@@ -24,8 +25,7 @@ public class DiscoverPageController {
         Set<String> currentTopics = state.getCurrentTopics();
         int currentPage = state.getCurrentPage();
         String username = loginViewModel.getState().getUsername();
-        DiscoverPageInputData inputData = new DiscoverPageInputData(currentTopics, currentPage, username);
-        DiscoverPageInputData inputData = new DiscoverPageInputData(currentTopics, currentPage, userPreferences);
+        DiscoverPageInputData inputData = new DiscoverPageInputData(currentTopics, currentPage, username, userPreferences);
         discoverPageUseCaseInteractor.execute(inputData);
     }
 }
