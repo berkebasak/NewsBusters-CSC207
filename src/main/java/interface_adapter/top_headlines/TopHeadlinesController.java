@@ -12,7 +12,7 @@ public class TopHeadlinesController {
     }
 
     public void fetchHeadlines(UserPreferences userPreferences) {
-        TopHeadlinesInputData inputData = new TopHeadlinesInputData("top", userPreferences);
+        TopHeadlinesInputData inputData = new TopHeadlinesInputData("fetch", userPreferences);
         interactor.execute(inputData);
     }
 }

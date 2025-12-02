@@ -12,7 +12,19 @@ public class TopHeadlinesPresenter implements TopHeadlinesOutputBoundary {
 
     @Override
     public void present(TopHeadlinesOutputData outputData) {
-        viewModel.getState().setArticles(outputData.getArticles());
+        var state = viewModel.getState();
+        state.setArticles(outputData.getArticles());
+        state.setError(null);
+        state.setArticleSourceLabel("New Articles");
+        viewModel.firePropertyChange();
+    }
+
+    @Override
+    public void presentAlternative(TopHeadlinesOutputData outputData, String message) {
+        var state = viewModel.getState();
+        state.setArticles(outputData.getArticles());
+        state.setError(message);
+        state.setArticleSourceLabel("Saved Articles");
         viewModel.firePropertyChange();
     }
 }

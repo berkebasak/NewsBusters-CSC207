@@ -4,64 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad0693ef-8800-4e3d-ac90-8c0989a99209" name="Changes" comment="Made extractor files to extract information from the language/countries/topics resources to be used in preferences">
-      <change afterPath="$PROJECT_DIR$/checkstyle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/keys.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/data_access/generate_credibility/GenerateCredibilityAPIsDataAccessObject.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/generate_credibility/DiscoverGenerateCredibilityPresenter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/generate_credibility/GenerateCredibilityController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/generate_credibility/GenerateCredibilityPresenter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/profile/ProfileController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/profile/ProfilePresenter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/profile/ProfileState.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/profile/ProfileViewModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/view_credibility/CredibilityDetailsState.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/view_credibility/CredibilityDetailsViewModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/view_credibility/ViewCredibilityDetailsController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/view_credibility/ViewCredibilityDetailsPresenter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/view_credibility/ViewCredibilityDetailsState.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/view_credibility/ViewCredibilityDetailsViewModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/generate_credibility/CredibilitySignalsDataAccessInterface.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/generate_credibility/GenerateCredibilityDataAccessInterface.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/generate_credibility/GenerateCredibilityInputBoundary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/generate_credibility/GenerateCredibilityInputData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/generate_credibility/GenerateCredibilityInteractor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/generate_credibility/GenerateCredibilityOutputBoundary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/generate_credibility/GenerateCredibilityOutputData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/profile/ProfileInputBoundary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/profile/ProfileInputData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/profile/ProfileInteractor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/profile/ProfileOutputBoundary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/profile/ProfileOutputData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/view_credibility/ViewCredibilityDetailsInputBoundary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/view_credibility/ViewCredibilityDetailsInputData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/view_credibility/ViewCredibilityDetailsInteractor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/view_credibility/ViewCredibilityDetailsOutputBoundary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/view_credibility/ViewCredibilityDetailsOutputData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/view/ProfileView.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/data_access/DBUserDataAccessObjectApiTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/data_access/generate_credibility/OpenPageRankApiTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/data_access/generate_credibility/TextRazorApiTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/use_case/discover_page/DiscoverPageInteractorTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/use_case/generate_credibility/GenerateCredibilityInteractorTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/use_case/top_headlines/TopHeadlinesInteractorTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/use_case/view_credibility/ViewCredibilityDetailsInteractorTest.java" afterDir="false" />
+    <list default="true" id="ad0693ef-8800-4e3d-ac90-8c0989a99209" name="Changes" comment="update">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/saved_articles.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/data_access/save_article/FileSaveArticleDataAccess.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/save_article/SaveArticleController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/save_article/SaveArticlePresenter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/save_article/SaveArticleViewModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleDataAccessInterface.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleInputBoundary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleInputData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleInteractor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleOutputBoundary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/use_case/save_article/SaveArticleOutputData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/saved_articles.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/saved_articles.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/users.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/users.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/AppBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/AppBuilder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/app/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/data_access/DBUserDataAccessObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/data_access/DBUserDataAccessObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/data_access/FileUserDataAccessObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/data_access/FileUserDataAccessObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entity/Article.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entity/Article.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entity/CredibilityScore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entity/CredibilityScore.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/interface_adapter/login/LoginPresenter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/interface_adapter/login/LoginPresenter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/use_case/search_news/SearchNewsInteractor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/use_case/search_news/SearchNewsInteractor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/use_case/top_headlines/TopHeadlinesInteractor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/use_case/top_headlines/TopHeadlinesInteractor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/view/DiscoverPageView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/view/DiscoverPageView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/view/TopHeadlinesView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/view/TopHeadlinesView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/view/ViewManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/view/ViewManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +32,6 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
-        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -93,7 +52,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/berkebasak/NewsBusters-CSC207.git&quot;,
-    &quot;accountId&quot;: &quot;b71dc40a-9b2f-4c0c-98e4-1683ed52bf74&quot;
+    &quot;accountId&quot;: &quot;449a0ba0-82c9-4b82-a12a-cfe640927db2&quot;
   }
 }</component>
   <component name="ProblemsViewState">
@@ -110,17 +69,14 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Main.executor": "Run",
-    "Application.SetPreferencesView.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SONARLINT_PRECOMMIT_ANALYSIS": "true",
-    "git-widget-placeholder": "Merging Muhammad",
+    "git-widget-placeholder": "#4 on Merging search__news__UC9__lana",
     "kotlin-language-version-configured": "true",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie"
+    "project.structure.side.proportion": "0.2"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -128,7 +84,7 @@
       <recent name="$PROJECT_DIR$/src/main/java/data_access/save_article" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.SetPreferencesView">
+  <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="app.Main" />
       <module name="NewsBusters" />
@@ -142,30 +98,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="SetPreferencesView" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="view.SetPreferencesView" />
-      <module name="NewsBusters" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="view.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Application.Main" />
-      <item itemvalue="Application.SetPreferencesView" />
-    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.SetPreferencesView" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main" />
-        <item itemvalue="Application.SetPreferencesView" />
-        <item itemvalue="Application.SetPreferencesView" />
+        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -280,127 +217,7 @@
       <option name="project" value="LOCAL" />
       <updated>1763187781134</updated>
     </task>
-    <task id="LOCAL-00013" summary="Added UserPreferences entity">
-      <option name="closed" value="true" />
-      <created>1763591801906</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1763591801906</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Added data input class for Set Preferences use case">
-      <option name="closed" value="true" />
-      <created>1763592102747</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1763592102748</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Added input data class for Set Preferences use case">
-      <option name="closed" value="true" />
-      <created>1763592115417</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1763592115417</updated>
-    </task>
-    <task id="LOCAL-00016" summary="Edited User entity and FileUserDataAccessObject to be integrated with UserPreferences">
-      <option name="closed" value="true" />
-      <created>1764274025948</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274025948</updated>
-    </task>
-    <task id="LOCAL-00017" summary="Edited Input Data, Output Data, and Data Access Interface for SetPreferences use case to be integrated with User">
-      <option name="closed" value="true" />
-      <created>1764274092284</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274092284</updated>
-    </task>
-    <task id="LOCAL-00018" summary="Created View object for SetPreferences use case">
-      <option name="closed" value="true" />
-      <created>1764274119748</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274119748</updated>
-    </task>
-    <task id="LOCAL-00019" summary="Completed view model for set preferences use case">
-      <option name="closed" value="true" />
-      <created>1764274424835</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274424835</updated>
-    </task>
-    <task id="LOCAL-00020" summary="Completed presenter for set preferences use case">
-      <option name="closed" value="true" />
-      <created>1764274434485</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274434485</updated>
-    </task>
-    <task id="LOCAL-00021" summary="Completed state for set preferences use case">
-      <option name="closed" value="true" />
-      <created>1764274443057</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274443057</updated>
-    </task>
-    <task id="LOCAL-00022" summary="Completed output boundary for set preferences use case">
-      <option name="closed" value="true" />
-      <created>1764274453653</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274453653</updated>
-    </task>
-    <task id="LOCAL-00023" summary="Completed interactor for set preferences use case">
-      <option name="closed" value="true" />
-      <created>1764274463171</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274463171</updated>
-    </task>
-    <task id="LOCAL-00024" summary="Completed input boundary for set preferences use case">
-      <option name="closed" value="true" />
-      <created>1764274473495</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274473495</updated>
-    </task>
-    <task id="LOCAL-00025" summary="Completed controller for set preferences use case">
-      <option name="closed" value="true" />
-      <created>1764274481763</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274481763</updated>
-    </task>
-    <task id="LOCAL-00026" summary="Added resource files for to get possible countries/languages/topics for preferences">
-      <option name="closed" value="true" />
-      <created>1764274554695</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274554695</updated>
-    </task>
-    <task id="LOCAL-00027" summary="Made extractor files to extract information from the language/countries/topics resources to be used in preferences">
-      <option name="closed" value="true" />
-      <created>1764274601670</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1764274601670</updated>
-    </task>
-    <option name="localTasksCounter" value="28" />
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -413,31 +230,6 @@
     <MESSAGE value="Data Access, Interface Adaptor, Use Case for UC11" />
     <MESSAGE value="Updated TopHeadlinesView for UC11" />
     <MESSAGE value="update" />
-    <MESSAGE value="Added UserPreferences entity" />
-    <MESSAGE value="Added data input class for Set Preferences use case" />
-    <MESSAGE value="Added input data class for Set Preferences use case" />
-    <MESSAGE value="Edited User entity and FileUserDataAccessObject to be integrated with UserPreferences" />
-    <MESSAGE value="Edited Input Data, Output Data, and Data Access Interface for SetPreferences use case to be integrated with User" />
-    <MESSAGE value="Created View object for SetPreferences use case" />
-    <MESSAGE value="Completed view model for set preferences use case" />
-    <MESSAGE value="Completed presenter for set preferences use case" />
-    <MESSAGE value="Completed state for set preferences use case" />
-    <MESSAGE value="Completed output boundary for set preferences use case" />
-    <MESSAGE value="Completed interactor for set preferences use case" />
-    <MESSAGE value="Completed input boundary for set preferences use case" />
-    <MESSAGE value="Completed controller for set preferences use case" />
-    <MESSAGE value="Added resource files for to get possible countries/languages/topics for preferences" />
-    <MESSAGE value="Made extractor files to extract information from the language/countries/topics resources to be used in preferences" />
-    <option name="LAST_COMMIT_MESSAGE" value="Made extractor files to extract information from the language/countries/topics resources to be used in preferences" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <breakpoint enabled="true" type="java-exception">
-          <properties class="java.lang.NullPointerException" package="java.lang" />
-          <option name="timeStamp" value="1" />
-        </breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
 </project>

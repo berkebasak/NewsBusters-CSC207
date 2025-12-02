@@ -5,6 +5,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+
         AppBuilder appBuilder = new AppBuilder();
         JFrame application = appBuilder
                 .addLoginView()
@@ -12,16 +13,20 @@ public class Main {
                 .addSetPreferencesView()
                 .addSetPreferencesUseCase()
                 .addTopHeadlinesView()
+                .addDiscoverPageView()
                 .addTopHeadlinesUseCase()
                 .addLoginUseCase()
                 .addSignupUseCase()
                 .addSaveArticleUseCase()
                 .addSearchNewsUseCase()
-                .addDiscoverPageView()
+                .addFilterNewsUseCase()
                 .addCredibilityUseCases()
+                .addFilterCredibilityUseCase()
                 .addDiscoverPageUseCase()
                 .addProfileView()
                 .addProfileUseCase()
+                .addLoadSavedArticlesView()
+                .addLoadSavedArticlesUseCase()
                 .build();
 
         application.setLocationRelativeTo(null);

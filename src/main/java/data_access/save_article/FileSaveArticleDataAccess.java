@@ -1,27 +1,35 @@
 package data_access.save_article;
 
+import java.io.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import entity.Article;
 import use_case.save_article.SaveArticleDataAccessInterface;
 
-import java.io.*;
-import java.util.HashSet;
-import java.util.Set;
-
 public class FileSaveArticleDataAccess implements SaveArticleDataAccessInterface {
 
+    private static final int PARTS_LIMIT = 3;
     private final File storageFile;
-    private final Set<String> ids = new HashSet<>();
-    private final Set<String> urls = new HashSet<>();
+    private final Map<String, Set<String>> urlsByUser = new HashMap<>();
 
-    public FileSaveArticleDataAccess(String filePath) throws IOException{
+    public FileSaveArticleDataAccess(String filePath) throws IOException {
         this.storageFile = new File(filePath);
         try {
-            if (!storageFile.exists()){
+            final File parent = storageFile.getParentFile();
+            if (parent != null && !parent.exists()) {
+                parent.mkdirs();
+                // ensure directory exists
+            }
+            if (!storageFile.exists()) {
                 storageFile.createNewFile();
             }
             loadExisting();
-        } catch (IOException e) {
-            throw new RuntimeException("Could not create/access storage file:" + filePath, e);
+        }
+        catch (IOException ex) {
+            throw new RuntimeException("Could not create/access storage file:" + filePath, ex);
         }
 
     }
@@ -30,47 +38,58 @@ public class FileSaveArticleDataAccess implements SaveArticleDataAccessInterface
         try (BufferedReader br = new BufferedReader(new FileReader(storageFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                if ((line.isBlank())) continue;
-
-                String[] parts = line.split("\\|", 3);
-
-                if (parts.length >= 1 && !parts[0].isBlank()) {
-                    ids.add(parts[0]);
+                if (line.isBlank()) {
+                    continue;
                 }
-                if (parts.length >= 3 && !parts[2].isBlank()) {
-                    urls.add(parts[2]);
+
+                final String[] parts = line.split("\\|", PARTS_LIMIT);
+
+                if (parts.length < PARTS_LIMIT) {
+                    // ignore malformed lines
+                    continue;
                 }
+                final String username = parts[0].trim();
+                final String url = parts[2].trim();
+
+                if (username.isEmpty() || url.isEmpty()) {
+                    continue;
+                }
+                urlsByUser
+                        .computeIfAbsent(username, key -> new HashSet<>())
+                        .add(url);
             }
         }
     }
 
     @Override
-    public boolean existsById(String id){
-        return id != null && ids.contains(id);
+    public boolean existsByUserandUrl(String username, String url) {
+        boolean exists = false;
+
+        if (username != null && url != null) {
+            final Set<String> urls = urlsByUser.get(username);
+            exists = urls != null && urls.contains(url);
+        }
+
+        return exists;
     }
 
     @Override
-    public boolean existsByUrl(String url){
-        return url != null && urls.contains(url);
+    public void saveForUser(String username, Article article) throws Exception {
+        if (username != null && !username.isBlank() && article != null) {
+
+            try (FileWriter fw = new FileWriter(storageFile, true);
+                 BufferedWriter bw = new BufferedWriter(fw)) {
+
+                bw.write(username + "|" + article.getTitle() + "|" + article.getUrl());
+                bw.newLine();
+            }
+
+            if (article.getUrl() != null) {
+                urlsByUser
+                        .computeIfAbsent(username, key -> new HashSet<>())
+                        .add(article.getUrl());
+            }
+        }
     }
 
-    @Override
-    public void save(Article article) throws Exception{
-        try (FileWriter fw = new FileWriter(storageFile, true);
-             BufferedWriter bw = new BufferedWriter(fw)){
-
-            bw.write(article.getId() + "|" + article.getTitle() + "|" + article.getUrl());
-            bw.newLine();
-            bw.flush(); // Explicitly flush to ensure data is written to disk immediately
-            fw.flush(); // Also flush the underlying FileWriter
-        }
-
-        if (article.getId() != null){
-            ids.add(article.getId());
-        }
-        if (article.getUrl() != null){
-            urls.add(article.getUrl());
-        }
-
-    }
 }

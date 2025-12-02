@@ -6,9 +6,7 @@ import use_case.search_news.SearchNewsInputData;
 
 /**
  * The Controller for the Search News use case.
- * Receives the keyword from the UI and passed it to the Interactor
  */
-
 public class SearchNewsController {
     private final SearchNewsInputBoundary searchNewsUseCaseInteractor;
 
