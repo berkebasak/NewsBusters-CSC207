@@ -1,0 +1,12 @@
+{"users": [{
+  "password": "salman",
+  "savedArticles": [],
+  "userPreferences": {
+    "preferredTopics": [],
+    "language": "id",
+    "region": "id",
+    "blockedSources": []
+  },
+  "history": [],
+  "username": "salman"
+}]}

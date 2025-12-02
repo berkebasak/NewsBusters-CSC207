@@ -90,7 +90,6 @@ public class DBUserDataAccessObject implements
         Set<String> seen = new HashSet<>();
 
         String customizedURL = applyLanguageAndCountry(TOP_URL, userPreferences);
-        customizedURL = applyPreferredTopics(customizedURL, userPreferences);
 
         try {
             String nextPage = null;
