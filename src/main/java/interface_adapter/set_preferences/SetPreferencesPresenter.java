@@ -8,12 +8,9 @@ import use_case.set_preferences.SetPreferencesOutputData;
 public class SetPreferencesPresenter implements SetPreferencesOutputBoundary {
 
     private final SetPreferencesViewModel setPreferencesViewModel;
-    private final ViewManagerModel viewManagerModel;
 
-    public SetPreferencesPresenter(SetPreferencesViewModel setPreferencesViewModel,
-                                   ViewManagerModel viewManagerModel) {
+    public SetPreferencesPresenter(SetPreferencesViewModel setPreferencesViewModel) {
         this.setPreferencesViewModel = setPreferencesViewModel;
-        this.viewManagerModel = viewManagerModel;
     }
 
     @Override

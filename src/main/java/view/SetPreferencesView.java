@@ -5,6 +5,8 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.profile.ProfileViewModel;
+import interface_adapter.save_article.SaveArticleController;
+import interface_adapter.save_article.SaveArticleViewModel;
 import interface_adapter.set_preferences.SetPreferencesController;
 import interface_adapter.set_preferences.SetPreferencesState;
 import interface_adapter.set_preferences.SetPreferencesViewModel;
@@ -269,17 +271,30 @@ public class SetPreferencesView extends JPanel implements PropertyChangeListener
         this.loginViewModel = loginViewModel;
     }
 
+//    public void setSaveArticleUseCase(SaveArticleController controller,
+//                                      SaveArticleViewModel viewModel) {
+//        this.saveController = controller;
+//        this.saveViewModel = viewModel;
+//
+//        this.saveViewModel.addPropertyChangeListener(evt -> {
+//            if ("message".equals(evt.getPropertyName())) {
+//                String msg = (String) evt.getNewValue();
+//                if (msg != null && !msg.isEmpty()) {
+//                    JOptionPane.showMessageDialog(this, msg);
+//                }
+//            }
+//        });
+//    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         SetPreferencesState state = setPreferencesViewModel.getState();
 
         if (state.getError() != null) {
-            messageLabel.setForeground(Color.RED);
-            messageLabel.setText("Error: " + state.getError());
+            JOptionPane.showMessageDialog(this, state.getError());
             state.setError(null); // Acknowledge error
         } else if (state.getMessage() != null) {
-            messageLabel.setForeground(new Color(0, 128, 0)); // Dark green for success
-            messageLabel.setText(state.getMessage());
+            JOptionPane.showMessageDialog(this, state.getMessage());
             state.setMessage(null); // Acknowledge message
         } else {
             // State update - Populate UI fields
