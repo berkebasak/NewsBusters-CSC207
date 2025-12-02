@@ -54,26 +54,6 @@ public class DBUserDataAccessObject implements
     private List<String> activeFilterTopics = new ArrayList<>();
     private final Map<String, Set<String>> articleCategories = new HashMap<>();
 
-    private String applyPreferredTopics(String url, UserPreferences userPreferences) {
-        String query = "";
-        ArrayList<String> preferredTopics = userPreferences.getPreferredTopics();
-
-        for (int i = 0; i < preferredTopics.size(); i++) {
-            if (i > 0)
-                query += " OR ";
-            query += preferredTopics.get(i);
-        }
-
-        try {
-            String replacement = "https://newsdata.io/api/1/news?"
-                    + "q=" + java.net.URLEncoder.encode(query, "UTF-8") + "&";
-            return url.replace("https://newsdata.io/api/1/news?", replacement);
-        } catch (UnsupportedEncodingException e) {
-            System.err.println("Error Applying Preferred Topics: " + e.getMessage());
-        }
-        return url;
-    }
-
     private String applyLanguageAndCountry(String url, UserPreferences userPreferences) {
         String language = "language=" + userPreferences.getLanguage();
         String country = "country=" + userPreferences.getRegion();
@@ -90,7 +70,6 @@ public class DBUserDataAccessObject implements
         Set<String> seen = new HashSet<>();
 
         String customizedURL = applyLanguageAndCountry(TOP_URL, userPreferences);
-        customizedURL = applyPreferredTopics(customizedURL, userPreferences);
 
         try {
             String nextPage = null;
@@ -139,11 +118,9 @@ public class DBUserDataAccessObject implements
         Set<String> seen = new HashSet<>();
         String nextPage = null;
 
-        String customizedSearchURL = applyLanguageAndCountry(SEARCH_URL, userPreferences);
-
         while (articles.size() < 1000) {
             String url = buildKeywordUrl(keyword, nextPage);
-//            String url = customizedSearchURL + keyword;
+            url = applyLanguageAndCountry(url, userPreferences);
 
             JSONObject json = executeApi(url);
             if (json == null) {
