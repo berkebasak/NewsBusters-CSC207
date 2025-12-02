@@ -1,6 +1,8 @@
 package use_case.discover_page;
 
 import entity.Article;
+import entity.UserPreferences;
+
 import java.util.List;
 import java.util.Set;
 
@@ -45,12 +47,14 @@ public class DiscoverPageInteractor implements DiscoverPageInputBoundary {
                 pageToUse = inputData.getCurrentPage() + 1;
             }
 
-            List<Article> discoveredArticles = dataAccessObject.searchByTopics(newTopics, pageToUse);
+            UserPreferences userPreferences = inputData.getUserPreferences();
+
+            List<Article> discoveredArticles = dataAccessObject.searchByTopics(newTopics, pageToUse, userPreferences);
 
             if (discoveredArticles == null || discoveredArticles.isEmpty()) {
                 // If no articles on this page, try page 0
                 if (pageToUse > 0) {
-                    discoveredArticles = dataAccessObject.searchByTopics(newTopics, 0);
+                    discoveredArticles = dataAccessObject.searchByTopics(newTopics, 0, userPreferences);
                     pageToUse = 0;
                 }
                 

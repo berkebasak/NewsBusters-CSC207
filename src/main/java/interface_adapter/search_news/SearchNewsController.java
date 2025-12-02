@@ -1,5 +1,6 @@
 package interface_adapter.search_news;
 
+import entity.UserPreferences;
 import use_case.search_news.SearchNewsInputBoundary;
 import use_case.search_news.SearchNewsInputData;
 
@@ -21,8 +22,8 @@ public class SearchNewsController {
      * Called when the user clicks the Search button or presses Enter.
      * @param keyword the keyword entered by the user
      */
-    public void execute(String keyword) {
-        final SearchNewsInputData searchNewsInputData = new SearchNewsInputData(keyword);
+    public void excute(String keyword, UserPreferences userPreferences) {
+        final SearchNewsInputData searchNewsInputData = new SearchNewsInputData(keyword, userPreferences);
         searchNewsUseCaseInteractor.execute(searchNewsInputData);
     }
 

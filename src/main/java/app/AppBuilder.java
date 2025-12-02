@@ -3,6 +3,12 @@ package app;
 import interface_adapter.ViewManagerModel;
 import use_case.filter_news.FilterNewsOutputBoundary;
 import view.ViewManager;
+import interface_adapter.set_preferences.SetPreferencesController;
+import interface_adapter.set_preferences.SetPreferencesPresenter;
+import interface_adapter.set_preferences.SetPreferencesViewModel;
+import use_case.set_preferences.SetPreferencesInputBoundary;
+import use_case.set_preferences.SetPreferencesInteractor;
+import view.*;
 import data_access.DBUserDataAccessObject;
 import data_access.FileUserDataAccessObject;
 import data_access.generate_credibility.GenerateCredibilityAPIsDataAccessObject;
@@ -86,6 +92,8 @@ public class AppBuilder {
     private DBUserDataAccessObject newsDataAccessObject;
     private FileUserDataAccessObject userDataAccessObject;
 
+    private SetPreferencesView setPreferencesView;
+    private SetPreferencesViewModel setPreferencesViewModel;
     private LoginView loginView;
     private LoginViewModel loginViewModel;
     private TopHeadlinesView topHeadlinesView;
@@ -123,10 +131,19 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addSetPreferencesView() {
+        setPreferencesViewModel = new SetPreferencesViewModel();
+        setPreferencesView = new SetPreferencesView(setPreferencesViewModel);
+        setPreferencesView.setViewManagerModel(viewManagerModel);
+        setPreferencesView.setLoginViewModel(loginViewModel);
+        cardPanel.add(setPreferencesView, SetPreferencesView.VIEW_NAME);
+        return this;
+    }
+
     public AppBuilder addTopHeadlinesView() {
         topHeadlinesViewModel = new TopHeadlinesViewModel();
         topHeadlinesView = new TopHeadlinesView(null, topHeadlinesViewModel);
-        topHeadlinesView.setViewManagerModel(viewManagerModel, loginViewModel);
+        topHeadlinesView.setViewManagerModel(viewManagerModel, loginViewModel, setPreferencesViewModel);
         cardPanel.add(topHeadlinesView, TopHeadlinesView.VIEW_NAME);
         return this;
     }
@@ -175,6 +192,19 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addSetPreferencesUseCase() {
+        SetPreferencesPresenter presenter = new SetPreferencesPresenter(setPreferencesViewModel, viewManagerModel);
+        SetPreferencesInputBoundary interactor = new SetPreferencesInteractor(getUserDataAccessObject(), presenter);
+        SetPreferencesController controller = new SetPreferencesController(interactor);
+        setPreferencesView.setSetPreferencesController(controller);
+
+        if (loginView != null) {
+            loginView.setSetPreferencesController(controller);
+        }
+
+        return this;
+    }
+
     public AppBuilder addSearchNewsUseCase() {
         if (newsDataAccessObject == null) {
             newsDataAccessObject = new DBUserDataAccessObject();
@@ -214,6 +244,7 @@ public class AppBuilder {
         discoverPageViewModel = new DiscoverPageViewModel();
         discoverPageView = new DiscoverPageView(null, discoverPageViewModel);
         discoverPageView.setViewManagerModel(viewManagerModel);
+        discoverPageView.setSetPreferencesViewModel(setPreferencesViewModel);
         cardPanel.add(discoverPageView, DiscoverPageView.VIEW_NAME);
         return this;
     }
@@ -233,6 +264,7 @@ public class AppBuilder {
         DiscoverPageController controller =
                 new DiscoverPageController(interactor, discoverPageViewModel, loginViewModel);
         discoverPageView.setController(controller);
+        topHeadlinesView.setDiscoverPageController(controller);
         return this;
     }
 

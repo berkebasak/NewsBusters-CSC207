@@ -1,6 +1,11 @@
 {"users": [{
-  "password": "123",
+  "password": "abc",
   "savedArticles": [],
-  "history": [],
-  "username": "gummy"
+  "userPreferences": {
+    "preferredTopics": [],
+    "language": "English",
+    "region": "Canada",
+    "blockedSources": []
+  },
+  "username": "zendy"
 }]}

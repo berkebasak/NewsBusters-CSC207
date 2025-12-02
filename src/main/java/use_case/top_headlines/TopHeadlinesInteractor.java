@@ -1,5 +1,6 @@
 package use_case.top_headlines;
 
+
 import entity.Article;
 import entity.User;
 import data_access.UserDataAccessInterface;
@@ -33,7 +34,7 @@ public class TopHeadlinesInteractor implements TopHeadlinesInputBoundary {
         // MAIN FLOW: Fetch articles from the API
         List<Article> apiArticles = null;
         try {
-            apiArticles = apiDao.fetchTopHeadlines();
+            apiArticles = apiDao.fetchTopHeadlines(inputData.getUserPreferences());
         } catch (Exception ignored) {}
 
         if (apiArticles != null && !apiArticles.isEmpty()) {

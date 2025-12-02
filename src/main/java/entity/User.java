@@ -10,31 +10,39 @@ public class User {
     private String password;
     private final List<Article> savedArticles;
     private final List<Article> history;
+    private UserPreferences userPreferences;
 
-    private User(String username, String password, List<Article> savedArticles) {
+    private User(String username, String password, List<Article> savedArticles, UserPreferences userPreferences) {
         this.username = Objects.requireNonNull(username, "username").trim();
         this.password = Objects.requireNonNull(password, "password");
         this.savedArticles = new ArrayList<>(savedArticles == null ? List.of() : savedArticles);
         this.history = new ArrayList<>();
+        this.userPreferences = userPreferences;
     }
 
-    private User(String username, String password, List<Article> savedArticles, List<Article> history) {
+    private User(String username, String password, List<Article> savedArticles, List<Article> history,
+                 UserPreferences userPreferences) {
         this.username = Objects.requireNonNull(username, "username").trim();
         this.password = Objects.requireNonNull(password, "password");
         this.savedArticles = new ArrayList<>(savedArticles == null ? List.of() : savedArticles);
         this.history = new ArrayList<>(history == null ? List.of() : history);
+        this.userPreferences = userPreferences;
     }
 
     public static User create(String username, String plainPassword) {
         if (plainPassword == null || plainPassword.isBlank()) {
             throw new IllegalArgumentException("Password must not be blank");
         }
-        return new User(username, plainPassword, new ArrayList<>(), new ArrayList<>());
+        return new User(username, plainPassword, new ArrayList<>(), new ArrayList<>(), new UserPreferences());
     }
 
+    public static User fromPersistence(String username, String password,
+                                       List<Article> savedArticles, UserPreferences userPreferences) {
+        return new User(username, password, savedArticles, userPreferences);
+    }
     public static User fromPersistence(String username, String password, List<Article> savedArticles,
-            List<Article> history) {
-        return new User(username, password, savedArticles, history);
+            List<Article> history, UserPreferences userPreferences) {
+        return new User(username, password, savedArticles, history, userPreferences);
     }
 
     public String getUsername() {
@@ -83,6 +91,9 @@ public class User {
         return savedArticles.removeIf(article -> url.equals(article.getUrl()));
     }
 
+    public UserPreferences getUserPreferences() { return userPreferences; }
+
+    public void setUserPreferences(UserPreferences userPreferences) { this.userPreferences = userPreferences; }
     public List<Article> getHistory() {
         return Collections.unmodifiableList(history);
     }

@@ -1,6 +1,7 @@
 package use_case.search_news;
 
 import entity.Article;
+import entity.UserPreferences;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ class SearchNewsInteractorTest {
         }
 
         @Override
-        public List<Article> searchByKeyword(String keyword) {
+        public List<Article> searchByKeyword(String keyword, UserPreferences userPreferences) {
             return articles;
         }
     }
@@ -60,7 +61,7 @@ class SearchNewsInteractorTest {
         daoArticles.add(new Article("3", "New COVID vaccine approved", "d", "l3", "i3", "s3"));
 
         TestSearchNewsDAO dao = new TestSearchNewsDAO(daoArticles);
-        SearchNewsInputData input = new SearchNewsInputData(keyword);
+        SearchNewsInputData input = new SearchNewsInputData(keyword, new UserPreferences());
 
         SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {
             @Override
@@ -88,7 +89,7 @@ class SearchNewsInteractorTest {
 
     @Test
     void failure_emptyKeyword() {
-        SearchNewsInputData input = new SearchNewsInputData("   ");
+        SearchNewsInputData input = new SearchNewsInputData("   ", new UserPreferences());
         TestSearchNewsDAO dao = new TestSearchNewsDAO(new ArrayList<>());
 
         SearchNewsOutputBoundary presenter = new SearchNewsOutputBoundary() {

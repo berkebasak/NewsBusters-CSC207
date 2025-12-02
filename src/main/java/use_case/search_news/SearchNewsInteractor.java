@@ -2,8 +2,8 @@ package use_case.search_news;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import entity.Article;
+import entity.UserPreferences;
 
 /**
  * The interactor for the Search News by Keyword use case.
@@ -44,8 +44,10 @@ public class SearchNewsInteractor implements SearchNewsInputBoundary {
             return;
         }
 
+        UserPreferences userPreferences = searchNewsInputData.getUserPreferences();
+
         try {
-            final List<Article> articles = userDataAccessObject.searchByKeyword(keyword);
+            final List<Article> articles = userDataAccessObject.searchByKeyword(keyword, userPreferences);
 
             if (articles == null || articles.isEmpty()) {
                 searchNewsPresenter.prepareFailView("No articles found.");

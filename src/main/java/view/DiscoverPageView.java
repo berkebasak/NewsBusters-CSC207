@@ -1,11 +1,13 @@
 package view;
 
 import entity.Article;
+import entity.UserPreferences;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.discover_page.DiscoverPageController;
 import interface_adapter.discover_page.DiscoverPageViewModel;
 
 import interface_adapter.generate_credibility.GenerateCredibilityController;
+import interface_adapter.set_preferences.SetPreferencesViewModel;
 import interface_adapter.filter_credibility.FilterCredibilityController;
 import interface_adapter.view_credibility.ViewCredibilityDetailsViewModel;
 import interface_adapter.view_credibility.ViewCredibilityDetailsController;
@@ -26,6 +28,7 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
     public static final String VIEW_NAME = "discover_page_view";
     private DiscoverPageController controller;
     private final DiscoverPageViewModel viewModel;
+    private SetPreferencesViewModel setPreferencesViewModel;
     private ViewManagerModel viewManagerModel;
     private GenerateCredibilityController generateCredibilityController;
     private ViewCredibilityDetailsController viewCredibilityDetailsController;
@@ -99,7 +102,7 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
 
         refreshButton.addActionListener(e -> {
             if (this.controller != null) {
-                this.controller.execute();
+                this.controller.execute(setPreferencesViewModel.getState().getUserPreferences());
             }
         });
 
@@ -206,12 +209,16 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
         super.setVisible(visible);
         if (visible && controller != null) {
             // Load articles when view becomes visible (after login)
-            controller.execute();
+            controller.execute(new UserPreferences());
         }
     }
 
     public void setViewManagerModel(ViewManagerModel viewManagerModel) {
         this.viewManagerModel = viewManagerModel;
+    }
+
+    public void setSetPreferencesViewModel(SetPreferencesViewModel setPreferencesViewModel) {
+        this.setPreferencesViewModel = setPreferencesViewModel;
     }
 
     public void setCredibilityUseCases(GenerateCredibilityController generateController,
@@ -250,11 +257,11 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
         headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         JLabel headerLabel = new JLabel("Filter articles based on credibility score:");
         headerLabel.setFont(new Font("TimesNewRoman", Font.BOLD, 14));
         headerLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
-        
+
         JLabel infoLabel = new JLabel("ⓘ");
         infoLabel.setFont(new Font("TimesNewRoman", Font.PLAIN, 16));
         infoLabel.setForeground(new Color(100, 100, 200)); // Blue-ish color for info
@@ -271,7 +278,7 @@ public class DiscoverPageView extends JPanel implements PropertyChangeListener {
                 );
             }
         });
-        
+
         headerPanel.add(headerLabel);
         headerPanel.add(Box.createHorizontalStrut(3)); // Small gap
         headerPanel.add(infoLabel);
