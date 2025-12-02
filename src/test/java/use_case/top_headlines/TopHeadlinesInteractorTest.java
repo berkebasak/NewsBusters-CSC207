@@ -176,4 +176,60 @@ class TopHeadlinesInteractorTest {
         assertEquals("Saved 0", result.get(0).getTitle());
         assertEquals("Saved 19", result.get(19).getTitle());
     }
+
+    @Test
+    void alternativeFlowWhenUserDoesNotExist() {
+
+        // API returns empty list → alternative flow
+        TopHeadlinesUserDataAccessInterface fakeApi = (up) -> new ArrayList<>();
+
+        FakeUserDao dao = new FakeUserDao(null);  // ← no user returned
+        FakeLoginViewModel loginVM = new FakeLoginViewModel("ghostUser");
+        CapturingPresenter presenter = new CapturingPresenter();
+
+        TopHeadlinesInteractor interactor =
+                new TopHeadlinesInteractor(fakeApi, dao, loginVM, presenter);
+
+        interactor.execute(new TopHeadlinesInputData("top", new UserPreferences()));
+
+        assertTrue(presenter.alternativeCalled);
+        assertEquals(0, presenter.lastAlternativeData.getArticles().size());
+    }
+
+    @Test
+    void mainFlowExactlyTwentyArticlesNoTrimming() {
+
+        TopHeadlinesUserDataAccessInterface fakeApi = (up) -> {
+            List<Article> list = new ArrayList<>();
+            for (int i = 0; i < 20; i++) {
+                Article a = new Article();
+                a.setTitle("Headline " + i);
+                a.setUrl("https://example.com/" + i);
+                list.add(a);
+            }
+            return list; // EXACTLY 20
+        };
+
+        User user = User.fromPersistence(
+                "berke",
+                "1234",
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new UserPreferences()
+        );
+
+        FakeUserDao dao = new FakeUserDao(user);
+        CapturingPresenter presenter = new CapturingPresenter();
+        FakeLoginViewModel loginVM = new FakeLoginViewModel("berke");
+
+        TopHeadlinesInteractor interactor =
+                new TopHeadlinesInteractor(fakeApi, dao, loginVM, presenter);
+
+        interactor.execute(new TopHeadlinesInputData("top", user.getUserPreferences()));
+
+        assertTrue(presenter.successCalled);
+        assertEquals(20, presenter.lastSuccessData.getArticles().size());
+    }
+
+
 }

@@ -53,8 +53,6 @@ public class TopHeadlinesInteractor implements TopHeadlinesInputBoundary {
 
         List<Article> saved = user != null ? user.getSavedArticles() : new ArrayList<>();
 
-        if (saved == null) saved = new ArrayList<>();
-
         if (saved.size() > 20) {
             saved = saved.subList(0, 20);
         }
