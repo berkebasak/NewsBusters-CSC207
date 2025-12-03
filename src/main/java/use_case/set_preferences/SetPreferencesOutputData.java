@@ -24,10 +24,6 @@ public class SetPreferencesOutputData {
         return userPreferences;
     }
 
-    public boolean isSuccess() {
-        return success;
-    }
-
     public String getMessage() {
         return message;
     }
