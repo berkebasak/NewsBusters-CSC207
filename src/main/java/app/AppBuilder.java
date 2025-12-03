@@ -193,7 +193,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addSetPreferencesUseCase() {
-        SetPreferencesPresenter presenter = new SetPreferencesPresenter(setPreferencesViewModel, viewManagerModel);
+        SetPreferencesPresenter presenter = new SetPreferencesPresenter(setPreferencesViewModel);
         SetPreferencesInputBoundary interactor = new SetPreferencesInteractor(getUserDataAccessObject(), presenter);
         SetPreferencesController controller = new SetPreferencesController(interactor);
         setPreferencesView.setSetPreferencesController(controller);

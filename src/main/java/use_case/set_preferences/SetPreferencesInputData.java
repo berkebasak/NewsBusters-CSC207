@@ -3,8 +3,8 @@ package use_case.set_preferences;
 import entity.UserPreferences;
 
 public class SetPreferencesInputData {
-    String username;
-    UserPreferences userPreferences;
+    private String username;
+    private UserPreferences userPreferences;
 
     public SetPreferencesInputData(String username) {
         this.username = username;
@@ -15,7 +15,11 @@ public class SetPreferencesInputData {
         this.userPreferences = userPreferences;
     }
 
-    public String getUsername() { return username; }
+    public String getUsername() {
+        return username;
+    }
 
-    public UserPreferences getUserPreferences() { return userPreferences; }
+    public UserPreferences getUserPreferences() {
+        return userPreferences;
+    }
 }
